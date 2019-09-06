@@ -11,5 +11,5 @@ sudo dpkg -i docker-ce_18.09.7~3-0~debian-buster_armhf.deb
 
 sudo usermod pi -aG docker
 
-echo "Logout and back in and then run inst-step02.sh"
+echo "Reboot and then run inst-step02.sh"
 
