@@ -1,7 +1,7 @@
 #!/bin/bash
 
 sudo apt-get update
-sudo apt-get upgrade
+sudo apt-get -y upgrade
 
 
 # Install Docker - Version 18.09 (this is the latest validated version as of 9/5/19
