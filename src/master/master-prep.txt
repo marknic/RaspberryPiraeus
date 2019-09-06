@@ -15,8 +15,8 @@ sudo apt-get upgrade
 # Execute worker install script 1 (Install Docker)
 # Reboot (after reboot, you can test Docker install with "docker run hello-world"
 
-# Execute worker install script 2 (disable swap, install kubernetes, update cmdline.txt)
-# Reboot
+# Execute worker install script 2 (disable swap, install kubernetes, initializing kubernetes)
+# Note: make sure you modify the script to use your master node IP address
 
 # Execute kubeadm join command to join the node to the cluster
 
