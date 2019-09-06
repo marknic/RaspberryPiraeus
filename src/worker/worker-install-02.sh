@@ -3,7 +3,7 @@
 # This installs the base instructions up to the point of joining / creating a cluster
 
 # To run this command:
-#  sudo curl -sSL https://raw.githubusercontent.com/marknic/RaspberryPiraeus/master/src/worker/inst-step02.sh | sh
+#  sudo curl -sSL https://raw.githubusercontent.com/marknic/RaspberryPiraeus/master/src/worker/worker-install-02.sh | sh
 
 sudo dphys-swapfile swapoff
 sudo dphys-swapfile uninstall
