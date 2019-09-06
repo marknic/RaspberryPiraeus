@@ -12,22 +12,17 @@ sudo systemctl start ssh
 sudo apt-get update
 sudo apt-get upgrade
 
-# Execute worker install script 1 (Install Docker)
+# Execute master install script 1 (Install Docker)
 # Reboot (after reboot, you can test Docker install with "docker run hello-world"
 
-# Execute worker install script 2 (disable swap, install kubernetes, initializing kubernetes)
+# Execute master install script 2 (disable swap, install kubernetes, initializing kubernetes)
 # Note: make sure you modify the script to use your master node IP address
 
-# Execute kubeadm join command to join the node to the cluster
+# Execute master install script 3 (install networking, join the cluster)
+# Note: make sure you modify the script to use your master node IP address and change the networking if you want something other than Weave
 
-# On the master, execute the kubectl label command to define the new node as a worker
-kubectl label node kub-worker-01 node-role.kubernetes.io/worker=worker # only change: 'kub-worker-01' should be your host name of the node
-
-# The node should now be added to the cluster as a worker
+# The node should now be added to the cluster as the master
 # To verify, run 'kubectl get nodes' on the master.  Depending on how many nodes you've added, you should see something similar to this:
 # pi@kub-master:~ $ kubectl get nodes
 # NAME            STATUS   ROLES    AGE     VERSION
 # kub-master      Ready    master   26h     v1.15.3
-# kub-worker-01   Ready    worker   23h     v1.15.3
-# kub-worker-02   Ready    worker   22h     v1.15.3
-# kub-worker-03   Ready    worker   6h55m   v1.15.3
