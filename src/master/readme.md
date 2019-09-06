@@ -1,10 +1,10 @@
 Enable SSH for remote access with commands below or through raspi-config
 ===
-## sudo systemctl enable ssh
-## sudo systemctl start ssh
+* sudo systemctl enable ssh
+* sudo systemctl start ssh
 
 Do the following with "sudo raspi-config"
----
+===
 * Set hostname (master, worker1, 2, etc.)
 * Set locale properties
 * Set keyboard (for some keyboards, you will need to reboot after setting up internet access before the right keyboard option appears)
