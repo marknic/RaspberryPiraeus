@@ -16,6 +16,12 @@
 # kubelet/kubernetes-xenial,now 1.15.3-00 armhf [installed,automatic]
 # kubernetes-cni/kubernetes-xenial,now 0.7.5-00 armhf [installed,automatic]
 
+# pi@kub-master:~ $ apt list --installed | grep docker
+#
+# WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+#
+# docker-ce-cli/now 5:18.09.7~3-0~debian-buster armhf [installed,local]
+# docker-ce/now 5:18.09.7~3-0~debian-buster armhf [installed,local]
 
 # Kubernetes does not work with a swapfile so it needs to be disabled completely
 sudo dphys-swapfile swapoff
@@ -31,6 +37,9 @@ curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
   echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list && \
   sudo apt-get update -q && \
   sudo apt-get install -qy kubeadm
+
+# Keep apt from updating these packages.  Kubernetes should be doing that.
+sudo apt-mark kubelet kubeadm kubectl docker-ce
 
 echo Adding " cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory" to /boot/cmdline.txt
 
