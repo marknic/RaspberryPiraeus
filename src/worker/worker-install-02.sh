@@ -5,6 +5,7 @@
 # To run this command:
 #  sudo curl -sSL https://raw.githubusercontent.com/marknic/RaspberryPiraeus/master/src/worker/worker-install-02.sh | sh
 
+# Kubernetes does not work with a swapfile so it needs to be disabled completely
 sudo dphys-swapfile swapoff
 sudo dphys-swapfile uninstall
 sudo update-rc.d dphys-swapfile remove
