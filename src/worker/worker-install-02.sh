@@ -4,6 +4,18 @@
 
 # To run this command:
 #  sudo curl -sSL https://raw.githubusercontent.com/marknic/RaspberryPiraeus/master/src/worker/worker-install-02.sh | sh
+# To verify installation:
+# pi@kub-master:~ $ apt list --installed | grep kube
+# 
+# Sample Output:
+# WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
+# 
+# cri-tools/kubernetes-xenial,now 1.13.0-00 armhf [installed,automatic]
+# kubeadm/kubernetes-xenial,now 1.15.3-00 armhf [installed]
+# kubectl/kubernetes-xenial,now 1.15.3-00 armhf [installed,automatic]
+# kubelet/kubernetes-xenial,now 1.15.3-00 armhf [installed,automatic]
+# kubernetes-cni/kubernetes-xenial,now 0.7.5-00 armhf [installed,automatic]
+
 
 # Kubernetes does not work with a swapfile so it needs to be disabled completely
 sudo dphys-swapfile swapoff
