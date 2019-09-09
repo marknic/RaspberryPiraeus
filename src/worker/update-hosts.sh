@@ -2,6 +2,8 @@
 
 # This script will update the hosts file for network communications.
 #  update the IP addresses, the host names, for each of the k8s nodes
+# Download the script:
+# wget https://raw.githubusercontent.com/marknic/RaspberryPiraeus/master/src/worker/update-hosts.sh
 # make sure you make this call before running the script:
 #  sudo chmod +x update-hosts.sh
 #  Then, call it:
