@@ -30,7 +30,7 @@ kubeadm config images pull
 #  This command will likely take some time
 # >>>>>>>>>>>>>>>>
 # Change the IP address to whatever your master has been set to
-sudo kubeadm init --apiserver-advertise-address=192.168.8.101
+sudo kubeadm init --apiserver-advertise-address=192.168.8.100
 # >>>>>>>>>>>>>>>>
 
 
