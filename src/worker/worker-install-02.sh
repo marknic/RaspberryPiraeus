@@ -24,6 +24,9 @@
 # docker-ce/now 5:18.09.7~3-0~debian-buster armhf [installed,local]
 
 # Kubernetes does not work with a swapfile so it needs to be disabled completely
+# When these commands are done, you can verify that the swap file is gone with
+#  this command:  sudo swapon --summary
+#  there should be no output
 sudo dphys-swapfile swapoff
 sudo dphys-swapfile uninstall
 sudo update-rc.d dphys-swapfile remove
