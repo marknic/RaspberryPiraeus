@@ -11,7 +11,7 @@ kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl versi
 
 # >>>>>>>>>>>>>>>>
 # Replace the following line with the output from the kubeadm init command
-sudo kubeadm join 192.168.8.101:6443 --token YOURTOKEN \
+sudo kubeadm join 192.168.8.100:6443 --token YOURTOKEN \
     --discovery-token-ca-cert-hash sha256:YOURHASH
 # >>>>>>>>>>>>>>>>
 
