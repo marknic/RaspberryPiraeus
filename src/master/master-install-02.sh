@@ -23,14 +23,22 @@ sudo apt-get install -qy kubeadm
 # Do some cleanup
 sudo apt autoremove
 
+sudo kubeadm reset
+
 # Pulls images required for setting up a Kubernetes cluster
 kubeadm config images pull
 
-# Master/Boss Node - Sets IP address and assumes "validated" version of Docker in the "preflight checks"
+# Master Node - Sets IP address and assumes "validated" version of Docker in the "preflight checks"
 #  This command will likely take some time
 # >>>>>>>>>>>>>>>>
-# Change the IP address to whatever your master has been set to
-sudo kubeadm init --apiserver-advertise-address=192.168.8.100
+# Initialize and change the IP address to whatever your master has been set to
+sudo kubeadm init 
+
+sudo kubeadm init phase certs all
+sudo kubeadm init phase kubeconfig all
+sudo kubeadm init phase control-plane all --pod-network-cidr 192.168.8.0/24
+
+sudo kubeadm init --v=1 --skip-phases=certs,kubeconfig,control-plane --ignore-preflight-errors=all --pod-network-cidr 192.168.8.0/24 --apiserver-advertise-address=192.168.8.100
 # >>>>>>>>>>>>>>>>
 
 
