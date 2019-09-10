@@ -1,4 +1,4 @@
- #!/bin/bash
+#!/bin/bash
 
 # Run sudo apt-get update and sudo apt-get upgrade prior to running this script
 # To run this command:
