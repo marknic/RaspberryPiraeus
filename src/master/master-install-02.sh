@@ -36,9 +36,9 @@ sudo kubeadm init
 
 sudo kubeadm init phase certs all
 sudo kubeadm init phase kubeconfig all
-sudo kubeadm init phase control-plane all --pod-network-cidr 192.168.8.0/24
+sudo kubeadm init phase control-plane all --pod-network-cidr 10.244.0.0/16
 
-sudo kubeadm init --v=1 --skip-phases=certs,kubeconfig,control-plane --ignore-preflight-errors=all --pod-network-cidr 192.168.8.0/24 --apiserver-advertise-address=192.168.8.100
+sudo kubeadm init --v=1 --skip-phases=certs,kubeconfig,control-plane --ignore-preflight-errors=all --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address=192.168.8.100
 # >>>>>>>>>>>>>>>>
 
 
