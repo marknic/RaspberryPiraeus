@@ -23,6 +23,7 @@ sudo apt-get install -qy kubeadm
 # Do some cleanup
 sudo apt autoremove
 
+# Reset to start
 sudo kubeadm reset
 
 # Pulls images required for setting up a Kubernetes cluster
