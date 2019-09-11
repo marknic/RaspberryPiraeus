@@ -11,9 +11,7 @@ set time zone
   
   
 3. ### Execute update/upgrade  
-sudo apt-get update  
-sudo apt-get upgrade  
-  
+sudo apt-get update && sudo apt-get upgrade  
   
 4. ### Execute worker install script 1 (Install Docker)
 
