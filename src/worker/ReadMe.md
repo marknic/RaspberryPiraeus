@@ -29,7 +29,7 @@ sudo apt-get upgrade
 kubeadm join 192.168.2.101:6443 --token g3wux2.oc3vwunaXXXXXXXX \  
     --discovery-token-ca-cert-hash sha256:XXXXXXXX237ca288c020b8c0XXXXXXXXdace23744e91028cd0bf1d5fXXXXXXXX  
     
-8. ### The node should now be added to the cluster as the master
+8. ### The node should now be added to the cluster as a worker node
 > To verify, run 'kubectl get nodes' on the workers.  Depending on how many nodes you've added, you should see something similar to this:
 #### pi@kub-master:~ $ kubectl get nodes
 | NAME       | STATUS | ROLES  | AGE | VERSION |
