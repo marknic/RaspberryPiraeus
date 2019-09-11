@@ -1,4 +1,6 @@
-#Disable Swap File - Kubernetes has issue with swap-file so there will be problems if it isn't disabled
+#!/bin/bash
+
+# Disable Swap File - Kubernetes has issue with swap-file so there will be problems if it isn't disabled
 sudo dphys-swapfile swapoff
 sudo dphys-swapfile uninstall
 sudo update-rc.d dphys-swapfile remove
