@@ -35,7 +35,6 @@ kubeadm config images pull
 #  This command will likely take some time
 # >>>>>>>>>>>>>>>>
 # Initialize and change the IP address to whatever your master has been set to
-sudo kubeadm init 
 
 sudo kubeadm init phase certs all
 sudo kubeadm init phase kubeconfig all
@@ -46,6 +45,8 @@ sudo sed -i 's/failureThreshold: [0-9]/failureThreshold: 18/g'             /etc/
 sudo sed -i 's/timeoutSeconds: [0-9][0-9]/timeoutSeconds: 20/g'            /etc/kubernetes/manifests/kube-apiserver.yaml
 
 sudo kubeadm init --v=1 --skip-phases=certs,kubeconfig,control-plane --ignore-preflight-errors=all --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address=192.168.8.100
-# >>>>>>>>>>>>>>>>
+
+# Load Flannel for networking - Note: Change this command if you don't want to use Flannel
+curl -sSL https://rawgit.com/coreos/flannel/v0.9.1/Documentation/kube-flannel.yml | sed "s/amd64/arm/g" | kubectl create -f -
 
 
