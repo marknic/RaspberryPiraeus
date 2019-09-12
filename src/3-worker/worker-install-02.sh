@@ -3,7 +3,7 @@
 # This installs the base instructions up to the point of joining / creating a cluster
 
 # To run this command:
-#  sudo curl -sSL https://raw.githubusercontent.com/marknic/RaspberryPiraeus/master/src/worker/worker-install-02.sh | sh
+#  sudo curl -sSL https://raw.githubusercontent.com/marknic/RaspberryPiraeus/master/src/3-worker/worker-install-02.sh | sh
 # To verify installation:
 # pi@kub-master:~ $ apt list --installed | grep kube
 # 
@@ -38,8 +38,8 @@ sudo apt -y purge dphys-swapfile
 # Install kubeadm
 curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add - && \
   echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list && \
-  sudo apt-get update -q && \
-  sudo apt-get install -qy kubeadm
+  sudo apt-get -q update && \
+  sudo apt-get -qy install kubeadm
 
 # Keep apt from updating these packages.  Kubernetes should be doing that.
 sudo apt-mark kubelet kubeadm kubectl docker-ce
