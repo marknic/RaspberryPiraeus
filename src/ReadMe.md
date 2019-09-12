@@ -1,3 +1,5 @@
+## Do This First (for all RPi's in the cluster)
+
 ### Prep the Raspberry Pi
 
 1. Load an SD card with Raspian Lite - no GUI is needed 
@@ -25,3 +27,5 @@
     * You will save steps since most of the time consuming ones are already done 
     * And, when I do start over, I can immediately start using SSH to control the Pi's - this is a big pain with a headless cluster
     
+> When I created my first RPi with the steps above, I used a smaller SD card than what I was going to use on the real system.  I did this because Win32DiskImager will create an img file using the full size of the SD card - even all the empty space.  With a smaller card, the img file is smaller and it takes less time to copy img files to SD cards.  This will make it easier/quicker to recover from a mistake especially if (when) I mess things up across the whole cluster and have to restart all machines.  
+> I've looked into shrinking the image file but wow, what a pile of steps that requires.
