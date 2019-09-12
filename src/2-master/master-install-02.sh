@@ -1,6 +1,10 @@
 #!/bin/bash
 
-# Disable Swap File - Kubernetes has issue with swap-file so there will be problems if it isn't disabled
+# Run this script (as is):  https://raw.githubusercontent.com/marknic/RaspberryPiraeus/master/src/2-master/master-install-02.sh
+# or
+# Download the script for mods: curl -O https://raw.githubusercontent.com/marknic/RaspberryPiraeus/master/src/2-master/master-install-02.sh
+
+# Disable Swap File - Kubernetes cannot be used with a swap-file so it is required to turn it off
 sudo dphys-swapfile swapoff
 sudo dphys-swapfile uninstall
 sudo update-rc.d dphys-swapfile remove
