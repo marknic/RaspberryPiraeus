@@ -34,8 +34,4 @@ sudo apt -qy autoremove
 # Initialize and change the IP address to whatever your master has been set to
 sudo kubeadm init --ignore-preflight-errors=all --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address=192.168.8.100
 
-# Load Flannel for networking - Note: Change this command if you don't want to use Flannel
-echo "Installing Flannel"
-curl -sSL https://rawgit.com/coreos/flannel/v0.9.1/Documentation/kube-flannel.yml | sed "s/amd64/arm/g" | kubectl create -f -
-
-
+echo "Reboot and then run master-install-03.sh
