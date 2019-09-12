@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Run this script (as is):  sudo curl -sSL https://raw.githubusercontent.com/marknic/RaspberryPiraeus/master/src/2-master/update-hosts.sh | sh
+# or
+# Download the script for mods: curl -O https://raw.githubusercontent.com/marknic/RaspberryPiraeus/master/src/2-master/update-hosts.sh
+
 # This script will update the hosts file for network communications.
 #  update the IP addresses, the host names, for each of the k8s nodes
 # make sure you make this call before running the script:
