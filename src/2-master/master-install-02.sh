@@ -21,13 +21,13 @@ curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
 
 echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list 
 
-sudo apt-get update -q 
+sudo apt -qy update 
 
 # Install KubeAdm
-sudo apt-get install -qy kubeadm 
+sudo apt -qy install kubeadm 
 
 # Do some cleanup
-sudo apt autoremove
+sudo apt -qy autoremove
 
 # Reset to start
 sudo kubeadm reset
@@ -36,8 +36,6 @@ sudo kubeadm reset
 kubeadm config images pull
 
 # Master Node - Sets IP address and assumes "validated" version of Docker in the "preflight checks"
-#  This command will likely take some time
-# >>>>>>>>>>>>>>>>
 # Initialize and change the IP address to whatever your master has been set to
 
 sudo kubeadm init phase certs all
