@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Run this script (as is):  sudo curl -sSL https://raw.githubusercontent.com/marknic/RaspberryPiraeus/master/src/2-master/master-install-02.sh | sh
+# Run this script (as is):  sudo curl -sSL https://raw.githubusercontent.com/marknic/RaspberryPiraeus/master/src/2-master/2_master_install.sh | sh
 # or
-# Download the script for mods: curl -O https://raw.githubusercontent.com/marknic/RaspberryPiraeus/master/src/2-master/master-install-02.sh
+# Download the script for mods: curl -O https://raw.githubusercontent.com/marknic/RaspberryPiraeus/master/src/2-master/2_master_install.sh
 
 # Disable Swap File - Kubernetes cannot be used with a swap-file so it is required to turn it off
 sudo dphys-swapfile swapoff
@@ -34,4 +34,4 @@ sudo apt -qy autoremove
 # Initialize and change the IP address to whatever your master has been set to
 sudo kubeadm init --ignore-preflight-errors=all --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address=192.168.8.100
 
-echo "Reboot and then run master-install-03.sh
+echo "Reboot and then run 3_master_install.sh
