@@ -23,7 +23,7 @@ set time zone
 > This is the kubeadm join command structure.  You will need the right token and certificate hash.  
 > Those values come from the initial install of the kubernetes master node 
 
-7 See 4_worker_joint.md for instructions on joining the workers to the cluster  
+7. See 3_worker_install.md for instructions on joining the workers to the cluster  
     
 8. ### The node should now be added to the cluster as a worker node
 > To verify, run 'kubectl get nodes' on the workers.  Depending on how many nodes you've added, you should see something similar to this:
