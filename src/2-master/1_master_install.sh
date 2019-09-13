@@ -17,4 +17,4 @@ sudo dpkg -i docker-ce_18.09.7~3-0~debian-buster_armhf.deb
 
 sudo usermod pi -aG docker
 
-echo "Reboot and then run master-install-02.sh"
+echo "Reboot and then run 2_master_install.sh"
