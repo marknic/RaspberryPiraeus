@@ -11,7 +11,7 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 # Load Flannel for networking - Note: Change this command if you don't want to use Flannel
 echo "Installing Flannel"
-curl -sSL https://rawgit.com/coreos/flannel/v0.9.1/Documentation/kube-flannel.yml | sed "s/amd64/arm/g" | kubectl create -f -
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/a70459be0084506e4ec919aa1c114638878db11b/Documentation/kube-flannel.yml
 
 
 # Your master node should now be operational
