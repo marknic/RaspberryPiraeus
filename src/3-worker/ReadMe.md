@@ -38,4 +38,4 @@ kubeadm join 192.168.2.101:6443 --token g3wux2.oc3vwunaXXXXXXXX \
 | kub-worker-03 | Ready  | worker | 27h | v1.15.3 |
 
 9. ### On the master, execute the kubectl label command to define the new node as a worker
-kubectl label node kub-worker-01 node-role.kubernetes.io/worker=worker # only change: 'kub-worker-01' should be your host name of the node
+kubectl label node kub-worker-01 node-role.kubernetes.io/worker=worker # only change: 'kub-worker-01' should be your host name of the node.  There is a script within the 2-master folder called "" that will automatically label the workers.
