@@ -23,10 +23,9 @@ set time zone
 > This is the kubeadm join command structure.  You will need the right token and certificate hash.  
 > Those values come from the initial install of the kubernetes master node 
 
-kubeadm join 192.168.2.101:6443 --token g3wux2.oc3vwunaXXXXXXXX \  
-    --discovery-token-ca-cert-hash sha256:XXXXXXXX237ca288c020b8c0XXXXXXXXdace23744e91028cd0bf1d5fXXXXXXXX  
+7 See 4_worker_joint.md for instructions on joining the workers to the cluster  
     
-7. ### The node should now be added to the cluster as a worker node
+8. ### The node should now be added to the cluster as a worker node
 > To verify, run 'kubectl get nodes' on the workers.  Depending on how many nodes you've added, you should see something similar to this:
 #### pi@kub-master:~ $ kubectl get nodes
 | NAME       | STATUS | ROLES  | AGE | VERSION |
@@ -36,6 +35,6 @@ kubeadm join 192.168.2.101:6443 --token g3wux2.oc3vwunaXXXXXXXX \
 | kub-worker-02 | Ready  | worker | 21h | v1.15.3 |
 | kub-worker-03 | Ready  | worker | 27h | v1.15.3 |
 
-8. ### On the master, execute the kubectl label command to define the new node as a worker
+9. ### On the master, execute the kubectl label command to define the new node as a worker
     kubectl label node kub-worker-01 node-role.kubernetes.io/worker=worker 
 > Only change: 'kub-worker-01' should be your host name of the node.  There is a script within the "2-master" folder called "5_label_workers.sh" that will automatically label the workers.
