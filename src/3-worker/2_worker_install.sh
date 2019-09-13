@@ -3,7 +3,7 @@
 # This installs the base instructions up to the point of joining / creating a cluster
 
 # To run this command:
-#  sudo curl -sSL https://raw.githubusercontent.com/marknic/RaspberryPiraeus/master/src/3-worker/worker-install-02.sh | sh
+#  sudo curl -sSL https://raw.githubusercontent.com/marknic/RaspberryPiraeus/master/src/3-worker/2_worker_install.sh | sh
 # To verify installation:
 # pi@kub-master:~ $ apt list --installed | grep kube
 # 
