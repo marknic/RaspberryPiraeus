@@ -44,7 +44,7 @@ while read line; do
 
   if [ "${linearray[4]}" == "/etc/hosts" ] && [ "${linearray[1]}" != "$ip_addr" ]
   then
-    labelcmd="#kubectl label node ${linearray[2]} node-role.kubernetes.io/worker=worker"
+    labelcmd="kubectl label node ${linearray[2]} node-role.kubernetes.io/worker=worker"
     $labelcmd
   fi
 
