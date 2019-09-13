@@ -11,23 +11,22 @@ set time zone
   
   
 3. ### Execute update/upgrade  
-sudo apt-get update && sudo apt-get upgrade  
+    sudo apt update && sudo apt -y upgrade 
   
-4. ### Execute worker install script 1 (Install Docker)
-
-5. sudo reboot # (after reboot, you can test Docker install with "docker run hello-world"
+4. ### Execute worker install script 1 (Install Docker) - reboot after completion of the Docker install
+> After rebooting, you can test Docker install with "docker run hello-world"
  
-6. ### Execute worker install script 2 (disable swap, install kubeadm, update cmdline.txt)
+5. ### Execute worker install script 2 (disable swap, install kubeadm, update cmdline.txt)
 > Note: make sure you modify the script to use your master node IP address
    
-7. ### Execute kubeadm join command to join the node to the cluster
+6. ### Execute kubeadm join command to join the node to the cluster
 > This is the kubeadm join command structure.  You will need the right token and certificate hash.  
 > Those values come from the initial install of the kubernetes master node 
 
 kubeadm join 192.168.2.101:6443 --token g3wux2.oc3vwunaXXXXXXXX \  
     --discovery-token-ca-cert-hash sha256:XXXXXXXX237ca288c020b8c0XXXXXXXXdace23744e91028cd0bf1d5fXXXXXXXX  
     
-8. ### The node should now be added to the cluster as a worker node
+7. ### The node should now be added to the cluster as a worker node
 > To verify, run 'kubectl get nodes' on the workers.  Depending on how many nodes you've added, you should see something similar to this:
 #### pi@kub-master:~ $ kubectl get nodes
 | NAME       | STATUS | ROLES  | AGE | VERSION |
@@ -37,6 +36,6 @@ kubeadm join 192.168.2.101:6443 --token g3wux2.oc3vwunaXXXXXXXX \
 | kub-worker-02 | Ready  | worker | 21h | v1.15.3 |
 | kub-worker-03 | Ready  | worker | 27h | v1.15.3 |
 
-9. ### On the master, execute the kubectl label command to define the new node as a worker
+8. ### On the master, execute the kubectl label command to define the new node as a worker
     kubectl label node kub-worker-01 node-role.kubernetes.io/worker=worker 
 > Only change: 'kub-worker-01' should be your host name of the node.  There is a script within the "2-master" folder called "5_label_workers.sh" that will automatically label the workers.
