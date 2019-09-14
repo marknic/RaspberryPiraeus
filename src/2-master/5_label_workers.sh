@@ -27,12 +27,9 @@ while true; do
     esac
 done
 
-
-ip_addr=$(cat $FILE | grep -Eo "?([0-9]*\.){3}[0-9]*.*$(hostname).*" | grep -Eo '([0-9]*\.){3}[0-9]*')
-
 host_name="$(hostname)"
 
-ip_addr=$(cat "$FILE" | grep -Eo "?([0-9]*\.){3}[0-9]*.*$host_name.*" | grep -Eo '([0-9]*\.){3}[0-9]*')
+ip_addr=$(cat $FILE | grep -Eo "?([0-9]*\.){3}[0-9]*.*$host_name.*" | grep -Eo '([0-9]*\.){3}[0-9]*')
 
 while read line; do
 
