@@ -3,8 +3,8 @@
 host_name="$(hostname)"
 
 FILE_UPDATE_HOSTS="4_update_hosts.sh"
-FILE_HOSTNAME="hostname"
-FILE_HOSTS="hosts"
+FILE_HOSTNAME="/etc/hostname"
+FILE_HOSTS="/etc/hosts"
 
 ip_addr="$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')"
 
@@ -24,7 +24,7 @@ while read line; do
   then
     new_host_name="${linearray[2]}"
 
-    sed -i -e "s/$host_name/$new_host_name/g" $FILE_HOSTS
+    sudo sed -i -e "s/$host_name/$new_host_name/g" $FILE_HOSTS
 
     result1=$?
 
