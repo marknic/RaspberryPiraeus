@@ -7,7 +7,7 @@
 # To verify installation:
 # pi@kub-master:~ $ apt list --installed | grep kube
 # 
-# Sample Output:
+# >>>> SAMPLE OUTPUT:
 # WARNING: apt does not have a stable CLI interface. Use with caution in scripts.
 # 
 # cri-tools/kubernetes-xenial,now 1.13.0-00 armhf [installed,automatic]
@@ -22,6 +22,7 @@
 #
 # docker-ce-cli/now 5:18.09.7~3-0~debian-buster armhf [installed,local]
 # docker-ce/now 5:18.09.7~3-0~debian-buster armhf [installed,local]
+# <<<<
 
 # Kubernetes does not work with a swapfile so it needs to be disabled completely
 # When these commands are done, you can verify that the swap file is gone with
