@@ -30,11 +30,13 @@
 > When I created my first RPi with the steps above, I used a smaller SD card than I was going to use on the real system.  I did this because Win32DiskImager will create an img file using the full size of the SD card - even all the empty space.  With a smaller card, the img file is smaller and it takes less time to copy img files to SD cards.  This will make it easier/quicker to recover from a mistake especially if (when) I mess things up across the whole cluster and have to restart all machines.  
 > I've looked into shrinking the image file but wow, what a pile of steps that requires.
 
-## 2. Set up static IP addresses for each of the RPi's that will be part of the cluster
+## 2. Network Setup
+1. Set up static IP addresses for each of the RPi's that will be part of the cluster
     * This will make management and configuration MUCH easier
     * It's pretty much required for the cluster to work
-    * One suggestion is to purchase a "travel router".  This type of router makes it easy to set up static IP addresses that don't need to be within your home/work IP space.  This also makes the cluster portable.  For example, my home wifi uses "10.0.*.*" for its IP space.  The travel router uses "192.168.8.*".  Setting the router up in "repeater mode" lets you use a single IP address on your home/work network and your travel router gives your cluster 200+ spaces. 
-
+    * One suggestion is to purchase a "travel router".  This type of router makes it easy to set up static IP addresses that don't need to be within your home/work IP space.  This also makes the cluster portable.  For example, my home wifi uses "10.0.\*.\*" for its IP space.  My travel router uses "192.168.8.\*".  Setting the router up in "repeater mode" lets you use a single IP address on your home/work network and your travel router gives your cluster 200+ spaces.  
+    * As an example ONLY: this is the travel router I purchased: https://www.amazon.com/gp/product/B07GBXMBQF/ref=ppx_yo_dt_b_asin_title_o09_s02?ie=UTF8&psc=1.  I am not making any claims as to its abilities and I'm not recommending anything.  It just happens to be the one I bought.  There are others that will be suitable as well.
+    * Each router will have its own method for setting static IP addresses so I will leave that part out.
 
 ## 3. Set up the "update hosts" script
 
@@ -44,4 +46,12 @@
 2. Edit the file
     * nano 4_update_hosts.sh
     
-3. The clu
+3. The cluster needs to be described in the file.  Outside of the comments, it will look similar to this:
+> echo '192.168.8.100  kub-master' >> /etc/hosts
+> echo '192.168.8.101  kub-worker-01' >> /etc/hosts
+> echo '192.168.8.102  kub-worker-02' >> /etc/hosts
+> echo '192.168.8.103  kub-worker-03' >> /etc/hosts
+> echo '192.168.8.104  kub-worker-04' >> /etc/hosts
+> echo '192.168.8.105  kub-worker-05' >> /etc/hosts
+
+
