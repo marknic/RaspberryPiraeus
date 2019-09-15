@@ -40,13 +40,15 @@
 
 ## 3. Set up the "update hosts" script
 
+> This step will create a script that will be used to update each Raspberry Pi with host names used by Kubernetes.  The file is also used as input to a scripted step that will update the host name of each machine.
+
 1. Copy the file "4_update_hosts.sh" file down to one of the RPi's.
     * curl -O https://raw.githubusercontent.com/marknic/RaspberryPiraeus/master/src/1-node-prep/4_update_hosts.sh
     
 2. Edit the file
     * nano 4_update_hosts.sh
     
-3. The cluster needs to be described in the file.  Outside of the comments, it will look similar to this:  
+3. The cluster needs to be described in the file.  Outside of the comments at the top, it will look similar to this:  
     echo '192.168.8.100  kub-master' >> /etc/hosts  
     echo '192.168.8.101  kub-worker-01' >> /etc/hosts  
     echo '192.168.8.102  kub-worker-02' >> /etc/hosts  
@@ -54,5 +56,11 @@
     echo '192.168.8.104  kub-worker-04' >> /etc/hosts  
     echo '192.168.8.105  kub-worker-05' >> /etc/hosts  
     
-
+4. Modify the file with your cluster's information
+    * One line for each machine
+    * Different host names for each machine. Hint: use a naming convention that lets you figure out which machine is which.  In my case, the master is the topmost in my tower.  Machines below it are the workers and they're numbered 0-5 giving me 6 total machines in the cluster.
+    * Do not change the structure of this file - just change the IP addresses and the host names
+    * Ensure each line keeps the spacing
+    * Ensure each line keeps the single quotes surrounding the IP and host name
+    * Do not add any additional commands outside of an echo command for each machine in the cluster
 
