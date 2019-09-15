@@ -1,8 +1,8 @@
-## Do This First (for all RPi's in the cluster)
+## 1. Prep the Raspberry Pi's
 
-### Prep the Raspberry Pi
+### Do This First (for all RPi's in the cluster)
 
-1. Load an SD card with Raspian Lite - no GUI is needed 
+1. Load an SD card with Raspian Lite - no GUI is needed with the cluster
     * You can download the smaller image from here:  https://www.raspberrypi.org/downloads/raspbian/
 2. Size recommendation for the SD card is > 8GB
 3. Turn on SSH
@@ -25,7 +25,23 @@
     * Spin up multiple SD cards for my cluster with all of them starting at the same point in time
     * Start over quickly when I make mistakes
     * You will save steps since most of the time consuming ones are already done 
-    * And, when I do start over, I can immediately start using SSH to control the Pi's - this is a big pain with a headless cluster
+    * And, when I do start over, I can immediately start using SSH to control the Pi's - major benefit with a headless cluster
     
-> When I created my first RPi with the steps above, I used a smaller SD card than what I was going to use on the real system.  I did this because Win32DiskImager will create an img file using the full size of the SD card - even all the empty space.  With a smaller card, the img file is smaller and it takes less time to copy img files to SD cards.  This will make it easier/quicker to recover from a mistake especially if (when) I mess things up across the whole cluster and have to restart all machines.  
+> When I created my first RPi with the steps above, I used a smaller SD card than I was going to use on the real system.  I did this because Win32DiskImager will create an img file using the full size of the SD card - even all the empty space.  With a smaller card, the img file is smaller and it takes less time to copy img files to SD cards.  This will make it easier/quicker to recover from a mistake especially if (when) I mess things up across the whole cluster and have to restart all machines.  
 > I've looked into shrinking the image file but wow, what a pile of steps that requires.
+
+## 2. Set up static IP addresses for each of the RPi's that will be part of the cluster
+    * This will make management and configuration MUCH easier
+    * It's pretty much required for the cluster to work
+    * One suggestion is to purchase a "travel router".  This type of router makes it easy to set up static IP addresses that don't need to be within your home/work IP space.  This also makes the cluster portable.  For example, my home wifi uses "10.0.*.*" for its IP space.  The travel router uses "192.168.8.*".  Setting the router up in "repeater mode" lets you use a single IP address on your home/work network and your travel router gives your cluster 200+ spaces. 
+
+
+## 3. Set up the "update hosts" script
+
+1. Copy the file "4_update_hosts.sh" file down to one of the RPi's.
+    * curl -O https://raw.githubusercontent.com/marknic/RaspberryPiraeus/master/src/1-node-prep/4_update_hosts.sh
+    
+2. Edit the file
+    * nano 4_update_hosts.sh
+    
+3. The clu
