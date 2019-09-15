@@ -1,12 +1,26 @@
 #!/bin/bash
 
-host_name="$(hostname)"
+# This script will update two files that dictate the name of the host.  "/etc/hostname" contains the name of the host and "/etc/hosts"
+#  which contains the name of the host and associates it with IP addres 127.0.1.1 (a Debian convention).  Both are required changes 
+#  to change the name of the host. 
+#
+# Note: you can do the same changes that this script will do with raspi-config.  This script is provided to automate changes
+#  and to ensure the names are updated consistently across all RPi's by gettint the host names from the "update_hosts.sh" file.
 
+# Set the names of the required files
 FILE_UPDATE_HOSTS="4_update_hosts.sh"
 FILE_HOSTNAME="/etc/hostname"
 FILE_HOSTS="/etc/hosts"
 
+# Get the current host name that will be replaced.  (Probably "raspberrypi")
+host_name="$(hostname)"
+
+# Get the IP address of this machine
 ip_addr="$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')"
+
+# Read the "update_hosts" script and extract the IP and host name info.
+# When we find an IP address match, then we know that host name should be
+# associated with this machine.  At that point, we change /etc/hostname and /etc/hosts
 
 while read line; do
 
