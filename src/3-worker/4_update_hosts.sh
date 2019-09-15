@@ -4,7 +4,7 @@
 
 # This script will update the hosts file for network communications.
 #  update the IP addresses, the host names, for each of the k8s nodes
-# make sure you make this call before running the script:
+# To run the script, make it executable with this command:
 #  sudo chmod +x 4_update_hosts.sh
 #  Then, call it:
 # sudo ./4_update_hosts.sh
