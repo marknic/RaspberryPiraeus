@@ -64,3 +64,5 @@
     * Ensure each line keeps the single quotes surrounding the IP and host name
     * Do not add any additional commands outside of an echo command for each machine in the cluster
 
+5. When you are satisfied with the updates to the file, save it and copy it to each of the machines
+    * There are multiple ways to copy files but here is a way to do it from the command line
