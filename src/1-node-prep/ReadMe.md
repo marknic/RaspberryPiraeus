@@ -46,8 +46,9 @@
 2. Edit the file
     * nano 4_update_hosts.sh
     
-3. The cluster needs to be described in the file.  Outside of the comments, it will look similar to this:
-    ''' echo '192.168.8.100  kub-master' >> /etc/hosts  
+3. The cluster needs to be described in the file.  Outside of the comments, it will look similar to this:  
+    ''' 
+    echo '192.168.8.100  kub-master' >> /etc/hosts  
     echo '192.168.8.101  kub-worker-01' >> /etc/hosts  
     echo '192.168.8.102  kub-worker-02' >> /etc/hosts  
     echo '192.168.8.103  kub-worker-03' >> /etc/hosts  
