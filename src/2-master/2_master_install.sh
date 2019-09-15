@@ -30,8 +30,11 @@ sudo apt -qy install kubeadm
 # Do some cleanup
 sudo apt -qy autoremove
 
+# Get the IP address of this machine
+ip_addr="$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')"
+
 # Master Node - Sets IP address and assumes "validated" version of Docker in the "preflight checks"
 # Initialize and change the IP address to whatever your master has been set to
-sudo kubeadm init --ignore-preflight-errors=all --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address=192.168.8.100
+sudo kubeadm init --ignore-preflight-errors=all --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address=$ip_addr
 
 echo "Reboot and then run 3_master_install.sh
