@@ -1,3 +1,5 @@
+# Set up the Kubernetes Master Node
+
 1. ### Execute master install script 1 (Install Docker)
     * sudo reboot # (after reboot, you can test Docker install with "docker run hello-world"
  
