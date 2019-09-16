@@ -58,7 +58,7 @@
     
 4. Modify the file with your cluster's information
     * One line for each machine
-    * Different host names for each machine. Hint: use a naming convention that lets you figure out which machine is which.  In my case, the master is the topmost in my tower.  Machines below it are the workers and they're numbered 0-5 giving me 6 total machines in the cluster.
+    * Different host names for each machine. Hint: use a naming convention that lets you figure out which machine is which.  In my case, the master is the topmost in my tower.  Machines below it are the workers and they're numbered 0-5 giving me 6 total machines in the cluster.  6 RPi's are not required.  It is just the number I have.  For the cluster to be useful, I think 4 RPi's would be a low number to start.
     * Do not change the structure of this file - just change the IP addresses and the host names
     * Ensure each line keeps the spacing
     * Ensure each line keeps the single quotes surrounding the IP and host name
