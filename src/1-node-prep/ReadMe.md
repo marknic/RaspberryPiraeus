@@ -40,12 +40,14 @@
 
 ## 3. Set up the "update hosts" script
 
-> This step will create a script that will be used to update each Raspberry Pi with host names used by Kubernetes.  The file is also used as input to a scripted step that will update the host name of each machine.
+### Do This on the Master Node  (for all RPi's in the cluster)
 
-1. Copy the file "4_update_hosts.sh" file down to one of the RPi's.
-    * curl -O https://raw.githubusercontent.com/marknic/RaspberryPiraeus/master/src/1-node-prep/4_update_hosts.sh
+> This step will modify a script that will be used to update each Raspberry Pi with host names used by Kubernetes.  The file is also used as input to a scripted step that will update the host name of each machine.
+
+1. If you did not already download the project files, the following will download the scripts necessary to proceed:
+    * curl -sSL https://raw.githubusercontent.com/marknic/RaspberryPiraeus/master/src/1-node-prep/1_setup_files_locally.sh | sh
     
-2. Edit the file
+2. When the files are local Edit the file
     * nano 4_update_hosts.sh
     
 3. The cluster needs to be described in the file.  Outside of the comments at the top, it will look similar to this:  
