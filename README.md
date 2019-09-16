@@ -1,5 +1,5 @@
 # RaspberryPiraeus
-Piraeus on Docker in Kubernetes on RPi Cluster
+Piraeus on Docker in Kubernetes on Raspian (Debian) Linux on RPi Cluster
 
 Build/install Kubernetes on a Raspberry Pi Cluster
 1. Go to src/master and follow the instructions to create the master node
