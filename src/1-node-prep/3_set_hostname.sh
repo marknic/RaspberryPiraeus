@@ -67,16 +67,16 @@ while read line; do
 
 done < $FILE_UPDATE_HOSTS
 
-echo " "
-echo "/etc/hostname contents:"
-echo "====================="
-cat /etc/hostname
-echo "====================="
-echo " "
-echo " "
-echo "/etc/hosts contents:"
-echo "====================="
-cat /etc/hosts
-echo "====================="
-echo "Done. "
+#echo " "
+#echo "/etc/hostname contents:"
+#echo "====================="
+#cat /etc/hostname
+#echo "====================="
+#echo " "
+#echo " "
+#echo "/etc/hosts contents:"
+#echo "====================="
+#cat /etc/hosts
+#echo "====================="
+#echo "Done. "
 
