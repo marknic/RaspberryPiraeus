@@ -5,7 +5,7 @@
 #  to change the name of the host. 
 #
 # Note: you can do the same changes that this script will do with raspi-config.  This script is provided to automate changes
-#  and to ensure the names are updated consistently across all RPi's by gettint the host names from the "update_hosts.sh" file.
+#  and to ensure the names are updated consistently across all RPi's by getting the host names from the "update_hosts.sh" file.
 
 # Set the names of the required files
 FILE_UPDATE_HOSTS="4_update_hosts.sh"
