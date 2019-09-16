@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Execute this script with the following command:
+# Command to automatically download and run this script:
 #  curl -sSL https://raw.githubusercontent.com/marknic/RaspberryPiraeus/master/src/1-node-prep/1_setup_files_locally.sh | sh
 
 if [ ! -f 2_copy_hostname_script.sh ]; then
