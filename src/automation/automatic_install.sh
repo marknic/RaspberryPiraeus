@@ -8,4 +8,6 @@ sshpass -p $pword ssh $id@$ip "curl -sSL https://raw.githubusercontent.com/markn
 
 sshpass -p $pword ssh $id@$ip "curl -sSL https://raw.githubusercontent.com/marknic/RaspberryPiraeus/master/src/1-node-prep/3_set_hostname.sh | sudo sh"
 
+scp 4_update_hosts.sh $id@$ip
+
 sshpass -p $pword ssh $id@$ip "sudo ./4_update_hosts.sh"
