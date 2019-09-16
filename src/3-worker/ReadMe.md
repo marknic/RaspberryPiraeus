@@ -39,4 +39,4 @@ set time zone
 
 9. ### On the master, execute the kubectl label command to define the new node as a worker
     kubectl label node kub-worker-01 node-role.kubernetes.io/worker=worker 
-> Only change: 'kub-worker-01' should be your host name of the node.  There is a script within the "2-master" folder called "5_label_workers.sh" that will automatically label the workers.
+> Only change: 'kub-worker-01' should be your host name of the node.  There is a script within the "2-master" folder called "4_label_workers.sh" that will automatically label the workers.
