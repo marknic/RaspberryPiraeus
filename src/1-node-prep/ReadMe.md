@@ -40,7 +40,7 @@
 
 ## 3. Set up the "update hosts" script
 
-### Do This on the Master Node  (for all RPi's in the cluster)
+### Do This on the Master Node
 
 > This step will modify a script that will be used to update each Raspberry Pi with host names used by Kubernetes.  The file is also used as input to a scripted step that will update the host name of each machine.
 
