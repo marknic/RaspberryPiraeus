@@ -16,4 +16,4 @@
 | ---------- | ------ | ------ | --- | ------- |
 | kub-master | Ready  | master | 26h | v1.15.3 |
 
-5. ### When all of the worker nodes are created, run 5_label_workers.sh to set their roles within the cluster.
+5. ### When all of the worker nodes are created, run 4_label_workers.sh to set their roles within the cluster.
