@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # This file will remotely copy the update hosts script file to each of the nodes in the cluster.  You just
-# need to run it (don't forget: chmod +x 1_copy_hostname_script.sh).  You will likely be asked if you are sure
-# you would like to continue.  Answer "yes".  You will then be prompted to enter the password for the machine
-# it is copying to.  This is where having all of the passwords the same comes in handy.
+# need to run it.  You will likely be asked if you are sure you would like to continue.  Answer "yes".  
+# You will then be prompted to enter the password for the machine it is copying to.  
+# This is where having all of the passwords the same comes in handy.
 
 # Set the names of the required files
 FILE_UPDATE_HOSTS="4_update_hosts.sh"
