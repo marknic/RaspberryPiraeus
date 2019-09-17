@@ -22,15 +22,13 @@ if [ -f $FILE_UPDATE_HOSTS ]; then
     done
 
 else
-    curl -O https://raw.githubusercontent.com/marknic/RaspberryPiraeus/master/src/1-node-prep/4_update_hosts.sh
+    curl -O https://raw.githubusercontent.com/marknic/RaspberryPiraeus/master/src/automation/4_update_hosts.sh
     printf "\e[1;31mError: File $FILE_UPDATE_HOSTS did not exist locally.\e[0m\n"
     printf "It has been copied to this machine.  Please read the instructions and update the file\n"
     printf " with your static network IP addresses and hostnames (1 per machine/node).\n"
     printf "exiting...rerun this script when you have edited $FILE_UPDATE_HOSTS.\n"
     exit 1
 fi
-
-
 
 
 
