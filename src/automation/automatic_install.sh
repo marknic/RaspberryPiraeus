@@ -31,7 +31,7 @@ else
 fi
 
 
-
+printf "Updating host names...\n\n"
 # Get the IP address of this machine
 ip_addr_me="$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')"
 
