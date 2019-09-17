@@ -1,13 +1,67 @@
 #!/bin/bash
 
+FILE_UPDATE_HOSTS="4_update_hosts.sh"
+
 pword="raspberry"
 id="pi"
-ip="192.168.8.101"
 
-sshpass -p $pword ssh $id@$ip "curl -sSL https://raw.githubusercontent.com/marknic/RaspberryPiraeus/master/src/automation/copy_hostname_scripts.sh | sh"
 
-sshpass -p $pword ssh $id@$ip "curl -sSL https://raw.githubusercontent.com/marknic/RaspberryPiraeus/master/src/1-node-prep/3_set_hostname.sh | sudo sh"
 
-scp 4_update_hosts.sh $id@$ip
 
-sshpass -p $pword ssh $id@$ip "sudo ./4_update_hosts.sh"
+if [ -f $FILE_UPDATE_HOSTS ]; then
+    printf "File $FILE_UPDATE_HOSTS exists locally.\n\n"
+
+    while true; do
+        printf "Has the $FILE_UPDATE_HOSTS file been updated with your network static IP addresses and hostnames?"
+        read -p "(y/n)?" yn
+        case $yn in
+            [Yy]* ) break;;
+            [Nn]* ) exit;;
+            * ) echo "Please answer (y)es or (n)o.";;
+        esac
+    done
+
+else
+    curl -O https://raw.githubusercontent.com/marknic/RaspberryPiraeus/master/src/1-node-prep/4_update_hosts.sh
+    printf "\e[1;31mError: File $FILE_UPDATE_HOSTS did not exist locally.\e[0m\n"
+    printf "It has been copied to this machine.  Please read the instructions and update the file\n"
+    printf " with your static network IP addresses and hostnames (1 per machine/node).\n"
+    printf "exiting...rerun this script when you have edited $FILE_UPDATE_HOSTS.\n"
+    exit 1
+fi
+
+
+
+
+
+# Get the IP address of this machine
+ip_addr_me="$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')"
+
+while read line; do
+
+    # Change single quotes to spaces
+    cleanline=$(echo $line | sed 's/'"'"'/ /g')
+
+    # Change first slash to space
+    cleanline=$(echo $cleanline | sed 's/\// \//')
+
+    # Split the line into an array delimited by spaces
+    linearray=($cleanline)
+
+    # When we find the same IP address in the file, that is the new host name
+    if [ "${linearray[4]}" == "/etc/hosts" ] && [ "${linearray[1]}" != "$ip_addr_me" ] ; then
+
+        ip_target=${linearray[1]}
+
+        echo "Copying $FILE_UPDATE_HOSTS to $ip_target..."
+        scp 4_update_hosts.sh pi@$ip_target:
+
+        sshpass -p $pword ssh $id@$ip_target "sudo ./4_update_hosts.sh"
+    else
+        # Working on the Master - Set the hostname
+        if [ "${linearray[4]}" == "/etc/hosts" ] && [ "${linearray[1]}" == "$ip_addr_me" ] ; then
+            sudo ./4_update_hosts.sh
+        fi
+    fi
+
+done < $FILE_UPDATE_HOSTS
