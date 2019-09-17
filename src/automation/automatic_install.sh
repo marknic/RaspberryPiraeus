@@ -1,6 +1,7 @@
 #!/bin/bash
 
 FILE_UPDATE_HOSTS="4_update_hosts.sh"
+FILE_HOSTNAME="/etc/hostname"
 
 pword="raspberry"
 id="pi"
@@ -65,28 +66,65 @@ echo "length: $length"
 
 for ((i=0; i<$length; i++));
 do
+    new_host_name=${filearray[i*6+3]}
+    ip_target="${filearray[i*6+2]}"
+        
     if [ "${filearray[i*6+2]}" == "$ip_addr_me" ] ; then
-
+        
         # Working on the Master - Set the hostname
         printf "Updating host names locally...\n\n"
+
         chmod +x "$FILE_UPDATE_HOSTS"
         sudo "./$FILE_UPDATE_HOSTS"
+        sudo sed -i -e "s/$host_name/$new_host_name/g" $FILE_HOSTNAME
 
     else         
-        ip_target="${filearray[i*6+2]}"
+        sshpass -p $pword ssh $id@$ip_target host_name=hostname
 
-        printf "Copying $FILE_UPDATE_HOSTS to $ip_target...\n\n"
+        printf "Modifying $host_name to $new_host_name...\n"
+        sshpass -p $pword ssh $id@$ip_target sudo sed -i -e "s/$host_name/$new_host_name/g" $FILE_HOSTNAME
+
+        printf "Copying $FILE_UPDATE_HOSTS to $ip_target...\n"
         sshpass -p $pword scp $FILE_UPDATE_HOSTS $id@$ip_target:
         
         sshpass -p $pword ssh $id@$ip_target "chmod +x $FILE_UPDATE_HOSTS"
 
-        printf "Updating host names on $ip_target...\n\n"
+        printf "Updating host names on $ip_target...\n"
         sshpass -p $pword ssh $id@$ip_target "sudo ./$FILE_UPDATE_HOSTS"
     fi
 
-    # IP Address: echo ${filearray[i*6+2]}
-    # Host Name:  echo ${filearray[i*6+3]}
+    # IP Address: ${filearray[i*6+2]}
+    # Host Name:  ${filearray[i*6+3]}
+done
+
+for ((i=0; i<$length; i++));
+do
+    if [ "${filearray[i*6+2]}" != "$ip_addr_me" ] ; then
+        ip_target="${filearray[i*6+2]}"
+        sshpass -p $pword ssh $id@$ip_target "sudo reboot"
+    fi
 done
 
 
-printf "Exited loop.\n\n"
+for ((i=0; i<$length; i++));
+do
+    ip_target="${filearray[i*6+2]}"
+
+    if [ "$ip_target" != "$ip_addr_me" ] ; then
+
+        output='down'
+
+        while [ $output != 'up' ]
+        do
+            output=$(sshpass -p $pword ssh $id@$ip uptime | awk '{print $2}')
+            if [ $output != 'up' ]
+            then
+                sleep 8
+            else
+                echo "$ip_target is back up."
+            fi
+        done
+    fi
+done
+
+
