@@ -36,7 +36,8 @@ printf "Updating host names...\n"
 ip_addr_me="$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')"
 printf "My IP Address:$ip_addr_me\n\n"
 
-while read line; do
+#read line
+while IFS= read -r line  ; do
     # Change single quotes to spaces
     cleanline=$(echo $line | sed 's/'"'"'/ /g')
 
@@ -60,7 +61,7 @@ while read line; do
         else         
             ip_target=${linearray[2]}
 
-            printf "Copying $FILE_UPDATE_HOSTS to $ip_target..."
+            printf "Copying $FILE_UPDATE_HOSTS to $ip_target...\n\n"
             sshpass -p $pword scp 4_update_hosts.sh $id@$ip_target:
             
             sshpass -p $pword ssh $id@$ip_target "chmod +x 4_update_hosts.sh"
@@ -71,6 +72,6 @@ while read line; do
         fi
     fi
 
-done < $FILE_UPDATE_HOSTS
+done < "$FILE_UPDATE_HOSTS"
 
 printf "Exited loop.\n\n"
