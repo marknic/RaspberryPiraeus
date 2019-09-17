@@ -51,13 +51,15 @@ while read line; do
 
         ip_target=${linearray[1]}
 
-        echo "Copying $FILE_UPDATE_HOSTS to $ip_target..."
+        printf "Copying $FILE_UPDATE_HOSTS to $ip_target..."
         scp 4_update_hosts.sh pi@$ip_target:
 
+        printf "Updating host names on $ip_target...\n\n"
         sshpass -p $pword ssh $id@$ip_target "sudo ./4_update_hosts.sh"
     else
         # Working on the Master - Set the hostname
         if [ "${linearray[4]}" == "/etc/hosts" ] && [ "${linearray[1]}" == "$ip_addr_me" ] ; then
+            printf "Updating host names locally...\n\n"
             chmod +x 4_update_hosts.sh
             sudo ./4_update_hosts.sh
         fi
