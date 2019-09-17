@@ -59,6 +59,7 @@ do
         
     if [ "${filearray[i*6+2]}" == "$ip_addr_me" ] ; then
         
+        host_name=hostname
         # Working on the Master - Set the hostname
         printf "Updating host names locally...\n\n"
 
@@ -67,7 +68,7 @@ do
         sudo sed -i -e "s/$host_name/$new_host_name/g" $FILE_HOSTNAME
 
     else         
-        sshpass -p $pword ssh $id@$ip_target host_name=hostname
+        host_name=$(sshpass -p $pword ssh pi@192.168.8.101 hostname)
 
         printf "Modifying $host_name to $new_host_name...\n"
         sshpass -p $pword ssh $id@$ip_target sudo sed -i -e "s/$host_name/$new_host_name/g" $FILE_HOSTNAME
