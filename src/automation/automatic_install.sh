@@ -46,6 +46,8 @@ while read line; do
     # Split the line into an array delimited by spaces
     linearray=($cleanline)
     
+    echo "${linearray[5]}"
+    
     if [ "${linearray[5]}" == "/etc/hosts" ] ; then
         # When we find the same IP address in the file, that is the new host name
         if [ "${linearray[2]}" == "$ip_addr_me" ] ; then
