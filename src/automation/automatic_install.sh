@@ -59,12 +59,16 @@ while read line; do
             ip_target=${linearray[2]}
 
             printf "Copying $FILE_UPDATE_HOSTS to $ip_target..."
-            scp 4_update_hosts.sh pi@$ip_target:
+            scp 4_update_hosts.sh $id@$ip_target:
+            
+            sshpass -p $pword ssh $id@$ip_target "chmod +x 4_update_hosts.sh"
 
             printf "Updating host names on $ip_target...\n\n"
             sshpass -p $pword ssh $id@$ip_target "sudo ./4_update_hosts.sh"
-            printf "Result of sshpass: $?\n\n"
+            
         fi
     fi
 
 done < $FILE_UPDATE_HOSTS
+
+printf "Exited loop.\n\n"
