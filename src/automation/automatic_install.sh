@@ -47,7 +47,7 @@ while read line; do
     linearray=($cleanline)
     
     echo "${linearray[5]}"
-    
+
     if [ "${linearray[5]}" == "/etc/hosts" ] ; then
         # When we find the same IP address in the file, that is the new host name
         if [ "${linearray[2]}" == "$ip_addr_me" ] ; then
@@ -61,7 +61,7 @@ while read line; do
             ip_target=${linearray[2]}
 
             printf "Copying $FILE_UPDATE_HOSTS to $ip_target..."
-            scp 4_update_hosts.sh $id@$ip_target:
+            sshpass -p $pword scp 4_update_hosts.sh $id@$ip_target:
             
             sshpass -p $pword ssh $id@$ip_target "chmod +x 4_update_hosts.sh"
 
