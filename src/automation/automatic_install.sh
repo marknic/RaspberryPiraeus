@@ -37,9 +37,6 @@ ip_addr_me="$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut 
 printf "My IP Address:$ip_addr_me\n\n"
 
 while read line; do
-
-    
-
     # Change single quotes to spaces
     cleanline=$(echo $line | sed 's/'"'"'/ /g')
 
@@ -49,9 +46,6 @@ while read line; do
     # Split the line into an array delimited by spaces
     linearray=($cleanline)
     
-    echo "${linearray[5]}"
-    echo "${linearray[2]}"
-
     # When we find the same IP address in the file, that is the new host name
     if [ "${linearray[5]}" == "/etc/hosts" ] && [ "${linearray[2]}" != "$ip_addr_me" ] ; then
 
@@ -62,6 +56,7 @@ while read line; do
 
         printf "Updating host names on $ip_target...\n\n"
         sshpass -p $pword ssh $id@$ip_target "sudo ./4_update_hosts.sh"
+        printf "Result of sshpass: $?\n\n"
 
     elif [ "${linearray[5]}" == "/etc/hosts" ] && [ "${linearray[2]}" == "$ip_addr_me" ] ; then
         
@@ -69,7 +64,6 @@ while read line; do
         printf "Updating host names locally...\n\n"
         chmod +x 4_update_hosts.sh
         sudo ./4_update_hosts.sh
-    
     fi
 
 done < $FILE_UPDATE_HOSTS
