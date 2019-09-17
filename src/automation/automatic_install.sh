@@ -58,6 +58,7 @@ while read line; do
     else
         # Working on the Master - Set the hostname
         if [ "${linearray[4]}" == "/etc/hosts" ] && [ "${linearray[1]}" == "$ip_addr_me" ] ; then
+            chmod +x 4_update_hosts.sh
             sudo ./4_update_hosts.sh
         fi
     fi
