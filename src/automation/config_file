@@ -1,0 +1,5 @@
+FILE_UPDATE_HOSTS="4_update_hosts.sh"
+FILE_HOSTNAME="/etc/hostname"
+FILE_HOSTS="/etc/hosts"
+id="pi"
+pword="raspberry"
