@@ -84,7 +84,6 @@ do
         sshpass -p $pword ssh $id@$ip_target "sudo ./$FILE_UPDATE_HOSTS"
     fi
 
-
     # IP Address: echo ${filearray[i*6+2]}
     # Host Name:  echo ${filearray[i*6+3]}
 done
