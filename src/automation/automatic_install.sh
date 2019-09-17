@@ -38,8 +38,8 @@ printf "My IP Address:$ip_addr_me\n\n"
 
 while read line; do
 
-    printf "Processing...\n\n"
     
+
     # Change single quotes to spaces
     cleanline=$(echo $line | sed 's/'"'"'/ /g')
 
@@ -59,13 +59,14 @@ while read line; do
 
         printf "Updating host names on $ip_target...\n\n"
         sshpass -p $pword ssh $id@$ip_target "sudo ./4_update_hosts.sh"
-    else
+
+    elif [ "${linearray[4]}" == "/etc/hosts" ] && [ "${linearray[1]}" == "$ip_addr_me" ] ; then
+        
         # Working on the Master - Set the hostname
-        if [ "${linearray[4]}" == "/etc/hosts" ] && [ "${linearray[1]}" == "$ip_addr_me" ] ; then
-            printf "Updating host names locally...\n\n"
-            chmod +x 4_update_hosts.sh
-            sudo ./4_update_hosts.sh
-        fi
+        printf "Updating host names locally...\n\n"
+        chmod +x 4_update_hosts.sh
+        sudo ./4_update_hosts.sh
+    
     fi
 
 done < $FILE_UPDATE_HOSTS
