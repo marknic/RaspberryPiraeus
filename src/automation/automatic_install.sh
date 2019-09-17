@@ -54,49 +54,50 @@ while read line; do
     fi
 done < "$FILE_UPDATE_HOSTS"
 
-echo "${#filearray[@]}"
-echo "${filearray[@]}"
-echo "${filearray[2]}"
-echo "${filearray[3]}"
-echo "${filearray[5]}"
+# echo "${#filearray[@]}"
+# echo "${filearray[@]}"
+# echo "${filearray[2]}"
+# echo "${filearray[3]}"
+# echo "${filearray[5]}"
 
 let length="${#filearray[@]} / 6"
 
-echo "length: $length"
+# echo "length: $length"
 
-for ((i=0; i<$length; i++));
-do
-    new_host_name=${filearray[i*6+3]}
-    ip_target="${filearray[i*6+2]}"
+# for ((i=0; i<$length; i++));
+# do
+#     new_host_name=${filearray[i*6+3]}
+#     ip_target="${filearray[i*6+2]}"
         
-    if [ "${filearray[i*6+2]}" == "$ip_addr_me" ] ; then
+#     if [ "${filearray[i*6+2]}" == "$ip_addr_me" ] ; then
         
-        # Working on the Master - Set the hostname
-        printf "Updating host names locally...\n\n"
+#         # Working on the Master - Set the hostname
+#         printf "Updating host names locally...\n\n"
 
-        chmod +x "$FILE_UPDATE_HOSTS"
-        sudo "./$FILE_UPDATE_HOSTS"
-        sudo sed -i -e "s/$host_name/$new_host_name/g" $FILE_HOSTNAME
+#         chmod +x "$FILE_UPDATE_HOSTS"
+#         sudo "./$FILE_UPDATE_HOSTS"
+#         sudo sed -i -e "s/$host_name/$new_host_name/g" $FILE_HOSTNAME
 
-    else         
-        sshpass -p $pword ssh $id@$ip_target host_name=hostname
+#     else         
+#         sshpass -p $pword ssh $id@$ip_target host_name=hostname
 
-        printf "Modifying $host_name to $new_host_name...\n"
-        sshpass -p $pword ssh $id@$ip_target sudo sed -i -e "s/$host_name/$new_host_name/g" $FILE_HOSTNAME
+#         printf "Modifying $host_name to $new_host_name...\n"
+#         sshpass -p $pword ssh $id@$ip_target sudo sed -i -e "s/$host_name/$new_host_name/g" $FILE_HOSTNAME
 
-        printf "Copying $FILE_UPDATE_HOSTS to $ip_target...\n"
-        sshpass -p $pword scp $FILE_UPDATE_HOSTS $id@$ip_target:
+#         printf "Copying $FILE_UPDATE_HOSTS to $ip_target...\n"
+#         sshpass -p $pword scp $FILE_UPDATE_HOSTS $id@$ip_target:
         
-        sshpass -p $pword ssh $id@$ip_target "chmod +x $FILE_UPDATE_HOSTS"
+#         sshpass -p $pword ssh $id@$ip_target "chmod +x $FILE_UPDATE_HOSTS"
 
-        printf "Updating host names on $ip_target...\n"
-        sshpass -p $pword ssh $id@$ip_target "sudo ./$FILE_UPDATE_HOSTS"
-    fi
+#         printf "Updating host names on $ip_target...\n"
+#         sshpass -p $pword ssh $id@$ip_target "sudo ./$FILE_UPDATE_HOSTS"
+#     fi
 
-    # IP Address: ${filearray[i*6+2]}
-    # Host Name:  ${filearray[i*6+3]}
-done
+#     # IP Address: ${filearray[i*6+2]}
+#     # Host Name:  ${filearray[i*6+3]}
+# done
 
+printf "Rebooting all workers!"
 for ((i=0; i<$length; i++));
 do
     if [ "${filearray[i*6+2]}" != "$ip_addr_me" ] ; then
@@ -105,7 +106,7 @@ do
     fi
 done
 
-
+printf "Verifying Reboot Complete"
 for ((i=0; i<$length; i++));
 do
     ip_target="${filearray[i*6+2]}"
@@ -114,10 +115,10 @@ do
 
         output='down'
 
-        while [ $output != 'up' ]
+        while [ "$output" != "up" ]
         do
             output=$(sshpass -p $pword ssh $id@$ip uptime | awk '{print $2}')
-            if [ $output != 'up' ]
+            if [ "$output" != "up" ]
             then
                 sleep 8
             else
