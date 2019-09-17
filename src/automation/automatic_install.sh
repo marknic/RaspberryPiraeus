@@ -49,13 +49,13 @@ while read line; do
     # Split the line into an array delimited by spaces
     linearray=($cleanline)
     
-    echo "${linearray[4]}"
-    echo "${linearray[1]}"
-    
-    # When we find the same IP address in the file, that is the new host name
-    if [ "${linearray[4]}" == "/etc/hosts" ] && [ "${linearray[1]}" != "$ip_addr_me" ] ; then
+    echo "${linearray[5]}"
+    echo "${linearray[2]}"
 
-        ip_target=${linearray[1]}
+    # When we find the same IP address in the file, that is the new host name
+    if [ "${linearray[5]}" == "/etc/hosts" ] && [ "${linearray[2]}" != "$ip_addr_me" ] ; then
+
+        ip_target=${linearray[2]}
 
         printf "Copying $FILE_UPDATE_HOSTS to $ip_target..."
         scp 4_update_hosts.sh pi@$ip_target:
@@ -63,7 +63,7 @@ while read line; do
         printf "Updating host names on $ip_target...\n\n"
         sshpass -p $pword ssh $id@$ip_target "sudo ./4_update_hosts.sh"
 
-    elif [ "${linearray[4]}" == "/etc/hosts" ] && [ "${linearray[1]}" == "$ip_addr_me" ] ; then
+    elif [ "${linearray[5]}" == "/etc/hosts" ] && [ "${linearray[2]}" == "$ip_addr_me" ] ; then
         
         # Working on the Master - Set the hostname
         printf "Updating host names locally...\n\n"
