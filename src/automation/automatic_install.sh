@@ -31,12 +31,15 @@ else
 fi
 
 
-printf "Updating host names...\n\n"
+printf "Updating host names...\n"
 # Get the IP address of this machine
 ip_addr_me="$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')"
+printf "My IP Address:$ip_addr_me\n\n"
 
 while read line; do
 
+    printf "Processing...\n\n"
+    
     # Change single quotes to spaces
     cleanline=$(echo $line | sed 's/'"'"'/ /g')
 
