@@ -36,8 +36,7 @@ printf "Updating host names...\n"
 ip_addr_me="$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')"
 printf "My IP Address:$ip_addr_me\n\n"
 
-#read line
-while IFS= read -r line  ; do
+while read line; do
     # Change single quotes to spaces
     cleanline=$(echo $line | sed 's/'"'"'/ /g')
 
@@ -71,7 +70,7 @@ while IFS= read -r line  ; do
             
         fi
     fi
-
+    printf "End of loop?\n\n"
 done < "$FILE_UPDATE_HOSTS"
 
 printf "Exited loop.\n\n"
