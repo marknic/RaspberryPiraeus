@@ -1,12 +1,7 @@
 #!/bin/bash
 
-FILE_UPDATE_HOSTS="4_update_hosts.sh"
-FILE_HOSTNAME="/etc/hostname"
 
-pword="raspberry"
-id="pi"
-
-
+. config_file
 
 
 if [ -f $FILE_UPDATE_HOSTS ]; then
@@ -106,7 +101,11 @@ do
     fi
 done
 
-printf "Verifying Reboot Complete"
+
+printf "Verifying Reboot Complete\n"
+
+let length="${#filearray[@]} / 6"
+
 for ((i=0; i<$length; i++));
 do
     ip_target="${filearray[i*6+2]}"
@@ -117,7 +116,8 @@ do
 
         while [ "$output" != "up" ]
         do
-            output=$(sshpass -p $pword ssh $id@$ip uptime | awk '{print $2}')
+            output=$(sshpass -p $pword ssh $id@$ip_target uptime | awk '{print $2}')
+
             if [ "$output" != "up" ]
             then
                 sleep 8
