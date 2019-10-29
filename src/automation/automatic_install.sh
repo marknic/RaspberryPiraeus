@@ -79,7 +79,7 @@ do
     sshpass -p $pword ssh $id@$ip_target  "rm -f $hostfilename"
     sshpass -p $pword ssh $id@$ip_target  "mv $tmp_hostfilename $hostfilename"
 
-    sshpass -p $pword ssh $id@$ip_target sudo echo '127.0.1.1   $new_host_name' >> $FILE_HOSTS
+    sshpass -p $pword ssh $id@$ip_target sudo echo '127.0.1.1   $new_host_name' >> $hostfilename
 
     sshpass -p $pword ssh $id@$ip_target sudo sed -i -e "s/$host_name/$new_host_name/g" $FILE_HOSTNAME
     
