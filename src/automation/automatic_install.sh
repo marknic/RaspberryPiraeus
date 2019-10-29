@@ -1,8 +1,6 @@
 #!/bin/bash
-
-
+ 
 . config_file
-
 
 if [ -f $FILE_UPDATE_HOSTS ]; then
     printf "File $FILE_UPDATE_HOSTS exists locally.\n\n"
@@ -33,7 +31,7 @@ ip_addr_me="$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut 
 printf "My IP Address:$ip_addr_me\n\n"
 
 
-
+# Get the IP/hostname info from the update script
 while read line; do
 
     cleanline=$(echo $line | sed 's/'"'"'/ /g')
@@ -51,6 +49,44 @@ done < "$FILE_UPDATE_HOSTS"
 
 
 let length="${#filearray[@]} / 6"
+
+
+# Clean up the hosts file before attempting to update with current information
+hostfilename="hostfile.txt"
+tmp_hostfilename="$hostfilename.bak"
+
+
+# Copy machine host file to local host file
+sudo cp -f /etc/hosts $hostfilename
+
+
+for ((i=0; i<$length; i++));
+do
+    # Get the IP to search for
+    ip_target="${filearray[i*6+2]}"
+
+    printf "\nCleaning the hosts file on $ip_target\n\n"
+    
+    # Delete the local host files (quietly - they may not exist)
+    sshpass -p $pword ssh $id@$ip_target  sudo rm -f $hostfilename > /dev/null 2>&1
+    sshpass -p $pword ssh $id@$ip_target  sudo rm -f $tmp_hostfilename > /dev/null 2>&1
+
+    for ((j=0; i<$length; j++));
+    do
+        ip_to_remove="${filearray[j*6+2]}"
+
+        # Delete the lines containing the IP address
+        sshpass -p $pword ssh $id@$ip_target  sed /$ip_to_remove/d $hostfilename > $tmp_hostfilename
+
+        # Copy the updated file over the local host file
+        sshpass -p $pword ssh $id@$ip_target  rm -f $hostfilename
+        sshpass -p $pword ssh $id@$ip_target  mv $tmp_hostfilename $hostfilename
+    done
+
+    # Replace the machine host file
+    sshpass -p $pword ssh $id@$ip_target  sudo cp -f --backup=t $hostfilename /etc/hosts
+done
+
 
 for ((i=0; i<$length; i++));
 do
@@ -86,16 +122,14 @@ do
     # Host Name:  ${filearray[i*6+3]}
 done
 
-printf "Rebooting all workers!"
-for ((i=0; i<$length; i++));
-do
-    if [ "${filearray[i*6+2]}" != "$ip_addr_me" ] ; then
-        ip_target="${filearray[i*6+2]}"
-        sshpass -p $pword ssh $id@$ip_target "sudo reboot"
-    fi
-done
-
-sudo reboot
+#printf "Rebooting workers!"
+#for ((i=0; i<$length; i++));
+#do
+#    if [ "${filearray[i*6+2]}" != "$ip_addr_me" ] ; then
+#        ip_target="${filearray[i*6+2]}"
+#        sshpass -p $pword ssh $id@$ip_target "sudo reboot"
+#    fi
+#done
 
 # printf "Verifying Reboot Complete\n"
 
@@ -124,4 +158,12 @@ sudo reboot
 #     fi
 # done
 
+# Write to ~/.bash_profile to script the next step in the process
 
+# sudo echo "#/!bin/bash" >> ~/.bash_profile
+# sudo echo "cd RaspberryPiraeus/src/automation/"
+# sudo echo "chmod +x master_install_1.sh"
+# sudo echo "./master_install_1.sh"
+
+
+# sudo reboot
