@@ -73,7 +73,9 @@ do
 
     for ((j=0; i<$length; j++));
     do
-        let ip_to_remove="${filearray[j*6+2]}"
+        printf "filearray: ${filearray[j*6+2]}\n"
+        
+        ip_to_remove="${filearray[j*6+2]}"
         
         printf "ip_to_remove: $ip_to_remove\n"
         
