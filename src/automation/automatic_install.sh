@@ -50,7 +50,7 @@ done < "$FILE_UPDATE_HOSTS"
 
 let length="${#filearray[@]} / 6"
 
-printf "Array Length: $length"
+printf "Array Length: $length\n"
 
 # Clean up the hosts file before attempting to update with current information
 hostfilename="hostfile.txt"
@@ -72,9 +72,7 @@ do
     # Copy machine host file to local host file
     sshpass -p $pword ssh $id@$ip_target  "sudo cp -f /etc/hosts ~/$hostfilename"
 
-    let j=0
-    
-    for ((j=0; i<$length; j++));
+    for ((j=0; i<length; j++));
     do
         printf "j=$j\n"
         printf "filearray: ${filearray[j*6+2]}\n"
