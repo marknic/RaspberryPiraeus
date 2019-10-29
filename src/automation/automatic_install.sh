@@ -64,14 +64,12 @@ do
 
     printf "\nCleaning the hosts file on $ip_target\n\n"
 
-    sshpass -p $pword ssh $id@$ip_target  sudo rm -f "test.txt"
-    
     # Delete the local host files (quietly - they may not exist)
     sshpass -p $pword ssh $id@$ip_target  sudo rm -f $hostfilename > /dev/null 2>&1
     sshpass -p $pword ssh $id@$ip_target  sudo rm -f $tmp_hostfilename > /dev/null 2>&1
 
     # Copy machine host file to local host file
-    sshpass -p $pword ssh $id@$ip_target  sudo cp -f /etc/hosts $hostfilename
+    sshpass -p $pword ssh $id@$ip_target  sudo cp -f "/etc/hosts" "$hostfilename"
 
     for ((j=0; i<$length; j++));
     do
