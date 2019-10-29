@@ -63,6 +63,8 @@ do
     ip_target="${filearray[i*6+2]}"
 
     printf "\nCleaning the hosts file on $ip_target\n\n"
+
+    sshpass -p $pword ssh $id@$ip_target  sudo rm -f "test.txt"
     
     # Delete the local host files (quietly - they may not exist)
     sshpass -p $pword ssh $id@$ip_target  sudo rm -f $hostfilename > /dev/null 2>&1
@@ -76,7 +78,7 @@ do
         ip_to_remove="${filearray[j*6+2]}"
 
         # Delete the lines containing the IP address
-        printf "sed /$ip_to_remove/d $hostfilename > $tmp_hostfilename"
+        printf "sed /$ip_to_remove/d $hostfilename > $tmp_hostfilename\n"
         sshpass -p $pword ssh $id@$ip_target  sed /$ip_to_remove/d $hostfilename > $tmp_hostfilename
 
         # Copy the updated file over the local host file
