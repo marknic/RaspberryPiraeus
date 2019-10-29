@@ -72,7 +72,10 @@ do
     # Copy machine host file to local host file
     sshpass -p $pword ssh $id@$ip_target  "sudo cp -f /etc/hosts ~/$hostfilename"
 
-    for ((j=0; i<length; j++));
+
+    #for ((j=0; i<length; j++));
+    j=0
+    while [ $j -lt $length]
     do
         printf "j=$j\n"
         printf "filearray: ${filearray[j*6+2]}\n"
@@ -88,6 +91,8 @@ do
         # Copy the updated file over the local host file
         sshpass -p $pword ssh $id@$ip_target  "rm -f $hostfilename"
         sshpass -p $pword ssh $id@$ip_target  "mv $tmp_hostfilename $hostfilename"
+        
+        ((j++))
     done
 
     # Replace the machine host file
