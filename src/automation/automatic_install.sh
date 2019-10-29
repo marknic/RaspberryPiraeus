@@ -84,15 +84,14 @@ do
 
     sshpass -p $pword ssh $id@$ip_target sudo sed -i -e "s/$host_name/$new_host_name/g" $FILE_HOSTNAME
     
+    printf "\n"
+ 
     j=0
     while [ $j -lt $length ]
     do
-        printf "j=$j\n"
-        printf "filearray: ${filearray[j*6+2]}\n"
-        
         ip_to_remove="${filearray[j*6+2]}"
         
-        printf "ip_to_remove: $ip_to_remove\n"
+        printf "."
         
         # Delete the lines containing the IP address
         sshpass -p $pword ssh $id@$ip_target  sed "/$ip_to_remove/d" $FILE_HOSTS
@@ -103,6 +102,8 @@ do
 
         ((j++))
     done
+
+    printf "\n"
 
     # Replace the machine host file
     #sshpass -p $pword ssh $id@$ip_target  "sudo cp -f --backup=t $hostfilename /etc/hosts"
