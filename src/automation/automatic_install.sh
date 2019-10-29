@@ -59,6 +59,7 @@ tmp_hostfilename="$hostfilename.bak"
 
 for ((i=0; i<$length; i++));
 do
+    printf "i=$i\n"
     # Get the IP to search for
     ip_target="${filearray[i*6+2]}"
 
@@ -73,6 +74,7 @@ do
 
     for ((j=0; i<$length; j++));
     do
+        printf "j=$j\n"
         printf "filearray: ${filearray[j*6+2]}\n"
         
         ip_to_remove="${filearray[j*6+2]}"
