@@ -74,7 +74,9 @@ do
     for ((j=0; i<$length; j++));
     do
         ip_to_remove="${filearray[j*6+2]}"
-
+        
+        printf "ip_to_remove: $ip_to_remove\n"
+        
         # Delete the lines containing the IP address
         printf "sed /$ip_to_remove/d $hostfilename > $tmp_hostfilename\n"
         sshpass -p $pword ssh $id@$ip_target  "sed /$ip_to_remove/d $hostfilename > $tmp_hostfilename"
