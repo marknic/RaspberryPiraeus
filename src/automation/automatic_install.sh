@@ -50,6 +50,7 @@ done < "$FILE_UPDATE_HOSTS"
 
 let length="${#filearray[@]} / 6"
 
+printf "Array Length: $length"
 
 # Clean up the hosts file before attempting to update with current information
 hostfilename="hostfile.txt"
@@ -75,6 +76,7 @@ do
         ip_to_remove="${filearray[j*6+2]}"
 
         # Delete the lines containing the IP address
+        printf "sed /$ip_to_remove/d $hostfilename > $tmp_hostfilename"
         sshpass -p $pword ssh $id@$ip_target  sed /$ip_to_remove/d $hostfilename > $tmp_hostfilename
 
         # Copy the updated file over the local host file
