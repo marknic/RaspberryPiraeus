@@ -66,20 +66,20 @@ do
     printf "\nCleaning the hosts file on $ip_target\n\n"
 
     # Delete the local host files (quietly - they may not exist)
-    sshpass -p $pword ssh $id@$ip_target  "sudo rm -f $hostfilename > /dev/null 2>&1"
-    sshpass -p $pword ssh $id@$ip_target  "sudo rm -f $tmp_hostfilename > /dev/null 2>&1"
+    #sshpass -p $pword ssh $id@$ip_target  "sudo rm -f $hostfilename > /dev/null 2>&1"
+    #sshpass -p $pword ssh $id@$ip_target  "sudo rm -f $tmp_hostfilename > /dev/null 2>&1"
 
     # Copy machine host file to local host file
     #sshpass -p $pword ssh $id@$ip_target  "sudo cp -f /etc/hosts ~/$hostfilename"
 
     host_name=$(sshpass -p $pword ssh $id@$ip_target hostname)
     
-    sshpass -p $pword ssh $id@$ip_target  sudo sed -i -e "/127.0.1.1/d" $FILE_HOSTS
+    sshpass -p $pword ssh $id@$ip_target  sudo sed -i -e "/127.0.1.1/d" /etc/hosts
 
     # sshpass -p $pword ssh $id@$ip_target  "rm -f $hostfilename"
     # sshpass -p $pword ssh $id@$ip_target  "mv $tmp_hostfilename $hostfilename"
 
-    sshpass -p $pword ssh $id@$ip_target sudo echo "127.0.1.1   $new_host_name" >> $FILE_HOSTS
+    sshpass -p $pword ssh $id@$ip_target sudo echo "127.0.1.1   $new_host_name" >> /etc/hosts
 
     sshpass -p $pword ssh $id@$ip_target sudo sed -i -e "s/$host_name/$new_host_name/g" $FILE_HOSTNAME
     
@@ -91,7 +91,7 @@ do
         printf "."
         
         # Delete the lines containing the IP address
-        sshpass -p $pword ssh $id@$ip_target  sed -i -e "/$ip_to_remove/d" $FILE_HOSTS
+        sshpass -p $pword ssh $id@$ip_target  sed -i -e "/$ip_to_remove/d" /etc/hosts
 
         # Copy the updated file over the local host file
         # sshpass -p $pword ssh $id@$ip_target  "rm -f $hostfilename"
