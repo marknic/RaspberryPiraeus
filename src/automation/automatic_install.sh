@@ -75,7 +75,8 @@ do
 
     host_name=$(sshpass -p $pword ssh $id@$ip_target hostname)
     
-    sshpass -p $pword ssh $id@$ip_target  sed "/127.0.1.1/d" $FILE_HOSTS
+    sshpass -p $pword ssh $id@$ip_target  sudo sed "/127.0.1.1/d" $FILE_HOSTS
+
     # sshpass -p $pword ssh $id@$ip_target  "rm -f $hostfilename"
     # sshpass -p $pword ssh $id@$ip_target  "mv $tmp_hostfilename $hostfilename"
 
