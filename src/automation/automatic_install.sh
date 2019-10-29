@@ -75,7 +75,7 @@ do
 
     #for ((j=0; i<length; j++));
     j=0
-    while [ $j -lt $length]
+    while [ $j -lt $length ]
     do
         printf "j=$j\n"
         printf "filearray: ${filearray[j*6+2]}\n"
@@ -91,7 +91,7 @@ do
         # Copy the updated file over the local host file
         sshpass -p $pword ssh $id@$ip_target  "rm -f $hostfilename"
         sshpass -p $pword ssh $id@$ip_target  "mv $tmp_hostfilename $hostfilename"
-        
+
         ((j++))
     done
 
