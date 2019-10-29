@@ -71,15 +71,15 @@ do
     sshpass -p $pword ssh $id@$ip_target  "sudo rm -f $tmp_hostfilename > /dev/null 2>&1"
 
     # Copy machine host file to local host file
-    sshpass -p $pword ssh $id@$ip_target  "sudo cp -f /etc/hosts ~/$hostfilename"
+    #sshpass -p $pword ssh $id@$ip_target  "sudo cp -f /etc/hosts ~/$hostfilename"
 
     host_name=$(sshpass -p $pword ssh $id@$ip_target hostname)
     
-    sshpass -p $pword ssh $id@$ip_target  sed "/127.0.1.1/d $hostfilename"
-    sshpass -p $pword ssh $id@$ip_target  "rm -f $hostfilename"
-    sshpass -p $pword ssh $id@$ip_target  "mv $tmp_hostfilename $hostfilename"
+    sshpass -p $pword ssh $id@$ip_target  sed "/127.0.1.1/d" $FILE_HOSTS
+    # sshpass -p $pword ssh $id@$ip_target  "rm -f $hostfilename"
+    # sshpass -p $pword ssh $id@$ip_target  "mv $tmp_hostfilename $hostfilename"
 
-    sshpass -p $pword ssh $id@$ip_target sudo echo "127.0.1.1   $new_host_name" >> $hostfilename
+    sshpass -p $pword ssh $id@$ip_target sudo echo "127.0.1.1   $new_host_name" >> $FILE_HOSTS
 
     sshpass -p $pword ssh $id@$ip_target sudo sed -i -e "s/$host_name/$new_host_name/g" $FILE_HOSTNAME
     
@@ -94,18 +94,17 @@ do
         printf "ip_to_remove: $ip_to_remove\n"
         
         # Delete the lines containing the IP address
-        printf "sed /${ip_to_remove}/d $hostfilename\n"
-        sshpass -p $pword ssh $id@$ip_target  sed "/$ip_to_remove/d" $hostfilename 
+        sshpass -p $pword ssh $id@$ip_target  sed "/$ip_to_remove/d" $FILE_HOSTS
 
         # Copy the updated file over the local host file
-        sshpass -p $pword ssh $id@$ip_target  "rm -f $hostfilename"
-        sshpass -p $pword ssh $id@$ip_target  "mv $tmp_hostfilename $hostfilename"
+        # sshpass -p $pword ssh $id@$ip_target  "rm -f $hostfilename"
+        # sshpass -p $pword ssh $id@$ip_target  "mv $tmp_hostfilename $hostfilename"
 
         ((j++))
     done
 
     # Replace the machine host file
-    sshpass -p $pword ssh $id@$ip_target  "sudo cp -f --backup=t $hostfilename /etc/hosts"
+    #sshpass -p $pword ssh $id@$ip_target  "sudo cp -f --backup=t $hostfilename /etc/hosts"
 
     printf "Copying $FILE_UPDATE_HOSTS to $ip_target...\n"
     sshpass -p $pword scp $FILE_UPDATE_HOSTS $id@$ip_target:
