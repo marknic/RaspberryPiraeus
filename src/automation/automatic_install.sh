@@ -72,6 +72,8 @@ do
     # Copy machine host file to local host file
     sshpass -p $pword ssh $id@$ip_target  "sudo cp -f /etc/hosts ~/$hostfilename"
 
+    let j=0
+    
     for ((j=0; i<$length; j++));
     do
         printf "j=$j\n"
