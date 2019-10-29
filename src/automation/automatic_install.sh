@@ -65,11 +65,11 @@ do
     printf "\nCleaning the hosts file on $ip_target\n\n"
 
     # Delete the local host files (quietly - they may not exist)
-    sshpass -p $pword ssh $id@$ip_target  sudo rm -f $hostfilename > /dev/null 2>&1
-    sshpass -p $pword ssh $id@$ip_target  sudo rm -f $tmp_hostfilename > /dev/null 2>&1
+    sshpass -p $pword ssh $id@$ip_target  "sudo rm -f $hostfilename > /dev/null 2>&1"
+    sshpass -p $pword ssh $id@$ip_target  "sudo rm -f $tmp_hostfilename > /dev/null 2>&1"
 
     # Copy machine host file to local host file
-    sshpass -p $pword ssh $id@$ip_target  sudo cp -f "/etc/hosts" "$hostfilename"
+    sshpass -p $pword ssh $id@$ip_target  "sudo cp -f /etc/hosts ~/$hostfilename"
 
     for ((j=0; i<$length; j++));
     do
@@ -77,15 +77,15 @@ do
 
         # Delete the lines containing the IP address
         printf "sed /$ip_to_remove/d $hostfilename > $tmp_hostfilename\n"
-        sshpass -p $pword ssh $id@$ip_target  sed /$ip_to_remove/d $hostfilename > $tmp_hostfilename
+        sshpass -p $pword ssh $id@$ip_target  "sed /$ip_to_remove/d $hostfilename > $tmp_hostfilename"
 
         # Copy the updated file over the local host file
-        sshpass -p $pword ssh $id@$ip_target  rm -f $hostfilename
-        sshpass -p $pword ssh $id@$ip_target  mv $tmp_hostfilename $hostfilename
+        sshpass -p $pword ssh $id@$ip_target  "rm -f $hostfilename"
+        sshpass -p $pword ssh $id@$ip_target  "mv $tmp_hostfilename $hostfilename"
     done
 
     # Replace the machine host file
-    sshpass -p $pword ssh $id@$ip_target  sudo cp -f --backup=t $hostfilename /etc/hosts
+    sshpass -p $pword ssh $id@$ip_target  "sudo cp -f --backup=t $hostfilename /etc/hosts"
 done
 
 
