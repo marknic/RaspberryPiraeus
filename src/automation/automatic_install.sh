@@ -59,7 +59,6 @@ tmp_hostfilename="$hostfilename.bak"
 
 for ((i=0; i<$length; i++));
 do
-    printf "i=$i\n"
     # Get the IP to search for
     ip_target="${filearray[i*6+2]}"
     new_host_name="${filearray[i*6+3]}"
@@ -75,7 +74,7 @@ do
 
     host_name=$(sshpass -p $pword ssh $id@$ip_target hostname)
     
-    sshpass -p $pword ssh $id@$ip_target  sudo sed "/127.0.1.1/d" $FILE_HOSTS
+    sshpass -p $pword ssh $id@$ip_target  sudo sed -i -e "/127.0.1.1/d" $FILE_HOSTS
 
     # sshpass -p $pword ssh $id@$ip_target  "rm -f $hostfilename"
     # sshpass -p $pword ssh $id@$ip_target  "mv $tmp_hostfilename $hostfilename"
@@ -84,8 +83,6 @@ do
 
     sshpass -p $pword ssh $id@$ip_target sudo sed -i -e "s/$host_name/$new_host_name/g" $FILE_HOSTNAME
     
-    printf "\n"
- 
     j=0
     while [ $j -lt $length ]
     do
@@ -94,7 +91,7 @@ do
         printf "."
         
         # Delete the lines containing the IP address
-        sshpass -p $pword ssh $id@$ip_target  sed "/$ip_to_remove/d" $FILE_HOSTS
+        sshpass -p $pword ssh $id@$ip_target  sed -i -e "/$ip_to_remove/d" $FILE_HOSTS
 
         # Copy the updated file over the local host file
         # sshpass -p $pword ssh $id@$ip_target  "rm -f $hostfilename"
