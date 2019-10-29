@@ -78,7 +78,7 @@ do
         printf "ip_to_remove: $ip_to_remove\n"
         
         # Delete the lines containing the IP address
-        printf "sed /$ip_to_remove/d $hostfilename > $tmp_hostfilename\n"
+        printf "sed /${ip_to_remove}/d $hostfilename > $tmp_hostfilename\n"
         sshpass -p $pword ssh $id@$ip_target  "sed /$ip_to_remove/d $hostfilename > $tmp_hostfilename"
 
         # Copy the updated file over the local host file
