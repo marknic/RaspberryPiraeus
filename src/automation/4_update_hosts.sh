@@ -10,9 +10,9 @@
 #  update the IP addresses, the host names, for each of the k8s nodes
 # make sure you make this call before running the script:
 
-sudo echo '192.168.8.100  kub-master' >> /etc/hosts
-sudo echo '192.168.8.101  kub-worker-01' >> /etc/hosts
-sudo echo '192.168.8.102  kub-worker-02' >> /etc/hosts
-sudo echo '192.168.8.103  kub-worker-03' >> /etc/hosts
-sudo echo '192.168.8.104  kub-worker-04' >> /etc/hosts
-sudo echo '192.168.8.105  kub-worker-05' >> /etc/hosts
+sudo echo '192.168.8.100  kub-master' >> hosts.local
+sudo echo '192.168.8.101  kub-worker-01' >> hosts.local
+sudo echo '192.168.8.102  kub-worker-02' >> hosts.local
+sudo echo '192.168.8.103  kub-worker-03' >> hosts.local
+sudo echo '192.168.8.104  kub-worker-04' >> hosts.local
+sudo echo '192.168.8.105  kub-worker-05' >> hosts.local

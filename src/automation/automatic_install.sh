@@ -56,6 +56,8 @@ printf "Array Length: $length\n"
 hostfilename="hostfile.txt"
 tmp_hostfilename="$hostfilename.bak"
 
+localhostsfile="hosts.local"
+localhostnamefile="hostname.local"
 
 for ((i=0; i<$length; i++));
 do
@@ -72,16 +74,20 @@ do
     # Copy machine host file to local host file
     #sshpass -p $pword ssh $id@$ip_target  "sudo cp -f /etc/hosts ~/$hostfilename"
 
+    sshpass -p $pword scp $id@$ip_target:/etc/hosts $localhostsfile
+
     host_name=$(sshpass -p $pword ssh $id@$ip_target hostname)
     
-    sshpass -p $pword ssh $id@$ip_target  sudo sed -i -e "/127.0.1.1/d" /etc/hosts
+    sudo sed -i -e "/127.0.1.1/d" $localhostsfile
 
     # sshpass -p $pword ssh $id@$ip_target  "rm -f $hostfilename"
     # sshpass -p $pword ssh $id@$ip_target  "mv $tmp_hostfilename $hostfilename"
 
-    sshpass -p $pword ssh $id@$ip_target sudo echo "127.0.1.1   $new_host_name" >> /etc/hosts
+    sudo echo "127.0.1.1   $new_host_name" >> $localhostsfile
 
-    sshpass -p $pword ssh $id@$ip_target sudo sed -i -e "s/$host_name/$new_host_name/g" $FILE_HOSTNAME
+    sudo echo "$new_host_name" > $localhostnamefile
+
+    #sshpass -p $pword ssh $id@$ip_target sudo sed -i -e "s/$host_name/$new_host_name/g" $FILE_HOSTNAME
     
     j=0
     while [ $j -lt $length ]
@@ -91,7 +97,7 @@ do
         printf "."
         
         # Delete the lines containing the IP address
-        sshpass -p $pword ssh $id@$ip_target  sed -i -e "/$ip_to_remove/d" /etc/hosts
+        sudo sed -i -e "/$ip_to_remove/d" $localhostsfile
 
         # Copy the updated file over the local host file
         # sshpass -p $pword ssh $id@$ip_target  "rm -f $hostfilename"
@@ -102,16 +108,21 @@ do
 
     printf "\n"
 
+
+
     # Replace the machine host file
     #sshpass -p $pword ssh $id@$ip_target  "sudo cp -f --backup=t $hostfilename /etc/hosts"
-
-    printf "Copying $FILE_UPDATE_HOSTS to $ip_target...\n"
-    sshpass -p $pword scp $FILE_UPDATE_HOSTS $id@$ip_target:
+    #printf "Copying $FILE_UPDATE_HOSTS to $ip_target...\n"
+    #sshpass -p $pword scp $FILE_UPDATE_HOSTS $id@$ip_target:
     
-    sshpass -p $pword ssh $id@$ip_target "chmod +x $FILE_UPDATE_HOSTS"
+    sudo chmod +x $FILE_UPDATE_HOSTS
 
     printf "Updating host names on $ip_target...\n"
-    sshpass -p $pword ssh $id@$ip_target "sudo ./$FILE_UPDATE_HOSTS"
+    sudo ./$FILE_UPDATE_HOSTS
+
+    sshpass -p $pword sudo scp $localhostsfile $id@$ip_target:/etc/hosts
+    sshpass -p $pword sudo scp $localhostnamefile $id@$ip_target:/etc/hostname
+
 done
 
 
