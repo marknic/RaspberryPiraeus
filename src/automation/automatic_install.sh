@@ -75,7 +75,8 @@ do
     # Copy machine host file to local host file
     sshpass -p $pword sudo scp "$id@$ip_target:/etc/hosts" $localhostsfile
 
-    host_name=$(sshpass -p $pword ssh $id@$ip_target hostname)
+    # Get the host
+    # host_name=$(sshpass -p $pword ssh $id@$ip_target hostname)
 
     sudo sed -i -e "/127.0.1.1/d" $localhostsfile
 
@@ -89,6 +90,7 @@ do
     do
         ip_to_remove="${filearray[j*6+2]}"
 
+        # Indicate that work is being done
         printf "."
 
         # Delete the lines containing the IP address
@@ -100,53 +102,21 @@ do
     printf "\n"
 
     
+    # Make the update script executable
     sudo chmod +x $FILE_UPDATE_HOSTS
 
-    printf "Updating host names on $ip_target...\n"
-    
+    # Execute the script to add the host IP/Names
     sudo ./$FILE_UPDATE_HOSTS
 
+    # Remove the redundant entry in the hosts file
     sudo sed -i -e "/$ip_target/d" $localhostsfile
 
-    # Replace the machine host file
-    sshpass -p $pword sudo scp $localhostsfile  $id@$ip_target:test.tst
+    # Replace the machine hosts/hostname files
+    sshpass -p $pword sudo scp $localhostsfile  $id@$ip_target:/etc/hosts
+    sshpass -p $pword sudo scp $localhostnamefile  $id@$ip_target:/etc/hostname
     
 done
 
-
-# for ((i=0; i<$length; i++));
-# do
-#     new_host_name=${filearray[i*6+3]}
-#     ip_target="${filearray[i*6+2]}"
-        
-#     # if [ "${filearray[i*6+2]}" == "$ip_addr_me" ] ; then
-        
-#     #     host_name=hostname
-#     #     # Working on the Master - Set the hostname
-#     #     printf "Updating host names locally...\n\n"
-
-#     #     chmod +x "$FILE_UPDATE_HOSTS"
-#     #     sudo "./$FILE_UPDATE_HOSTS"
-#     #     sudo sed -i -e "s/$host_name/$new_host_name/g" $FILE_HOSTNAME
-
-#     # else         
-#         host_name=$(sshpass -p $pword ssh $id@$ip_target hostname)
-
-#         printf "Modifying $host_name to $new_host_name...\n"
-#         sshpass -p $pword ssh $id@$ip_target sudo sed -i -e "s/$host_name/$new_host_name/g" $FILE_HOSTNAME
-
-#         printf "Copying $FILE_UPDATE_HOSTS to $ip_target...\n"
-#         sshpass -p $pword scp $FILE_UPDATE_HOSTS $id@$ip_target:
-        
-#         sshpass -p $pword ssh $id@$ip_target "chmod +x $FILE_UPDATE_HOSTS"
-
-#         printf "Updating host names on $ip_target...\n"
-#         sshpass -p $pword ssh $id@$ip_target "sudo ./$FILE_UPDATE_HOSTS"
-#     #fi
-
-#     # IP Address: ${filearray[i*6+2]}
-#     # Host Name:  ${filearray[i*6+3]}
-# done
 
 #printf "Rebooting workers!"
 #for ((i=0; i<$length; i++));
