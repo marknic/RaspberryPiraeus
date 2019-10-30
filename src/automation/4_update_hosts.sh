@@ -7,8 +7,8 @@
 #   structure and data - it is also named the same across all folders.  One version is all you need.
 
 # This script will update the hosts file for network communications.
-#  update the IP addresses, the host names, for each of the k8s nodes
-# make sure you make this call before running the script:
+# Update the IP addresses, the host names, for each of the k8s nodes
+# Make sure you make this call before running the scripts:
 
 sudo echo '192.168.8.100  kub-master' >> hosts.local
 sudo echo '192.168.8.101  kub-worker-01' >> hosts.local

@@ -118,8 +118,8 @@ do
     printf "Updating host names on $ip_target...\n"
     sudo ./$FILE_UPDATE_HOSTS
 
-    sshpass -p $pword sudo scp $localhostsfile $id@$ip_target:/etc/hosts
-    sshpass -p $pword sudo scp $localhostnamefile $id@$ip_target:/etc/hostname
+    #sudo scp $localhostsfile $id@$ip_target:/etc/hosts
+    #sudo scp $localhostnamefile $id@$ip_target:/etc/hostname
 
 done
 
