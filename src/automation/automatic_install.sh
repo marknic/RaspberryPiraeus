@@ -124,41 +124,44 @@ do
 done
 
 
-#printf "Rebooting workers!"
-#for ((i=0; i<$length; i++));
-#do
-#    if [ "${filearray[i*6+2]}" != "$ip_addr_me" ] ; then
-#        ip_target="${filearray[i*6+2]}"
-#        sshpass -p $pword ssh $id@$ip_target "sudo reboot"
-#    fi
-#done
+printf "Rebooting workers!"
+for ((i=0; i<$length; i++));
+do
+   if [ "${filearray[i*6+2]}" != "$ip_addr_me" ] ; then
+       ip_target="${filearray[i*6+2]}"
+       sshpass -p $pword ssh $id@$ip_target "sudo reboot"
+   fi
+done
 
-# printf "Verifying Reboot Complete\n"
+printf "Verifying Reboot...\n"
 
-# printf "Waiting 20 seconds"
-# sleep 20
+printf "Waiting 25 seconds"
+sleep 25
 
-# for ((i=0; i<$length; i++));
-# do
-#     ip_target="${filearray[i*6+2]}"
+for ((i=0; i<$length; i++));
+do
+    ip_target="${filearray[i*6+2]}"
 
-#     if [ "$ip_target" != "$ip_addr_me" ] ; then
+    if [ "$ip_target" != "$ip_addr_me" ] ; then
 
-#         output='down'
+        output='down'
 
-#         while [ "$output" != "up" ]
-#         do
-#             output=$(sshpass -p $pword ssh $id@$ip_target uptime | awk '{print $2}')
+        while [ "$output" != "up" ]
+        do
+            output=$(sshpass -p $pword ssh $id@$ip_target uptime | awk '{print $2}')
 
-#             if [ "$output" != "up" ]
-#             then
-#                 sleep 8
-#             else
-#                 echo "$ip_target is back up."
-#             fi
-#         done
-#     fi
-# done
+            if [ "$output" != "up" ]
+            then
+                sleep 8
+            else
+                echo "$ip_target is back up."
+            fi
+        done
+    fi
+done
+
+sudo reboot
+
 
 # Write to ~/.bash_profile to script the next step in the process
 
