@@ -60,7 +60,7 @@ localhostsfile="hosts.local"
 localhostnamefile="hostname.local"
 
 #for ((i=0; i<$length; i++));
-for ((i=0; i<1; i++));
+for ((i=1; i<2; i++));
 do
     # Get the IP to search for
     ip_target="${filearray[i*6+2]}"
@@ -69,58 +69,48 @@ do
     printf "\nCleaning the hosts file on $ip_target\n\n"
 
     # Delete the local host files (quietly - they may not exist)
-    #sshpass -p $pword ssh $id@$ip_target  "sudo rm -f $hostfilename > /dev/null 2>&1"
-    #sshpass -p $pword ssh $id@$ip_target  "sudo rm -f $tmp_hostfilename > /dev/null 2>&1"
+    sudo rm -f $localhostsfile > /dev/null 2>&1
+    sudo rm -f $localhostnamefile > /dev/null 2>&1
 
     # Copy machine host file to local host file
-    #sshpass -p $pword ssh $id@$ip_target  "sudo cp -f /etc/hosts ~/$hostfilename"
-
-    sshpass -p $pword scp $id@$ip_target:/etc/hosts $localhostsfile
+    sshpass -p $pword sudo scp "$id@$ip_target:/etc/hosts" $localhostsfile
 
     host_name=$(sshpass -p $pword ssh $id@$ip_target hostname)
-    
+
     sudo sed -i -e "/127.0.1.1/d" $localhostsfile
 
     sudo echo "127.0.1.1    $new_host_name" >> $localhostsfile
 
+    # Create the hostname file (to be copied to the remote machine's /etc/ folder)
     sudo echo "$new_host_name" > $localhostnamefile
 
-    #sshpass -p $pword ssh $id@$ip_target sudo sed -i -e "s/$host_name/$new_host_name/g" $FILE_HOSTNAME
-    
-    # j=0
-    # while [ $j -lt $length ]
-    # do
-    #     ip_to_remove="${filearray[j*6+2]}"
-        
-    #     printf "."
-        
-    #     # Delete the lines containing the IP address
-    #     sudo sed -i -e "/$ip_to_remove/d" $localhostsfile
+    j=0
+    while [ $j -lt $length ]
+    do
+        ip_to_remove="${filearray[j*6+2]}"
 
-    #     # Copy the updated file over the local host file
-    #     # sshpass -p $pword ssh $id@$ip_target  "rm -f $hostfilename"
-    #     # sshpass -p $pword ssh $id@$ip_target  "mv $tmp_hostfilename $hostfilename"
+        printf "."
 
-    #     ((j++))
-    # done
+        # Delete the lines containing the IP address
+        sudo sed -i -e "/$ip_to_remove/d" $localhostsfile
 
-    # printf "\n"
+        ((j++))
+    done
 
+    printf "\n"
 
-
-    # Replace the machine host file
-    #sshpass -p $pword ssh $id@$ip_target  "sudo cp -f --backup=t $hostfilename /etc/hosts"
-    #printf "Copying $FILE_UPDATE_HOSTS to $ip_target...\n"
-    #sshpass -p $pword scp $FILE_UPDATE_HOSTS $id@$ip_target:
     
     sudo chmod +x $FILE_UPDATE_HOSTS
 
     printf "Updating host names on $ip_target...\n"
+    
     sudo ./$FILE_UPDATE_HOSTS
 
-    #sudo scp $localhostsfile $id@$ip_target:/etc/hosts
-    #sudo scp $localhostnamefile $id@$ip_target:/etc/hostname
+    sudo sed -i -e "/$ip_target/d" $localhostsfile
 
+    # Replace the machine host file
+    sshpass -p $pword sudo scp $localhostsfile  $id@$ip_target:test.tst
+    
 done
 
 
