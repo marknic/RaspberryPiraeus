@@ -6,7 +6,7 @@ if [ -f $FILE_UPDATE_HOSTS ]; then
     printf "File $FILE_UPDATE_HOSTS exists locally.\n\n"
 
     while true; do
-        printf "Has the $FILE_UPDATE_HOSTS file been updated with your network static IP addresses and hostnames?"
+        printf "Has the $FILE_UPDATE_HOSTS file been updated with your network static IP addresses and hostnames? "
         read -p "(y/n)?" yn
         case $yn in
             [Yy]* ) break;;
@@ -112,9 +112,8 @@ do
     sudo sed -i -e "/$ip_target/d" $localhostsfile
 
     # Replace the machine hosts/hostname files
-    sshpass -p $pword sudo scp $localhostsfile  $id@$ip_target:/etc/hosts
-    sshpass -p $pword sudo scp $localhostnamefile  $id@$ip_target:/etc/hostname
-    
+    sudo sshpass -p $pword sudo su scp $localhostsfile  $id@$ip_target:/etc/hosts
+    sudo sshpass -p $pword sudo su scp $localhostnamefile  $id@$ip_target:/etc/hostname
 done
 
 
