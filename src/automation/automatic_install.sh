@@ -59,7 +59,8 @@ tmp_hostfilename="$hostfilename.bak"
 localhostsfile="hosts.local"
 localhostnamefile="hostname.local"
 
-for ((i=0; i<$length; i++));
+#for ((i=0; i<$length; i++));
+for ((i=0; i<1; i++));
 do
     # Get the IP to search for
     ip_target="${filearray[i*6+2]}"
