@@ -114,6 +114,13 @@ do
     # Replace the machine hosts/hostname files
     sudo sshpass -p $pword sudo scp $localhostsfile  $id@$ip_target:
     sudo sshpass -p $pword sudo scp $localhostnamefile  $id@$ip_target:
+
+    sshpass -p $pword ssh $id@$ip_target "sudo rm -f /etc/hosts"
+    sshpass -p $pword ssh $id@$ip_target "sudo mv -f '$localhostsfile' '/etc/hosts'"
+
+    sshpass -p $pword ssh $id@$ip_target "sudo rm -f /etc/hostname"
+    sshpass -p $pword ssh $id@$ip_target "sudo mv -f '$localhostnamefile' '/etc/hostname'"
+
 done
 
 
