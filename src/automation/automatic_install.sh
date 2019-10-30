@@ -112,8 +112,8 @@ do
     sudo sed -i -e "/$ip_target/d" $localhostsfile
 
     # Replace the machine hosts/hostname files
-    sudo sshpass -p $pword sudo su root scp $localhostsfile  $id@$ip_target:/etc/hosts
-    sudo sshpass -p $pword sudo su root scp $localhostnamefile  $id@$ip_target:/etc/hostname
+    sudo sshpass -p $pword sudo scp $localhostsfile  $id@$ip_target:
+    sudo sshpass -p $pword sudo scp $localhostnamefile  $id@$ip_target:
 done
 
 
