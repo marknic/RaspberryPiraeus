@@ -81,33 +81,30 @@ do
     
     sudo sed -i -e "/127.0.1.1/d" $localhostsfile
 
-    # sshpass -p $pword ssh $id@$ip_target  "rm -f $hostfilename"
-    # sshpass -p $pword ssh $id@$ip_target  "mv $tmp_hostfilename $hostfilename"
-
-    sudo echo "127.0.1.1   $new_host_name" >> $localhostsfile
+    sudo echo "127.0.1.1    $new_host_name" >> $localhostsfile
 
     sudo echo "$new_host_name" > $localhostnamefile
 
     #sshpass -p $pword ssh $id@$ip_target sudo sed -i -e "s/$host_name/$new_host_name/g" $FILE_HOSTNAME
     
-    j=0
-    while [ $j -lt $length ]
-    do
-        ip_to_remove="${filearray[j*6+2]}"
+    # j=0
+    # while [ $j -lt $length ]
+    # do
+    #     ip_to_remove="${filearray[j*6+2]}"
         
-        printf "."
+    #     printf "."
         
-        # Delete the lines containing the IP address
-        sudo sed -i -e "/$ip_to_remove/d" $localhostsfile
+    #     # Delete the lines containing the IP address
+    #     sudo sed -i -e "/$ip_to_remove/d" $localhostsfile
 
-        # Copy the updated file over the local host file
-        # sshpass -p $pword ssh $id@$ip_target  "rm -f $hostfilename"
-        # sshpass -p $pword ssh $id@$ip_target  "mv $tmp_hostfilename $hostfilename"
+    #     # Copy the updated file over the local host file
+    #     # sshpass -p $pword ssh $id@$ip_target  "rm -f $hostfilename"
+    #     # sshpass -p $pword ssh $id@$ip_target  "mv $tmp_hostfilename $hostfilename"
 
-        ((j++))
-    done
+    #     ((j++))
+    # done
 
-    printf "\n"
+    # printf "\n"
 
 
 
