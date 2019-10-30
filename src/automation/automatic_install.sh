@@ -42,7 +42,7 @@ while read line; do
     # Split the line into an array delimited by spaces
     linearray=($cleanline)
 
-    if [ "${linearray[5]}" == "/etc/hosts" ] ; then
+    if [ "${linearray[5]}" == "hosts.local" ] ; then
         filearray+=($cleanline)
     fi
 done < "$FILE_UPDATE_HOSTS"
