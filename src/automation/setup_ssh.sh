@@ -54,7 +54,8 @@ do
     ip_target="${filearray[i*6+2]}"
     
     if [ $ip_addr_me != $ip_target ] ; then
-        ssh-copy-id $id@$ip_target
+        #ssh-copy-id $id@$ip_target
+        sshpass -p $pword ssh $id@$ip_target "ssh-keyscan -H $ip_addr_me >> ~/.ssh/known_hosts"
     fi
 done
 
