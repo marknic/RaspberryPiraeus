@@ -11,17 +11,17 @@ do
     ip_target="${filearray[i*6+2]}"
     
     # Download Docker/Containerd/Docker CLI
-    ssh $id@$ip_target "wget $download_location$containerd"
-    ssh $id@$ip_target "wget $download_location$docker_ce_cli"
-    ssh $id@$ip_target "wget $download_location$docker_ce"
+    sudo sshpass -p $pword sudo ssh $id@$ip_target "wget $download_location$containerd"
+    sudo sshpass -p $pword sudo ssh $id@$ip_target "wget $download_location$docker_ce_cli"
+    sudo sshpass -p $pword sudo ssh $id@$ip_target "wget $download_location$docker_ce"
 
     # Install Docker - Version 18.09 (this is the latest validated version as of 9/5/19
-    ssh $id@$ip_target "sudo dpkg -i $containerd"
-    ssh $id@$ip_target "sudo dpkg -i $docker_ce_cli"
-    ssh $id@$ip_target "sudo dpkg -i $docker_ce"
+    sudo sshpass -p $pword sudo ssh $id@$ip_target "sudo dpkg -i $containerd"
+    sudo sshpass -p $pword sudo ssh $id@$ip_target "sudo dpkg -i $docker_ce_cli"
+    sudo sshpass -p $pword sudo ssh $id@$ip_target "sudo dpkg -i $docker_ce"
 
     # Create group "docker", then add user "pi" to it
-    sudo usermod pi -aG docker
+    sudo sshpass -p $pword sudo ssh $id@$ip_target "usermod pi -aG docker"
 
 done
 

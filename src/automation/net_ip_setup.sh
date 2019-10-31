@@ -23,8 +23,7 @@ do
     printf "scp /etc/hosts\n"
 
     # Copy machine host file to local host file
-    sudo scp "$id@$ip_target:/etc/hosts" $localhostsfile
-    #sudo sshpass -p $pword sudo scp "$id@$ip_target:/etc/hosts" $localhostsfile
+    sudo sshpass -p $pword sudo scp "$id@$ip_target:/etc/hosts" $localhostsfile
 
     printf "done: scp /etc/hosts\n"
 
