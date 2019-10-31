@@ -1,8 +1,8 @@
 #!/bin/bash
  
-. config_file.sh
+. _config_file.sh
 
-. array_setup.sh
+. _array_setup.sh
 
 printf "Array Length: $length\n"
 
