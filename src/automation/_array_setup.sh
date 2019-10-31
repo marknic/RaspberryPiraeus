@@ -1,6 +1,3 @@
-#!/bin/bash
-
-. config_file
 
 if [ -f $FILE_UPDATE_HOSTS ]; then
     printf "File $FILE_UPDATE_HOSTS exists locally.\n\n"
@@ -47,16 +44,3 @@ done < "$FILE_UPDATE_HOSTS"
 
 
 let length="${#filearray[@]} / 6"
-
-for ((i=0; i<$length; i++));
-do
-    # Get the IP to search for
-    ip_target="${filearray[i*6+2]}"
-    
-    if [ $ip_addr_me != $ip_target ] ; then
-        #ssh-copy-id $id@$ip_target
-        ssh-keyscan -H $ip_addr_me >> ~/.ssh/known_hosts
-    fi
-done
-
-

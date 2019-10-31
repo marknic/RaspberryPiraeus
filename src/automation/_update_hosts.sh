@@ -8,9 +8,14 @@
 
 # This script will update the hosts file for network communications.
 # Update the IP addresses, the host names, for each of the k8s nodes
-# Make sure you make this call before running the scripts:
+# Add or delete lines to match the number of nodes in the cluster
+# Do not change the format of the lines including spacing, and existing quotes.
+# Only change the IP Address and/or host name
+# Reason: The data in the lines below are used by the other setup scripts and the format
+# is used by the script to know where to pull the data.
 
-sudo echo '192.168.8.100  kub-master' >> hosts.local
+# Format:  "sudo echo 'IP-ADDRESS HOST-NAME' >> hosts.local"
+sudo echo '192.168.8.100  kub-master'    >> hosts.local
 sudo echo '192.168.8.101  kub-worker-01' >> hosts.local
 sudo echo '192.168.8.102  kub-worker-02' >> hosts.local
 sudo echo '192.168.8.103  kub-worker-03' >> hosts.local
