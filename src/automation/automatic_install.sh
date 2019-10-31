@@ -98,9 +98,6 @@ do
         ((j++))
     done
 
-    printf "\n"
-
-    
     # Make the update script executable
     sudo chmod +x $FILE_UPDATE_HOSTS
 
@@ -126,7 +123,7 @@ do
     sshpass -p $pword ssh $id@$ip_target "sudo rm -f /etc/hostname"
     sshpass -p $pword ssh $id@$ip_target "sudo mv -f '$localhostnamefile' '/etc/hostname'"
 
-    printf "!"
+    printf "!\n\n"
     
 done
 
