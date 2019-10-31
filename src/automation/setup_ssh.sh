@@ -55,7 +55,7 @@ do
     
     if [ $ip_addr_me != $ip_target ] ; then
         #ssh-copy-id $id@$ip_target
-        sshpass -p $pword ssh $id@$ip_target "ssh-keyscan -H $ip_addr_me >> ~/.ssh/known_hosts"
+        ssh-keyscan -H $ip_addr_me >> ~/.ssh/known_hosts
     fi
 done
 
