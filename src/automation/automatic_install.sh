@@ -71,9 +71,13 @@ do
     sudo rm -f $localhostsfile > /dev/null 2>&1
     sudo rm -f $localhostnamefile > /dev/null 2>&1
 
-    # Copy machine host file to local host file
-    sshpass -p $pword sudo scp "$id@$ip_target:/etc/hosts" $localhostsfile
+    printf "scp /etc/hosts\n"
 
+    # Copy machine host file to local host file
+    sudo sshpass -p $pword sudo scp "$id@$ip_target:/etc/hosts" $localhostsfile
+
+    printf "done: scp /etc/hosts\n"
+    
     # Get the host
     # host_name=$(sshpass -p $pword ssh $id@$ip_target hostname)
 
