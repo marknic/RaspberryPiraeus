@@ -53,7 +53,7 @@ do
     # Get the IP to search for
     ip_target="${filearray[i*6+2]}"
     
-    if [ ip_addr_me -ne ip_target ] ; then
+    if [ $ip_addr_me -ne $ip_target ] ; then
         ssh-copy-id $id@$ip_target
     fi
 done
