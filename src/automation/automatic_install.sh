@@ -65,7 +65,7 @@ do
     ip_target="${filearray[i*6+2]}"
     new_host_name="${filearray[i*6+3]}"
 
-    printf "\Updating the hosts and hostname files on $ip_target\n\n"
+    printf "\nUpdating the hosts and hostname files on $ip_target\n\n"
 
     # Delete the local host files (quietly - they may not exist)
     sudo rm -f $localhostsfile > /dev/null 2>&1
