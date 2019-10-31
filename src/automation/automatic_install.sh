@@ -65,7 +65,7 @@ do
     ip_target="${filearray[i*6+2]}"
     new_host_name="${filearray[i*6+3]}"
 
-    printf "\nCleaning the hosts file on $ip_target\n\n"
+    printf "\Updating the hosts and hostname files on $ip_target\n\n"
 
     # Delete the local host files (quietly - they may not exist)
     sudo rm -f $localhostsfile > /dev/null 2>&1
@@ -109,17 +109,25 @@ do
 
     # Remove the redundant entry in the hosts file
     sudo sed -i -e "/$ip_target/d" $localhostsfile
+    
+    printf "."
 
     # Replace the machine hosts/hostname files
     sudo sshpass -p $pword sudo scp $localhostsfile  $id@$ip_target:
     sudo sshpass -p $pword sudo scp $localhostnamefile  $id@$ip_target:
 
+    printf "."
+
     sshpass -p $pword ssh $id@$ip_target "sudo rm -f /etc/hosts"
     sshpass -p $pword ssh $id@$ip_target "sudo mv -f '$localhostsfile' '/etc/hosts'"
+
+    printf "."
 
     sshpass -p $pword ssh $id@$ip_target "sudo rm -f /etc/hostname"
     sshpass -p $pword ssh $id@$ip_target "sudo mv -f '$localhostnamefile' '/etc/hostname'"
 
+    printf "!"
+    
 done
 
 
