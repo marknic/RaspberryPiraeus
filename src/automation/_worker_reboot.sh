@@ -1,5 +1,5 @@
 
-printf "Rebooting workers!"
+printf "\n\nRebooting workers!\n"
 for ((i=0; i<$length; i++));
 do
    if [ "${filearray[i*6+2]}" != "$ip_addr_me" ] ; then
@@ -8,9 +8,9 @@ do
    fi
 done
 
-printf "Verifying Reboot:\n"
+printf "\nVerifying Reboot:\n"
 
-printf "Waiting 25 seconds...\n"
+printf "Waiting 25 seconds...\n\n"
 
 sleep 25
 
@@ -35,5 +35,7 @@ do
         done
     fi
 done
+
+printf "\nRebooting client machine...\n"
 
 sudo reboot

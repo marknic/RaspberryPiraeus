@@ -1,9 +1,12 @@
 
+# install jq here - it is used to parse the json data
+sudo apt-get install -y jq 
+
 if [ -f $FILE_UPDATE_HOSTS ]; then
     printf "File $FILE_UPDATE_HOSTS exists locally.\n\n"
 
     while true; do
-        printf "Has the $FILE_UPDATE_HOSTS file been updated with your network static IP addresses and hostnames? "
+        printf "\n\nHas the $FILE_UPDATE_HOSTS file been updated with your network static IP addresses and hostnames? "
         read -p "(y/n)?" yn
         case $yn in
             [Yy]* ) break;;
@@ -21,6 +24,7 @@ else
     exit 1
 fi
 
+printf "\n\n"
 
 ip_addr_me="$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')"
 printf "My IP Address:$ip_addr_me\n\n"
