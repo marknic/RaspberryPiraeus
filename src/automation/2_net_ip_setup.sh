@@ -49,11 +49,24 @@ do
         ((j++))
     done
 
-    # Make the update script executable
-    sudo chmod +x $FILE_UPDATE_HOSTS
-
     # Execute the script to add the host IP/Names
-    sudo ./$FILE_UPDATE_HOSTS
+    j=0
+    while [ $j -lt $length ]
+    do
+        ip_to_add=$(echo $cluster_data | jq --raw-output ".[$j].IP") 
+        host_to_add=$(echo $cluster_data | jq --raw-output ".[$j].name")
+
+        if [ $ip_target -ne $ip_to_add ]
+        then
+            # Indicate that work is being done
+            sudo echo "$ip_to_add  $host_to_add" >> $localhostsfile
+
+            printf "."
+        fi
+
+        ((j++))
+    done
+
 
     # Remove the redundant entry in the hosts file
     sudo sed -i -e "/$ip_target/d" $localhostsfile

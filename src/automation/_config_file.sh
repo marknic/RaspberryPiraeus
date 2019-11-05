@@ -1,4 +1,3 @@
-FILE_UPDATE_HOSTS="_update_hosts.sh"
 FILE_HOSTNAME="/etc/hostname"
 FILE_HOSTS="/etc/hosts"
 id="pi"
