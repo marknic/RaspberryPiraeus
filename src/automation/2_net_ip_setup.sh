@@ -11,8 +11,8 @@ printf "Array Length: $length\n"
 for ((i=0; i<$length; i++));
 do
     # Get the IP to search for
-    ip_target="${filearray[i*6+2]}"
-    new_host_name="${filearray[i*6+3]}"
+    ip_target=$(echo $cluster_data | jq --raw-output '.[$i].IP')
+    new_host_name=$(echo $cluster_data | jq --raw-output '.[$i].name')
 
     printf "\nUpdating the hosts and hostname files on $ip_target\n\n"
 
@@ -37,7 +37,7 @@ do
     j=0
     while [ $j -lt $length ]
     do
-        ip_to_remove="${filearray[j*6+2]}"
+        ip_to_remove=$(echo $cluster_data | jq --raw-output '.[$j].IP') 
 
         # Indicate that work is being done
         printf "."
@@ -75,16 +75,6 @@ do
 
     printf "!\n\n"
     
-done
-
-while true; do
-    printf "The machines need to be rebooted before the next step.  Reboot now "
-    read -p "(y/n)?" yn
-    case $yn in
-        [Yy]* ) break;;
-        [Nn]* ) exit;;
-        * ) echo "Please answer (y)es or (n)o.";;
-    esac
 done
 
 . _worker_reboot.sh

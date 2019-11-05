@@ -37,10 +37,18 @@ sudo apt -y purge dphys-swapfile
 # Add the kubernetes package to the apt repository list
 # Update the packages list
 # Install kubeadm
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add - && \
-  echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list && \
-  sudo apt-get -q update && \
-  sudo apt-get -qy install kubeadm
+# curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add - && \
+#   echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list && \
+#   sudo apt-get -q update && \
+#   sudo apt-get -qy install kubeadm
+
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add - &&
+
+echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+sudo apt-get -qy update
+
+sudo apt-get -qy install kubeadm
 
 # Keep apt from updating these packages.  Kubernetes should be doing that.
 sudo apt-mark kubelet kubeadm kubectl docker-ce

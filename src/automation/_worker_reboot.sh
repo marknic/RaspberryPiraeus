@@ -1,4 +1,15 @@
 
+while true; do
+    printf "The machines need to be rebooted before the next step.  Reboot now "
+    read -p "(y/n)?" yn
+    case $yn in
+        [Yy]* ) break;;
+        [Nn]* ) exit;;
+        * ) echo "Please answer (y)es or (n)o.";;
+    esac
+done
+
+
 printf "\n\nRebooting workers!\n"
 for ((i=0; i<$length; i++));
 do

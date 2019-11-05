@@ -8,7 +8,7 @@
 for ((i=0; i<$length; i++));
 do
     # Get the IP to search for
-    ip_target="${filearray[i*6+2]}"
+    ip_target=$(echo $cluster_data | jq --raw-output '.[$i].IP')
     
     if [ $ip_addr_me != $ip_target ] ; then
         # Attempt a copy to force the key transfer/password challenge
