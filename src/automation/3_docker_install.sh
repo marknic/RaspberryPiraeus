@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. _package_check.sh
+
 . _config_file.sh
 
 . _array_setup.sh

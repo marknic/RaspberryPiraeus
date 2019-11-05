@@ -1,18 +1,19 @@
 #!/bin/bash
  
+. _package_check.sh
+
 . _config_file.sh
 
 . _array_setup.sh
 
-printf "Array Length: $length\n"
-
+printf "\n"
 # Clean up the hosts file before attempting to update with current information
 
 for ((i=0; i<$length; i++));
 do
     # Get the IP to search for
-    ip_target=$(echo $cluster_data | jq --raw-output '.[$i].IP')
-    new_host_name=$(echo $cluster_data | jq --raw-output '.[$i].name')
+    ip_target=$(echo $cluster_data | jq --raw-output ".[$i].IP")
+    new_host_name=$(echo $cluster_data | jq --raw-output ".[$i].name")
 
     printf "\nUpdating the hosts and hostname files on $ip_target\n\n"
 
@@ -37,7 +38,7 @@ do
     j=0
     while [ $j -lt $length ]
     do
-        ip_to_remove=$(echo $cluster_data | jq --raw-output '.[$j].IP') 
+        ip_to_remove=$(echo $cluster_data | jq --raw-output ".[$j].IP") 
 
         # Indicate that work is being done
         printf "."
