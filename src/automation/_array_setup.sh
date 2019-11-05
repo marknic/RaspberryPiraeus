@@ -1,8 +1,14 @@
 
-. _config_file.sh
-
+printf "\n Verifying Package:\n    jq status of "
 # install jq here - it is used to parse the json data
-sudo apt-get install -y jq 
+dpkg-query -W -f='${Status}\n' jq | grep 'ok installed'
+
+printf "\n"
+
+if [ $? -eq 1 ]
+then
+    sudo apt-get install -y jq
+fi
 
 test -f $clusterfile
 
@@ -16,7 +22,7 @@ then
     then
         printf "Cluster data file '_cluster.json' needs to be modified with the target cluster host names and IP addresses.\n"
     else
-        printf "\nCluster data file '_cluster.json' has been modified...proceeding.\n\n"
+        printf "Cluster data file '_cluster.json' has been modified...proceeding.\n\n"
     fi
 else
 
@@ -26,13 +32,9 @@ else
 fi
 
 
-printf "\n\n"
-
 ip_addr_me="$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')"
-printf "My IP Address:$ip_addr_me\n\n"
+printf "\nMy IP Address:$ip_addr_me\n"
 
 
 length=$(cat _cluster.json | jq '. | length')
 printf "Cluster Size: $length nodes.\n"
-
-
