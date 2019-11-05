@@ -16,7 +16,7 @@ then
     then
         printf "Cluster data file '_cluster.json' needs to be modified with the target cluster host names and IP addresses.\n"
     else
-
+        printf "\nCluster data file '_cluster.json' has been modified...proceeding.\n\n"
     fi
 else
 
