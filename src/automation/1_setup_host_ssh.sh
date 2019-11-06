@@ -9,9 +9,7 @@
 . _array_setup.sh
 
 
-printf " Cluster Data: \n"
-echo $cluster_data
-printf "\n"
+
 
 for ((i=0; i<$length; i++));
 do

@@ -27,4 +27,6 @@ printf "\nMy IP Address:$ip_addr_me\n"
 
 
 length=$(cat _cluster.json | jq '. | length')
-printf "Cluster Size: $length nodes.\n"
+printf "Cluster Size: $length nodes.\n\n"
+
+printf " Cluster Data: $cluster_data \n\n"
