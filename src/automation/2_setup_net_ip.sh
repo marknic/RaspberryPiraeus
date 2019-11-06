@@ -25,10 +25,15 @@ do
 
     printf "scp /etc/hosts\n"
 
-    # Copy machine host file to local host file
-    sudo sshpass -p $pword sudo scp "$id@$ip_target:/etc/hosts" $localhostsfile
-
-    printf "done: scp /etc/hosts\n"
+    if [ $ip_target -eq $ip_addr_me ]
+    then
+        sudo cp $FILE_HOSTS $localhostsfile
+        printf "done: cp $FILE_HOSTS\n"
+    else
+        # Copy machine host file to local host file
+        sudo sshpass -p $pword sudo scp "$id@$ip_target:$FILE_HOSTS" $localhostsfile
+        printf "done: scp $FILE_HOSTS\n"
+    fi
 
     sudo sed -i -e "/127.0.1.1/d" $localhostsfile
 
@@ -75,19 +80,37 @@ do
     
     printf "."
 
-    # Replace the machine hosts/hostname files
-    sudo sshpass -p $pword sudo scp $localhostsfile  $id@$ip_target:
-    sudo sshpass -p $pword sudo scp $localhostnamefile  $id@$ip_target:
 
-    printf "."
+    if [ $ip_target -eq $ip_addr_me ]
+    then
+        # Replace the machine hosts/hostname files
+        sudo rm $FILE_HOSTS
+        sudo rm $FILE_HOSTNAME
 
-    sshpass -p $pword ssh $id@$ip_target "sudo rm -f $FILE_HOSTS"
-    sshpass -p $pword ssh $id@$ip_target "sudo mv -f $localhostsfile $FILE_HOSTS"
+        printf "."
 
-    printf "."
+        sudo mv $localhostsfile  $FILE_HOSTS
+        sudo mv $localhostnamefile  $FILE_HOSTNAME
 
-    sshpass -p $pword ssh $id@$ip_target "sudo rm -f $FILE_HOSTNAME"
-    sshpass -p $pword ssh $id@$ip_target "sudo mv -f $localhostnamefile $FILE_HOSTNAME"
+        printf "."
+    else
+        # Replace the machine hosts/hostname files
+        sudo sshpass -p $pword sudo scp $localhostsfile  $id@$ip_target:
+        sudo sshpass -p $pword sudo scp $localhostnamefile  $id@$ip_target:
+
+        printf "."
+
+        sshpass -p $pword ssh $id@$ip_target "sudo rm -f $FILE_HOSTS"
+        sshpass -p $pword ssh $id@$ip_target "sudo mv -f $localhostsfile $FILE_HOSTS"
+
+        printf "."
+
+        sshpass -p $pword ssh $id@$ip_target "sudo rm -f $FILE_HOSTNAME"
+        sshpass -p $pword ssh $id@$ip_target "sudo mv -f $localhostnamefile $FILE_HOSTNAME"
+
+        printf "."
+    fi
+
 
     printf "!\n\n"
     
