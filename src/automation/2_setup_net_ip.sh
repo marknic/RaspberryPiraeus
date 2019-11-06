@@ -23,9 +23,9 @@ do
     sudo rm -f $localhostsfile > /dev/null 2>&1
     sudo rm -f $localhostnamefile > /dev/null 2>&1
 
-    printf "scp /etc/hosts\n"
+    printf "copy /etc/hosts\n"
 
-    if [ $ip_target -eq $ip_addr_me ]
+    if [ $ip_target = $ip_addr_me ]
     then
         sudo cp $FILE_HOSTS $localhostsfile
         printf "done: cp $FILE_HOSTS\n"
@@ -81,7 +81,7 @@ do
     printf "."
 
 
-    if [ $ip_target -eq $ip_addr_me ]
+    if [ $ip_target = $ip_addr_me ]
     then
         # Replace the machine hosts/hostname files
         sudo rm $FILE_HOSTS
