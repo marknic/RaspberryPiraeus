@@ -1,5 +1,7 @@
 #!/bin/bash
  
+. _check_root.sh
+
 . _package_check.sh
 
 . _config_file.sh

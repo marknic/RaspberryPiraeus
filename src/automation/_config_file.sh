@@ -16,7 +16,3 @@ containerd_dpkg="containerd.io"
 docker_ce_cli_dpkg="docker-ce-cli"
 docker_ce_dpkg="docker-ce"
 
-if [ "$EUID" -ne 0 ]
-  then echo "Please run as root --> sudo ./scriptname.sh"
-  exit
-fi
