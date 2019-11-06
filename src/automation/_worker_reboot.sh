@@ -10,13 +10,15 @@ while true; do
 done
 
 
+
 printf "\n\nRebooting workers!\n"
 for ((i=0; i<$length; i++));
 do
-   if [ "${filearray[i*6+2]}" != "$ip_addr_me" ] ; then
-       ip_target="${filearray[i*6+2]}"
-       sshpass -p $pword ssh $id@$ip_target "sudo reboot"
-   fi
+    ip_target=$(echo $cluster_data | jq --raw-output ".[$i].IP")
+
+    if [ "$ip_target" != "$ip_addr_me" ] ; then
+        sshpass -p $pword ssh $id@$ip_target "sudo reboot"
+    fi
 done
 
 printf "\nVerifying Reboot:\n"
@@ -27,7 +29,7 @@ sleep 25
 
 for ((i=0; i<$length; i++));
 do
-    ip_target="${filearray[i*6+2]}"
+    ip_target=$(echo $cluster_data | jq --raw-output ".[$i].IP")
 
     if [ "$ip_target" != "$ip_addr_me" ] ; then
 
