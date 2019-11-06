@@ -12,7 +12,7 @@
 for ((i=0; i<$length; i++));
 do
     # Get the IP to search for
-    ip_target=$(echo $cluster_data | jq --raw-output '.[$i].IP')
+    ip_target=$(echo $cluster_data | jq --raw-output ".[$i].IP")
     
 
     # Download Docker/Containerd/Docker CLI
@@ -66,15 +66,6 @@ do
 
 done
 
-while true; do
-    printf "\n\nThe machines need to be rebooted before the next step.  Reboot now? "
-    read -p "(y/n)?" yn
-    case $yn in
-        [Yy]* ) break;;
-        [Nn]* ) exit;;
-        * ) echo "Please answer (y)es or (n)o.";;
-    esac
-done
 
 . _worker_reboot.sh
 
