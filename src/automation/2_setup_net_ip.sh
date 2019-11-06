@@ -63,12 +63,13 @@ do
         ip_to_add=$(echo $cluster_data | jq --raw-output ".[$j].IP") 
         host_to_add=$(echo $cluster_data | jq --raw-output ".[$j].name")
 
-        if [ $ip_target = $ip_to_add ]
+        if [ $ip_target != $ip_to_add ]
         then
-            # Indicate that work is being done
+
             sudo echo "$ip_to_add  $host_to_add" >> $localhostsfile
 
-            printf "."
+            # Indicate that work is being done
+            printf "-"
         fi
 
         ((j++))
