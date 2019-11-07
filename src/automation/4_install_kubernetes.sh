@@ -11,7 +11,7 @@
 for ((i=0; i<$length; i++));
 do
     # Get the IP to search for
-    ip_target=$(echo $cluster_data | jq --raw-output '.[$i].IP')
+    ip_target=$(echo $cluster_data | jq --raw-output ".[$i].IP")
 
     # Run this code across all machines
     sudo sshpass -p $pword ssh $id@$ip_target sudo dphys-swapfile swapoff
