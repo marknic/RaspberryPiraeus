@@ -15,7 +15,7 @@ do
     ip_target=$(echo $cluster_data | jq --raw-output ".[$i].IP")
     host_target=$(echo $cluster_data | jq --raw-output ".[$i].name")
 
-    printf "Checking $host_target/$ip_target for $containerd_dpkg\n\n"
+    printf "\n\nChecking $host_target/$ip_target for $containerd_dpkg\n\n"
     # Download Docker/Containerd/Docker CLI
     # Install Docker - Version 18.09 (this is the latest validated version as of 9/5/19
 
@@ -25,14 +25,16 @@ do
         # Is the package already installed?
         if dpkg-query -s $containerd_dpkg 2>/dev/null | grep "ok installed"
         then
+            printf ">>> package not found\n\n"
             # No? then does the package file exist locally?            
             if test -f $containerd
             then
+                printf ">>> file not found\n\n"
                 # No? Then download it
                 printf "Downloading from $download_location$containerd"
                 wget $download_location$containerd
             fi
-
+            printf ">>> installing the package\n\n"
             # Install the package
             sudo dpkg -i $containerd
         fi
@@ -40,14 +42,17 @@ do
         # Is the package already installed?
         if dpkg-query -s $docker_ce_cli_dpkg 2>/dev/null | grep "ok installed"
         then
+            printf ">>> remote package not found\n\n"
             # No? then does the package file exist locally?            
             if test -f $docker_ce_cli
             then
+                printf ">>> remote file not found\n\n"
                 # No? Then download it
                 printf "Downloading from $download_location$docker_ce_cli"
                 wget $download_location$docker_ce_cli
             fi
 
+            printf ">>> remote installing the package\n\n"
             # Install the package
             sudo dpkg -i $docker_ce_cli
         fi
