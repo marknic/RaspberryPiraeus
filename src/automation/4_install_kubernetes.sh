@@ -23,7 +23,7 @@ do
 
     sudo sshpass -p $pword ssh $id@$ip_target echo "$(head -n1 /boot/cmdline.txt) cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory" | sudo tee /boot/cmdline.txt
 
-    sudo sshpass -p $pword ssh $id@$ip_target wget -q -O https://packages.cloud.google.com/apt/doc/apt-key.gpg 
+    sudo sshpass -p $pword ssh $id@$ip_target wget -q https://packages.cloud.google.com/apt/doc/apt-key.gpg 
     sudo sshpass -p $pword ssh $id@$ip_target sudo apt-key add apt-key.gpg
 
     sudo sshpass -p $pword ssh $id@$ip_target echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list 
