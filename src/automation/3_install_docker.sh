@@ -15,7 +15,7 @@ do
     ip_target=$(echo $cluster_data | jq --raw-output ".[$i].IP")
     host_target=$(echo $cluster_data | jq --raw-output ".[$i].name")
 
-    printf "Checking $host_target/$ip_target for $containerd_dpkg"
+    printf "Checking $host_target/$ip_target for $containerd_dpkg\n\n"
     # Download Docker/Containerd/Docker CLI
     # Install Docker - Version 18.09 (this is the latest validated version as of 9/5/19
 
@@ -66,6 +66,8 @@ do
             # Install the package
             sudo dpkg -i $docker_ce
         fi
+
+        sudo usermod pi -aG docker
 
     else
         # Remote machine so use ssh
