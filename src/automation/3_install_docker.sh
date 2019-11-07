@@ -88,8 +88,7 @@ do
         if sudo sshpass -p $pword ssh $id@$ip_target dpkg-query -s $docker_ce_cli_dpkg 2>/dev/null | grep "ok installed"
         then
             # No? then does the package file exist locally?
-            sudo sshpass -p $pword ssh $id@$ip_target test -f $docker_ce_cli
-            if [ $? -eq 1 ]
+            if sudo sshpass -p $pword ssh $id@$ip_target test -f $docker_ce_cli
             then
                 # No? Then download it
                 sudo sshpass -p $pword ssh $id@$ip_target wget $download_location$docker_ce_cli
