@@ -33,7 +33,7 @@ do
 
     sudo sshpass -p $pword ssh $id@$ip_target sudo apt-get -qy install kubeadm
 
-    if [ $ip_target -eq $ip_addr_me ]
+    if [ $ip_target = $ip_addr_me ]
     then
         # Command specific to the Master
         sudo sshpass -p $pword ssh $id@$ip_target sudo kubeadm init --ignore-preflight-errors=all --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address=$ip_addr
