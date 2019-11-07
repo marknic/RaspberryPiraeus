@@ -27,11 +27,15 @@ do
         sudo cp /boot/cmdline.txt /boot/cmdline_backup.txt
 
         echo "$(head -n1 /boot/cmdline.txt) cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory" | sudo tee /boot/cmdline.txt
+        
+        printf "\n"
 
         wget -q https://packages.cloud.google.com/apt/doc/apt-key.gpg 
         sudo apt-key add apt-key.gpg
 
         echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list 
+        
+        printf "\n"
 
         sudo apt-get -qy update
 
@@ -50,11 +54,15 @@ do
         sudo sshpass -p $pword ssh $id@$ip_target sudo cp /boot/cmdline.txt /boot/cmdline_backup.txt
 
         sudo sshpass -p $pword ssh $id@$ip_target echo "$(head -n1 /boot/cmdline.txt) cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory" | sudo tee /boot/cmdline.txt
+        
+        printf "\n"
 
         sudo sshpass -p $pword ssh $id@$ip_target wget -q https://packages.cloud.google.com/apt/doc/apt-key.gpg 
         sudo sshpass -p $pword ssh $id@$ip_target sudo apt-key add apt-key.gpg
 
         sudo sshpass -p $pword ssh $id@$ip_target echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list 
+        
+        printf "\n"
 
         sudo sshpass -p $pword ssh $id@$ip_target sudo apt-get -qy update
 
