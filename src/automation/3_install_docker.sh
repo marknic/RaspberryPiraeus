@@ -23,28 +23,31 @@ do
     then
         
         # Is the package already installed?
-        if dpkg-query -s $containerd_dpkg 2>/dev/null | grep "ok installed"
+        if ! dpkg-query -s $containerd_dpkg 2>/dev/null | grep "ok installed"
         then
+            
             printf ">>> package not found\n\n"
             # No? then does the package file exist locally?            
-            if test -f $containerd
+            if ! test -f $containerd
             then
                 printf ">>> file not found\n\n"
                 # No? Then download it
                 printf "Downloading from $download_location$containerd"
                 wget $download_location$containerd
             fi
+
             printf ">>> installing the package\n\n"
             # Install the package
             sudo dpkg -i $containerd
         fi
 
         # Is the package already installed?
-        if dpkg-query -s $docker_ce_cli_dpkg 2>/dev/null | grep "ok installed"
+        if ! dpkg-query -s $docker_ce_cli_dpkg 2>/dev/null | grep "ok installed"
         then
+            
             printf ">>> remote package not found\n\n"
             # No? then does the package file exist locally?            
-            if test -f $docker_ce_cli
+            if ! test -f $docker_ce_cli
             then
                 printf ">>> remote file not found\n\n"
                 # No? Then download it
@@ -58,10 +61,10 @@ do
         fi
 
         # Is the package already installed?
-        if dpkg-query -s $docker_ce_dpkg 2>/dev/null | grep "ok installed"
+        if ! dpkg-query -s $docker_ce_dpkg 2>/dev/null | grep "ok installed"
         then
             # No? then does the package file exist locally?
-            if test -f $docker_ce
+            if ! test -f $docker_ce
             then
                 # No? Then download it
                 printf "Downloading from $download_location$docker_ce"
@@ -78,10 +81,11 @@ do
         # Remote machine so use ssh
 
         # Is the package already installed?
-        if sudo sshpass -p $pword ssh $id@$ip_target dpkg-query -s $containerd_dpkg 2>/dev/null | grep "ok installed"
+        if ! sudo sshpass -p $pword ssh $id@$ip_target dpkg-query -s $containerd_dpkg 2>/dev/null | grep "ok installed"
         then
+            
             # No? then does the package file exist locally?
-            if sudo sshpass -p $pword ssh $id@$ip_target test -f $containerd
+            if ! sudo sshpass -p $pword ssh $id@$ip_target test -f $containerd
             then
                 # No? Then download it
                 printf "Downloading to $"
@@ -92,10 +96,11 @@ do
             sudo sshpass -p $pword ssh $id@$ip_target sudo dpkg -i $containerd
         fi
 
-        if sudo sshpass -p $pword ssh $id@$ip_target dpkg-query -s $docker_ce_cli_dpkg 2>/dev/null | grep "ok installed"
+        if ! sudo sshpass -p $pword ssh $id@$ip_target dpkg-query -s $docker_ce_cli_dpkg 2>/dev/null | grep "ok installed"
         then
+            
             # No? then does the package file exist locally?
-            if sudo sshpass -p $pword ssh $id@$ip_target test -f $docker_ce_cli
+            if ! sudo sshpass -p $pword ssh $id@$ip_target test -f $docker_ce_cli
             then
                 # No? Then download it
                 sudo sshpass -p $pword ssh $id@$ip_target wget $download_location$docker_ce_cli
@@ -105,10 +110,11 @@ do
             sudo sshpass -p $pword ssh $id@$ip_target sudo dpkg -i $docker_ce_cli
         fi
         
-        if sudo sshpass -p $pword ssh $id@$ip_target dpkg-query -s $docker_ce_dpkg 2>/dev/null | grep "ok installed"
+        if ! sudo sshpass -p $pword ssh $id@$ip_target dpkg-query -s $docker_ce_dpkg 2>/dev/null | grep "ok installed"
         then
+
             # No? then does the package file exist locally?
-            if sudo sshpass -p $pword ssh $id@$ip_target test -f $docker_ce
+            if ! sudo sshpass -p $pword ssh $id@$ip_target test -f $docker_ce
             then
                 # No? Then download it
                 sudo sshpass -p $pword ssh $id@$ip_target wget $download_location$docker_ce
@@ -120,7 +126,6 @@ do
         
         # Create group "docker", then add user "pi" to it
         sudo sshpass -p $pword ssh $id@$ip_target sudo usermod pi -aG docker
-
     fi
 
 done
