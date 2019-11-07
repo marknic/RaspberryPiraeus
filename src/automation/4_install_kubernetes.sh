@@ -14,7 +14,7 @@ do
     ip_target=$(echo $cluster_data | jq --raw-output ".[$i].IP")
     host_target=$(echo $cluster_data | jq --raw-output ".[$i].name")
 
-    printf "Configuring $host_target/$ip_target"
+    printf "Configuring $host_target/$ip_target\n\n"
 
     if [ $ip_target = $ip_addr_me ]
     then
@@ -37,7 +37,7 @@ do
 
         sudo apt-get -qy install kubeadm
 
-        sudo kubeadm init --ignore-preflight-errors=all --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address=$ip_addr
+        sudo kubeadm init --ignore-preflight-errors=all --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address=$ip_addr_me
 
     else
 
@@ -58,10 +58,12 @@ do
 
         sudo sshpass -p $pword ssh $id@$ip_target sudo apt-get -qy update
 
+        sudo sshpass -p $pword ssh $id@$ip_target sudo apt-get -qy install kubelet
+        sudo sshpass -p $pword ssh $id@$ip_target sudo apt-get -qy install kubectl
         sudo sshpass -p $pword ssh $id@$ip_target sudo apt-get -qy install kubeadm
 
         # Command specific to the Workers
-        sudo sshpass -p $pword ssh $id@$ip_target sudo apt-mark kubelet kubeadm kubectl docker-ce
+        sudo sshpass -p $pword ssh $id@$ip_target sudo apt-mark hold kubelet kubeadm kubectl docker-ce
     fi
 
 done
