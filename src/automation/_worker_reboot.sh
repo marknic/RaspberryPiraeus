@@ -1,6 +1,6 @@
 
 while true; do
-    printf "The machines need to be rebooted before the next step.  Reboot now "
+    printf "\n\nThe machines need to be rebooted before the next step.  Reboot now "
     read -p "(y/n)?" yn
     case $yn in
         [Yy]* ) break;;
