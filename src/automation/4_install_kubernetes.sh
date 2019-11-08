@@ -8,6 +8,9 @@
 
 . _array_setup.sh
 
+# Create a support file that will be copied to the nodes
+echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | tee kubernetes.list
+
 for ((i=0; i<$length; i++));
 do
     # Get the IP to search for
@@ -34,7 +37,7 @@ do
         wget -q https://packages.cloud.google.com/apt/doc/apt-key.gpg 
         sudo apt-key add apt-key.gpg
 
-        echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list 
+        sudo cp kubernetes.list /etc/apt/sources.list.d/kubernetes.list 
         
         printf "\n"
 
@@ -61,8 +64,12 @@ do
         sudo sshpass -p $pword ssh $piid@$ip_target wget -q https://packages.cloud.google.com/apt/doc/apt-key.gpg 
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-key add apt-key.gpg
 
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list 
+        printf "Copying kubernetes.list to worker machine.\n"
+        sudo sshpass -p $pword sudo scp "kubernetes.list"  $piid@$ip_target:
         
+        sudo sshpass -p $pword ssh $piid@$ip_target "sudo rm -f /etc/apt/sources.list.d/kubernetes.list"
+        sudo sshpass -p $pword ssh $piid@$ip_target "sudo mv -f kubernetes.list /etc/apt/sources.list.d/kubernetes.list"
+
         printf "\n"
 
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -qy update
