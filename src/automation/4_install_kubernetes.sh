@@ -14,6 +14,7 @@ do
     ip_target=$(echo $cluster_data | jq --raw-output ".[$i].IP")
     host_target=$(echo $cluster_data | jq --raw-output ".[$i].name")
 
+    printf "\n\n-----------\n"
     printf "Configuring $host_target/$ip_target\n\n"
 
     if [ $ip_target = $ip_addr_me ]

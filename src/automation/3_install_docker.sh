@@ -26,11 +26,11 @@ do
         if ! dpkg-query -s $containerd_dpkg 2>/dev/null | grep "ok installed"
         then
             
-            printf ">>> package not found\n\n"
+            printf ">>> package not found...installing.\n\n"
             # No? then does the package file exist locally?            
             if ! test -f $containerd
             then
-                printf ">>> file not found\n\n"
+                printf ">>> file not found...downloading.\n\n"
                 # No? Then download it
                 printf "Downloading from $download_location$containerd"
                 wget $download_location$containerd
@@ -45,11 +45,11 @@ do
         if ! dpkg-query -s $docker_ce_cli_dpkg 2>/dev/null | grep "ok installed"
         then
             
-            printf ">>> remote package not found\n\n"
+            printf ">>> remote package not found...installing.\n\n"
             # No? then does the package file exist locally?            
             if ! test -f $docker_ce_cli
             then
-                printf ">>> remote file not found\n\n"
+                printf ">>> remote file not found...downloading.\n\n"
                 # No? Then download it
                 printf "Downloading from $download_location$docker_ce_cli"
                 wget $download_location$docker_ce_cli
