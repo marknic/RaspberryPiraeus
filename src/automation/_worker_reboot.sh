@@ -17,7 +17,7 @@ do
     ip_target=$(echo $cluster_data | jq --raw-output ".[$i].IP")
 
     if [ "$ip_target" != "$ip_addr_me" ] ; then
-        sshpass -p $pword ssh $id@$ip_target "sudo reboot"
+        sshpass -p $pword ssh $piid@$ip_target "sudo reboot"
     fi
 done
 
@@ -37,7 +37,7 @@ do
 
         while [ "$output" != "up" ]
         do
-            output=$(sshpass -p $pword ssh $id@$ip_target uptime | awk '{print $2}')
+            output=$(sshpass -p $pword ssh $piid@$ip_target uptime | awk '{print $2}')
 
             if [ "$output" != "up" ]
             then

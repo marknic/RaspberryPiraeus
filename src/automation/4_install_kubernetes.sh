@@ -47,32 +47,32 @@ do
     else
 
         # Run this code across all machines
-        sudo sshpass -p $pword ssh $id@$ip_target sudo dphys-swapfile swapoff
-        sudo sshpass -p $pword ssh $id@$ip_target sudo dphys-swapfile uninstall
-        sudo sshpass -p $pword ssh $id@$ip_target sudo update-rc.d dphys-swapfile remove
-        sudo sshpass -p $pword ssh $id@$ip_target sudo apt-get -y purge dphys-swapfile
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo dphys-swapfile swapoff
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo dphys-swapfile uninstall
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo update-rc.d dphys-swapfile remove
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y purge dphys-swapfile
 
-        sudo sshpass -p $pword ssh $id@$ip_target sudo cp /boot/cmdline.txt /boot/cmdline_backup.txt
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo cp /boot/cmdline.txt /boot/cmdline_backup.txt
 
-        sudo sshpass -p $pword ssh $id@$ip_target echo "$(head -n1 /boot/cmdline.txt) cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory" | sudo tee /boot/cmdline.txt
+        sudo sshpass -p $pword ssh $piid@$ip_target echo "$(head -n1 /boot/cmdline.txt) cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory" | sudo tee /boot/cmdline.txt
         
         printf "\n"
 
-        sudo sshpass -p $pword ssh $id@$ip_target wget -q https://packages.cloud.google.com/apt/doc/apt-key.gpg 
-        sudo sshpass -p $pword ssh $id@$ip_target sudo apt-key add apt-key.gpg
+        sudo sshpass -p $pword ssh $piid@$ip_target wget -q https://packages.cloud.google.com/apt/doc/apt-key.gpg 
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-key add apt-key.gpg
 
-        sudo sshpass -p $pword ssh $id@$ip_target sudo echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list 
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | tee /etc/apt/sources.list.d/kubernetes.list 
         
         printf "\n"
 
-        sudo sshpass -p $pword ssh $id@$ip_target sudo apt-get -qy update
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -qy update
 
-        sudo sshpass -p $pword ssh $id@$ip_target sudo apt-get -qy install kubelet
-        sudo sshpass -p $pword ssh $id@$ip_target sudo apt-get -qy install kubectl
-        sudo sshpass -p $pword ssh $id@$ip_target sudo apt-get -qy install kubeadm
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -qy install kubelet
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -qy install kubectl
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -qy install kubeadm
 
         # Command specific to the Workers
-        sudo sshpass -p $pword ssh $id@$ip_target sudo apt-mark hold kubelet kubeadm kubectl docker-ce
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-mark hold kubelet kubeadm kubectl docker-ce
     fi
 
 done

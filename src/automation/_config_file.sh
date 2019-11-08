@@ -1,6 +1,6 @@
 FILE_HOSTNAME="/etc/hostname"
 FILE_HOSTS="/etc/hosts"
-id="pi"
+piid="pi"
 pword="raspberry"
 localhostsfile="hosts.local"
 localhostnamefile="hostname.local"

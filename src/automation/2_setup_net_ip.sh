@@ -31,7 +31,7 @@ do
         printf "done: cp $FILE_HOSTS\n"
     else
         # Copy machine host file to local host file
-        sudo sshpass -p $pword sudo scp "$id@$ip_target:$FILE_HOSTS" $localhostsfile
+        sudo sshpass -p $pword sudo scp "$piid@$ip_target:$FILE_HOSTS" $localhostsfile
         printf "done: scp $FILE_HOSTS\n"
     fi
 
@@ -96,18 +96,18 @@ do
         printf "."
     else
         # Replace the machine hosts/hostname files
-        sudo sshpass -p $pword sudo scp $localhostsfile  $id@$ip_target:
-        sudo sshpass -p $pword sudo scp $localhostnamefile  $id@$ip_target:
+        sudo sshpass -p $pword sudo scp $localhostsfile  $piid@$ip_target:
+        sudo sshpass -p $pword sudo scp $localhostnamefile  $piid@$ip_target:
 
         printf "."
 
-        sshpass -p $pword ssh $id@$ip_target "sudo rm -f $FILE_HOSTS"
-        sshpass -p $pword ssh $id@$ip_target "sudo mv -f $localhostsfile $FILE_HOSTS"
+        sshpass -p $pword ssh $piid@$ip_target "sudo rm -f $FILE_HOSTS"
+        sshpass -p $pword ssh $piid@$ip_target "sudo mv -f $localhostsfile $FILE_HOSTS"
 
         printf "."
 
-        sshpass -p $pword ssh $id@$ip_target "sudo rm -f $FILE_HOSTNAME"
-        sshpass -p $pword ssh $id@$ip_target "sudo mv -f $localhostnamefile $FILE_HOSTNAME"
+        sshpass -p $pword ssh $piid@$ip_target "sudo rm -f $FILE_HOSTNAME"
+        sshpass -p $pword ssh $piid@$ip_target "sudo mv -f $localhostnamefile $FILE_HOSTNAME"
 
         printf "."
     fi
