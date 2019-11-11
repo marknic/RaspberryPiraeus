@@ -12,10 +12,6 @@
 # output of kubeadm command will be used on workers
 joincmd=$(sudo kubeadm token create --print-join-command)
 
-mkdir -p $HOME/.kube
-sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-sudo chown $(id -u):$(id -g) $HOME/.kube/config
-
 # Load Flannel for networking - Note: Change this command if you don't want to use Flannel
 printf "\nInstalling Flannel\n\n"
 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/a70459be0084506e4ec919aa1c114638878db11b/Documentation/kube-flannel.yml

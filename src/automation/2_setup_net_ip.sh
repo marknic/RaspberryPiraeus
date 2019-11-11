@@ -96,7 +96,14 @@ do
         printf "."
     else
         # Replace the machine hosts/hostname files
-        sudo sshpass -p $pword sudo scp $localhostsfile  $piid@$ip_target:
+        {
+  "exec-opts": ["native.cgroupdriver=systemd"],
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "100m"
+  },
+  "storage-driver": "overlay2"
+}
         sudo sshpass -p $pword sudo scp $localhostnamefile  $piid@$ip_target:
 
         printf "."

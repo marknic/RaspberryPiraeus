@@ -36,6 +36,13 @@ sudo apt-get -qy install kubelet kubeadm kubectl
 
 sudo kubeadm init --ignore-preflight-errors=all --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address=$ip_addr_me
 
+sudo sshpass -p $pword sudo scp $daemonjsonfile  $piid@$ip_target:
+
+sshpass -p $pword ssh $piid@$ip_target "sudo mv -f $daemonjsonfile $daemondestfilename"
+
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 for ((i=0; i<$length; i++));
 do
@@ -78,6 +85,8 @@ do
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -qy install kubeadm
 
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-mark hold kubelet kubeadm kubectl docker-ce
+
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo $joincmd
     fi
 
 done

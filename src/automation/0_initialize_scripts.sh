@@ -11,5 +11,5 @@ chmod +x 5_finalize_nodes.sh
 # Set up an alias making it easier to get to the script folder
 if ! cat ~/.bashrc | grep 'alias rp'
 then
-    sudo echo "alias rp='cd RaspberryPiraeus/src/automation/'" >> ~/.bashrc
+    sudo echo "alias rp='cd ~/RaspberryPiraeus/src/automation/'" >> ~/.bashrc
 fi

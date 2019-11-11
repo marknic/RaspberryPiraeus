@@ -5,6 +5,8 @@ pword="raspberry"
 localhostsfile="hosts.local"
 localhostnamefile="hostname.local"
 clusterfile="_cluster.json"
+daemonjsonfile="_daemon.json"
+daemondestfilename="/etc/docker/daemon.json"
 
 download_location="https://download.docker.com/linux/debian/dists/buster/pool/stable/armhf/"
 
