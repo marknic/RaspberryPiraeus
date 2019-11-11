@@ -34,6 +34,9 @@ sudo apt-get -qy update
 
 sudo apt-get -qy install kubelet kubeadm kubectl
 
+# Do some cleanup
+sudo apt -qy autoremove
+
 sudo kubeadm init --ignore-preflight-errors=all --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address=$ip_addr_me
 
 sudo sshpass -p $pword sudo scp $daemonjsonfile  $piid@$ip_target:
@@ -83,6 +86,8 @@ do
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -qy install kubelet
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -qy install kubectl
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -qy install kubeadm
+
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt -qy autoremove
 
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-mark hold kubelet kubeadm kubectl docker-ce
 
