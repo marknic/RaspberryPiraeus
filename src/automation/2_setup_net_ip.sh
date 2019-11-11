@@ -32,7 +32,10 @@ do
     else
         # Copy machine host file to local host file
         sudo sshpass -p $pword sudo scp "$piid@$ip_target:$FILE_HOSTS" $localhostsfile
-        printf "done: scp $FILE_HOSTS\n"
+    fi
+
+    if ! test -f $localhostsfile; then
+        cp -f _hosts.data $localhostsfile
     fi
 
     sudo sed -i -e "/127.0.1.1/d" $localhostsfile
@@ -85,26 +88,20 @@ do
     if [ $ip_target = $ip_addr_me ]
     then
         # Replace the machine hosts/hostname files
-        sudo rm $FILE_HOSTS
-        sudo rm $FILE_HOSTNAME
+        sudo rm -f $FILE_HOSTS
+        sudo rm -f $FILE_HOSTNAME
 
         printf "."
 
-        sudo mv $localhostsfile  $FILE_HOSTS
-        sudo mv $localhostnamefile  $FILE_HOSTNAME
+        sudo mv -f $localhostsfile  $FILE_HOSTS
+        sudo mv -f $localhostnamefile  $FILE_HOSTNAME
 
         printf "."
     else
         # Replace the machine hosts/hostname files
-        {
-  "exec-opts": ["native.cgroupdriver=systemd"],
-  "log-driver": "json-file",
-  "log-opts": {
-    "max-size": "100m"
-  },
-  "storage-driver": "overlay2"
-}
+        
         sudo sshpass -p $pword sudo scp $localhostnamefile  $piid@$ip_target:
+        sudo sshpass -p $pword sudo scp $localhostsfile  $piid@$ip_target:
 
         printf "."
 
