@@ -37,11 +37,11 @@ sudo apt-get -qy install kubelet kubeadm kubectl
 # Do some cleanup
 sudo apt -qy autoremove
 
-sudo kubeadm init --ignore-preflight-errors=all --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address=$ip_addr_me
-
 sudo sshpass -p $pword sudo scp $daemonjsonfile  $piid@$ip_target:
 
 sshpass -p $pword ssh $piid@$ip_target "sudo mv -f $daemonjsonfile $daemondestfilename"
+
+sudo kubeadm init --ignore-preflight-errors=all --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address=$ip_addr_me
 
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
