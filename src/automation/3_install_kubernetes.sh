@@ -88,11 +88,14 @@ do
         
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt -qy autoremove
 
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-mark hold kubelet kubeadm kubectl docker-ce
+        printf "\nRunning apt-get update.\n"
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -qy update
 
-        # Label the worker nodes
-        printf "\nLabeling worker: $host_target.\n"
-        sudo kubectl label node $host_target node-role.kubernetes.io/worker=worker
+        printf "\nInstalling kubeadm.\n"
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -qy install kubeadm
+        
+
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-mark hold kubelet kubeadm kubectl docker-ce
     fi
 
 done
