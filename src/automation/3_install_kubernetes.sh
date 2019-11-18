@@ -89,6 +89,9 @@ do
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-mark hold kubelet kubeadm kubectl docker-ce
 
         sudo sshpass -p $pword ssh $piid@$ip_target sudo $joincmd
+
+        # Label the worker nodes
+        sudo kubectl label node $host_target node-role.kubernetes.io/worker=worker
     fi
 
 done
