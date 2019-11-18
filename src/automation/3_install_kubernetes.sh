@@ -67,8 +67,7 @@ do
         
         printf "\n"
 
-        sudo sshpass -p $pword ssh $piid@$ip_target wget -q https://packages.cloud.google.com/apt/doc/apt-key.gpg 
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-key add apt-key.gpg
+        sudo sshpass -p $pword ssh $piid@$ip_target curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add - 
 
         printf "Copying kubernetes.list to worker machine.\n"
         sudo sshpass -p $pword sudo scp "kubernetes.list"  $piid@$ip_target:
@@ -80,15 +79,13 @@ do
 
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -qy update
 
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -qy install kubelet
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -qy install kubectl
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -qy install kubeadm
-
+        # sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -qy install kubelet
+        # sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -qy install kubectl
+        
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt -qy autoremove
 
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-mark hold kubelet kubeadm kubectl docker-ce
-
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo $joincmd
 
         # Label the worker nodes
         sudo kubectl label node $host_target node-role.kubernetes.io/worker=worker
