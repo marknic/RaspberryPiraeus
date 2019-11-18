@@ -56,16 +56,18 @@ do
     if [ $ip_target != $ip_addr_me ]
     then
         # Run this code across all machines
+        printf "Removing swapfile.\n"
         sudo sshpass -p $pword ssh $piid@$ip_target sudo dphys-swapfile swapoff
         sudo sshpass -p $pword ssh $piid@$ip_target sudo dphys-swapfile uninstall
         sudo sshpass -p $pword ssh $piid@$ip_target sudo update-rc.d dphys-swapfile remove
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y purge dphys-swapfile
 
+        printf "Backing up /boot/cmdline.txt\n"
         sudo sshpass -p $pword ssh $piid@$ip_target sudo cp /boot/cmdline.txt /boot/cmdline_backup.txt
 
         sudo sshpass -p $pword ssh $piid@$ip_target echo "$(head -n1 /boot/cmdline.txt) cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory" | sudo tee /boot/cmdline.txt
         
-        printf "\n"
+        printf "\n\nDownloading apt-key.gpg\n"
 
         sudo sshpass -p $pword ssh $piid@$ip_target wget https://packages.cloud.google.com/apt/doc/apt-key.gpg 
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-key add apt-key.gpg
@@ -76,10 +78,10 @@ do
         sudo sshpass -p $pword ssh $piid@$ip_target "sudo rm -f /etc/apt/sources.list.d/kubernetes.list"
         sudo sshpass -p $pword ssh $piid@$ip_target "sudo mv -f kubernetes.list /etc/apt/sources.list.d/kubernetes.list"
 
-        printf "\n"
-
+        printf "\nRunning apt-get update.\n"
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -qy update
 
+        printf "\nInstalling kubeadm.\n"
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -qy install kubeadm
         # sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -qy install kubelet
         # sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -qy install kubectl
@@ -89,6 +91,7 @@ do
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-mark hold kubelet kubeadm kubectl docker-ce
 
         # Label the worker nodes
+        printf "\nLabeling worker: $host_target.\n"
         sudo kubectl label node $host_target node-role.kubernetes.io/worker=worker
     fi
 
