@@ -28,6 +28,15 @@ do
 
     if [ $ip_target != $ip_addr_me ]
     then
+        printf "\nRunning apt-get update.\n"
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -qy update
+
+        printf "\nInstalling kubeadm.\n"
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -qy install kubeadm
+        # sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -qy install kubelet
+        # sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -qy install kubectl
+        
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt -qy autoremove
 
         printf "\n\n-----------\n"
         printf "Joining $host_target/$ip_target to the Kubernetes Cluster\n\n"
