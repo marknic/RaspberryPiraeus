@@ -17,8 +17,8 @@ joincmd=$(sudo kubeadm token create --print-join-command)
 
 # Load Flannel for networking - Note: Change this command if you don't want to use Flannel
 printf "\nInstalling Flannel\n\n"
-kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/a70459be0084506e4ec919aa1c114638878db11b/Documentation/kube-flannel.yml
-
+#kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/a70459be0084506e4ec919aa1c114638878db11b/Documentation/kube-flannel.yml
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 
 for ((i=0; i<$length; i++));
 do
@@ -37,6 +37,8 @@ do
         # sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -qy install kubectl
         
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt -qy autoremove
+
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-mark hold kubelet kubeadm kubectl docker-ce
 
         printf "\n\n-----------\n"
         printf "Joining $host_target/$ip_target to the Kubernetes Cluster\n\n"
