@@ -43,6 +43,10 @@ sshpass -p $pword ssh $piid@$ip_target "sudo mv -f $daemonjsonfile $daemondestfi
 
 sudo kubeadm init --ignore-preflight-errors=all --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address=$ip_addr_me
 
+sudo -u mkdir -p $HOME/.kube
+sudo -u sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo -u sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
 
 for ((i=0; i<$length; i++));
 do
