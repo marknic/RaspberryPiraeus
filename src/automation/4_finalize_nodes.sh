@@ -15,7 +15,13 @@ joincmd=$(sudo kubeadm token create --print-join-command)
 # Load Flannel for networking - Note: Change this command if you don't want to use Flannel
 printf "\nInstalling Flannel\n\n"
 #kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/a70459be0084506e4ec919aa1c114638878db11b/Documentation/kube-flannel.yml
-kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+
+sudo kubectl taint nodes $(hostname) node-role.kubernetes.io/master=true:NoSchedule
+sudo kubectl label node $(hostname) kubernetes.io/role=master node-role.kubernetes.io/master=
+
+sudo iptables -P FORWARD ACCEPT
+sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
 
 for ((i=0; i<$length; i++));
 do
@@ -25,16 +31,6 @@ do
 
     if [ $ip_target != $ip_addr_me ]
     then
-        printf "\nRunning apt-get update.\n"
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -qy update
-
-        printf "\nInstalling kubeadm.\n"
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -qy install kubeadm
-        # sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -qy install kubelet
-        # sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -qy install kubectl
-        
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt -qy autoremove
-
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-mark hold kubelet kubeadm kubectl docker-ce
 
         printf "\n\n-----------\n"

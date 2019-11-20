@@ -17,9 +17,11 @@ sudo apt-get install -y software-properties-common
 curl -fsSL https://get.docker.com -o get-docker.sh
 sh get-docker.sh
 
-sudo usermod pi -aG docker
+printf "\nCreating 'docker' group.\n"
+sudo usermod $piid -aG docker
 
-
+printf "\nCopying $daemonjsonfile to $daemondestfilename\n"
+sudo cp -f $daemonjsonfile $daemondestfilename
 
 for ((i=0; i<$length; i++));
 do
@@ -40,10 +42,13 @@ do
         sudo sshpass -p $pword ssh $piid@$ip_target curl -fsSL https://get.docker.com -o get-docker.sh
         sudo sshpass -p $pword ssh $piid@$ip_target sh get-docker.sh
 
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo usermod pi -aG docker
+        printf "\nCreating 'docker' group on $host_target.\n"
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo usermod $piid -aG docker
+
+        printf "\nCopying $daemonjsonfile to $daemondestfilename on $host_target\n"
+        sudo sshpass -p $pword sudo scp $daemonjsonfile  $piid@$ip_target:
+        sudo sshpass -p $pword sudo cp -f $daemonjsonfile $daemondestfilename
     fi
 done
 
-
 . _worker_reboot.sh
-
