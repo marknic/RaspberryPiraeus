@@ -25,6 +25,7 @@ sudo rm -f /etc/apt/sources.list.d/kubernetes.list
 sudo cp -f kubernetes.list /etc/apt/sources.list.d/kubernetes.list 
 sudo apt-key adv --fetch-keys https://packages.cloud.google.com/apt/doc/apt-key.gpg
 
+sudo apt -y update && sudo apt -y upgrade 
 
 printf "\nAdding cgroup settings to /boot/cmdline.txt file\n"
 sudo cp /boot/cmdline.txt /boot/cmdline_backup.txt
@@ -79,7 +80,7 @@ do
         sudo sshpass -p $pword ssh $piid@$ip_target "sudo mv -f kubernetes.list /etc/apt/sources.list.d/kubernetes.list"
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-key adv --fetch-keys https://packages.cloud.google.com/apt/doc/apt-key.gpg
 
-
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt -y update && sudo apt -y upgrade 
 
         printf "Backing up /boot/cmdline.txt\n"
         sudo sshpass -p $pword ssh $piid@$ip_target sudo cp /boot/cmdline.txt /boot/cmdline_backup.txt
