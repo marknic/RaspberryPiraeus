@@ -1,6 +1,11 @@
 
 test -f $clusterfile
 
+RED='\033[0;31m'
+LGRN='\033[1;32m'
+YLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
 if [ $? -eq 0 ]
 then
     cluster_data=$(<$clusterfile)
@@ -9,14 +14,14 @@ then
 
     if [ "$nodename" == "\"NODENAME\"" ]
     then
-        printf ">> Cluster data file '_cluster.json' needs to be modified with the target cluster host names and IP addresses.\n\n"
+        printf "${RED}>> Cluster data file '_cluster.json' needs to be modified with the target cluster host names and IP addresses.${NC}\n\n"
         exit 1
     else
-        printf "Cluster data file '_cluster.json' has been modified...proceeding.\n\n"
+        printf "${LGRN}Cluster data file '_cluster.json' has been modified...proceeding.${NC}\n\n"
     fi
 else
 
-    printf ">> Could not find the file '$clusterfile'.  It is required input data for execution of this script.\n"
+    printf "${RED}>> Could not find the file '$clusterfile'.  It is required input data for execution of this script.${NC}\n"
 
     exit 1
 fi
@@ -29,4 +34,4 @@ printf "\nMy IP Address:$ip_addr_me\n"
 length=$(cat _cluster.json | jq '. | length')
 printf "Cluster Size: $length nodes.\n\n"
 
-printf " Cluster Data: $cluster_data \n\n"
+printf " ${YLOW}Cluster Data: $cluster_data ${NC}\n\n"
