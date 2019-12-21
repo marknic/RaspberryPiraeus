@@ -22,10 +22,10 @@ printf "\nAdding link to Kubernetes repository and adding the APT key\n"
 echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | tee kubernetes.list
 # Add Kubernetes repository to the RPi package lists
 sudo rm -f /etc/apt/sources.list.d/kubernetes.list
-sudo cp -f kubernetes.list /etc/apt/sources.list.d/kubernetes.list 
+sudo cp -f kubernetes.list /etc/apt/sources.list.d/kubernetes.list
 sudo apt-key adv --fetch-keys https://packages.cloud.google.com/apt/doc/apt-key.gpg
 
-sudo apt -y update && sudo apt -y upgrade 
+sudo apt -y update && sudo apt -y upgrade
 
 printf "\nAdding cgroup settings to /boot/cmdline.txt file\n"
 sudo cp /boot/cmdline.txt /boot/cmdline_backup.txt
@@ -80,12 +80,12 @@ do
         sudo sshpass -p $pword ssh $piid@$ip_target "sudo mv -f kubernetes.list /etc/apt/sources.list.d/kubernetes.list"
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-key adv --fetch-keys https://packages.cloud.google.com/apt/doc/apt-key.gpg
 
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt -y update && sudo apt -y upgrade 
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt -y update && sudo apt -y upgrade
 
         printf "Backing up /boot/cmdline.txt\n"
         sudo sshpass -p $pword ssh $piid@$ip_target sudo cp /boot/cmdline.txt /boot/cmdline_backup.txt
 
-        sudo sshpass -p $pword ssh $piid@$ip_target echo "$(head -n1 /boot/cmdline.txt) cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory" | sudo tee /boot/cmdline.txt  
+        sudo sshpass -p $pword ssh $piid@$ip_target echo "$(head -n1 /boot/cmdline.txt) cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory" | sudo tee /boot/cmdline.txt
 
 
 
@@ -107,6 +107,7 @@ do
         printf "\nKubernetes config/startup...\n"
         sudo sshpass -p $pword ssh $piid@$ip_target sudo mkdir -p /home/$piid/.kube
         sudo sshpass -p $pword ssh $piid@$ip_target sudo cp -i /etc/kubernetes/admin.conf /home/$piid/.kube/config
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo echo "sudo chown: $(id -u):$(id -g) /home/$piid/.kube/config"
         sudo sshpass -p $pword ssh $piid@$ip_target sudo chown $(id -u):$(id -g) /home/$piid/.kube/config
 
     fi
