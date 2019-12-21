@@ -48,10 +48,11 @@ printf "\nkubeadm init...\n"
 sudo kubeadm init --ignore-preflight-errors=all --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address=$ip_addr_me
 
 printf "\nKubernetes config/startup...\n"
-sudo mkdir -p /home/$piid/.kube
-sudo cp -i /etc/kubernetes/admin.conf /home/$piid/.kube/config
-sudo chown $(id -u):$(id -g) /home/$piid/.kube/config
-
+sudo -S -u $piid -i mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+sudo -S -u $piid -i echo "export KUBECONFIG=${HOME}/.kube/config" >> ~/.bashrc
+sudo -S -u $piid -i source ~/.bashrc
 
 for ((i=0; i<$length; i++));
 do
@@ -104,12 +105,12 @@ do
         printf "\nkubeadm init...\n"
         sudo sshpass -p $pword ssh $piid@$ip_target sudo kubeadm init --ignore-preflight-errors=all --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address=$ip_addr_me
 
-        printf "\nKubernetes config/startup...\n"
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo mkdir -p /home/$piid/.kube
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo cp -i /etc/kubernetes/admin.conf /home/$piid/.kube/config
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo echo "sudo chown: $(id -u):$(id -g) /home/$piid/.kube/config"
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo chown $(id -u):$(id -g) /home/$piid/.kube/config
-
+        #printf "\nKubernetes config/startup...\n"
+        #sudo sshpass -p $pword ssh $piid@$ip_target mkdir -p /home/$piid/.kube
+        #sudo sshpass -p $pword ssh $piid@$ip_target sudo cp -i /etc/kubernetes/admin.conf /home/$piid/.kube/config
+        #sudo sshpass -p $pword ssh $piid@$ip_target sudo chown $(id -u):$(id -g) /home/$piid/.kube/config
+        #sudo sshpass -p $pword ssh $piid@$ip_target echo "export KUBECONFIG=${HOME}/.kube/config" >> ~/.bashrc
+        #sudo sshpass -p $pword ssh $piid@$ip_target source ~/.bashrc
     fi
 
 done
