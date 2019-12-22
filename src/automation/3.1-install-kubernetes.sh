@@ -51,7 +51,6 @@ sudo -S -u $piid -i source ~/.bashrc
 
 sudo apt-mark hold kubelet kubeadm kubectl
 
-
 printf "\nkubeadm init...\n"
 sudo kubeadm init --ignore-preflight-errors=all --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address=$ip_addr_me
 

@@ -18,7 +18,8 @@ do
     host_target=$(echo $cluster_data | jq --raw-output ".[$i].name")
 
     if [ $ip_addr_me != $ip_target ] ; then
-        printf "Attempting to synch ssh data for host: $host_target/$ip_target\n\n"
+        printf "${LBLU}Attempting to synch ssh data for host: $host_target/$ip_target${NC}\n\n"
+
         # Attempt a copy to force the key transfer/password challenge
         sudo scp $piid@$ip_target:/etc/hosts tmp.tmp
         rm -f tmp.tmp > /dev/null 2>&1
@@ -27,8 +28,7 @@ done
 
 printf "Done setting up SSH.\n\n"
 
-printf "Setting up host names and IP's\n\n"
-
+printf "${LBLU}>> Setting up host names and IP's.${NC}\n\n"
 # Clean up the hosts file before attempting to update with current information
 
 for ((i=0; i<$length; i++));
@@ -37,13 +37,12 @@ do
     ip_target=$(echo $cluster_data | jq --raw-output ".[$i].IP")
     new_host_name=$(echo $cluster_data | jq --raw-output ".[$i].name")
 
-    printf "\nUpdating the hosts and hostname files on $ip_target\n\n"
-
+    printf "\n${LBLU}>> Updating the hosts and hostname files on $ip_target.${NC}\n\n"
     # Delete the local host files (quietly - they may not exist)
     sudo rm -f $localhostsfile > /dev/null 2>&1
     sudo rm -f $localhostnamefile > /dev/null 2>&1
 
-    printf "copy /etc/hosts\n"
+    printf "${LBLU}>> copy /etc/hosts${NC}\n"
 
     if [ $ip_target = $ip_addr_me ]
     then
@@ -68,7 +67,7 @@ do
     j=0
     while [ $j -lt $length ]
     do
-        ip_to_remove=$(echo $cluster_data | jq --raw-output ".[$j].IP") 
+        ip_to_remove=$(echo $cluster_data | jq --raw-output ".[$j].IP")
 
         # Indicate that work is being done
         printf "."
@@ -83,7 +82,7 @@ do
     j=0
     while [ $j -lt $length ]
     do
-        ip_to_add=$(echo $cluster_data | jq --raw-output ".[$j].IP") 
+        ip_to_add=$(echo $cluster_data | jq --raw-output ".[$j].IP")
         host_to_add=$(echo $cluster_data | jq --raw-output ".[$j].name")
 
         if [ $ip_target != $ip_to_add ]
@@ -101,7 +100,7 @@ do
 
     # Remove the redundant entry in the hosts file
     sudo sed -i -e "/$ip_target/d" $localhostsfile
-    
+
     printf "."
 
 
@@ -119,7 +118,7 @@ do
         printf "."
     else
         # Replace the machine hosts/hostname files
-        
+
         sudo sshpass -p $pword sudo scp $localhostnamefile  $piid@$ip_target:
         sudo sshpass -p $pword sudo scp $localhostsfile  $piid@$ip_target:
 
@@ -138,7 +137,7 @@ do
 
 
     printf "!\n\n"
-    
+
 done
 
 . _worker_reboot.sh

@@ -4,6 +4,7 @@ test -f $clusterfile
 RED='\033[0;31m'
 LGRN='\033[1;32m'
 YLOW='\033[1;33m'
+LBLU='\033[1;34m'
 NC='\033[0m' # No Color
 
 if [ $? -eq 0 ]
