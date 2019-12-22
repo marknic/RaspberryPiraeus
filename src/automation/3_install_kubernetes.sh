@@ -16,10 +16,17 @@ sudo dphys-swapfile uninstall
 sudo update-rc.d dphys-swapfile remove
 sudo apt-get -y purge dphys-swapfile
 
+sudo apt update
+sudo apt upgrade -y
+
 
 printf "\nAdding link to Kubernetes repository and adding the APT key\n"
+sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+
 # Create a support file that will be copied to the nodes
 echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | tee kubernetes.list
+
+
 # Add Kubernetes repository to the RPi package lists
 sudo rm -f /etc/apt/sources.list.d/kubernetes.list
 sudo cp -f kubernetes.list /etc/apt/sources.list.d/kubernetes.list
@@ -66,7 +73,7 @@ do
     if [ $ip_target != $ip_addr_me ]
     then
         # Run this code across all machines
-        printf "Removing swapfile.\n"
+        printf "Removing swapfile on $host_target.\n"
         sudo sshpass -p $pword ssh $piid@$ip_target sudo dphys-swapfile swapoff
         sudo sshpass -p $pword ssh $piid@$ip_target sudo dphys-swapfile uninstall
         sudo sshpass -p $pword ssh $piid@$ip_target sudo update-rc.d dphys-swapfile remove
