@@ -18,7 +18,7 @@ printf "\nInstalling Flannel\n\n"
 
 # One of these...
 #sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
-curl -sSL https://raw.githubusercontent.com/coreos/flannel/v0.9.1/Documentation/kube-flannel.yml | sed "s/amd64/arm64/g" | kubectl create -f -
+sudo curl -sSL https://raw.githubusercontent.com/coreos/flannel/v0.9.1/Documentation/kube-flannel.yml | sed "s/amd64/arm64/g" | kubectl create -f -
 
 #sudo kubectl taint nodes $(hostname) node-role.kubernetes.io/master=true:NoSchedule
 #sudo kubectl label node $(hostname) kubernetes.io/role=master node-role.kubernetes.io/master=
