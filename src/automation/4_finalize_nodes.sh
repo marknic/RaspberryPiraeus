@@ -1,10 +1,10 @@
 #!/bin/bash
 
+. _config_file.sh
+
 . _check_root.sh
 
 . _package_check.sh
-
-. _config_file.sh
 
 . _array_setup.sh
 
@@ -13,7 +13,7 @@
 joincmd=$(sudo kubeadm token create --print-join-command)
 
 # Load Flannel for networking - Note: Change this command if you don't want to use Flannel
-printf "\nInstalling Flannel\n\n"
+print_instruction "\nInstalling Flannel\n\n"
 #kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/a70459be0084506e4ec919aa1c114638878db11b/Documentation/kube-flannel.yml
 
 # One of these...
@@ -48,13 +48,13 @@ do
     then
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-mark hold kubelet kubeadm kubectl docker-ce
 
-        printf "\n\n-----------\n"
-        printf "Joining $host_target/$ip_target to the Kubernetes Cluster\n\n"
+        print_instruction "\n\n-----------\n"
+        print_instruction "Joining $host_target/$ip_target to the Kubernetes Cluster\n\n"
 
         sudo sshpass -p $pword ssh $piid@$ip_target sudo $joincmd
 
         # Label the worker nodes
-        printf "\nLabeling worker: $host_target.\n"
+        print_instruction "\nLabeling worker: $host_target.\n"
         sudo kubectl label node $host_target node-role.kubernetes.io/worker=worker
     fi
 

@@ -1,8 +1,10 @@
 #!/bin/bash
 
+. _config_file.sh
+
 . _check_root.sh
 
-printf "${LBLU}>> Setting the scripts to 'Executable'.${NC}\n"
+print_instruction "Setting the scripts to 'Executable'."
 
 chmod +x 1_setup_host_ssh.sh
 chmod +x 2_install_docker.sh

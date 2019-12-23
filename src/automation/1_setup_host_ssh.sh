@@ -1,10 +1,10 @@
 #!/bin/bash
 
+. _config_file.sh
+
 . _check_root.sh
 
 . _package_check.sh
-
-. _config_file.sh
 
 . _array_setup.sh
 
@@ -18,7 +18,7 @@ do
     host_target=$(echo $cluster_data | jq --raw-output ".[$i].name")
 
     if [ $ip_addr_me != $ip_target ] ; then
-        printf "${LBLU}Attempting to synch ssh data for host: $host_target/$ip_target${NC}\n\n"
+        print_instruction "Attempting to synch ssh data for host: $host_target/$ip_target$\n"
 
         # Attempt a copy to force the key transfer/password challenge
         sudo scp $piid@$ip_target:/etc/hosts tmp.tmp
@@ -28,7 +28,7 @@ done
 
 printf "Done setting up SSH.\n\n"
 
-printf "${LBLU}>> Setting up host names and IP's.${NC}\n\n"
+printf "${CYAN}>> Setting up host names and IP's.${NC}\n\n"
 # Clean up the hosts file before attempting to update with current information
 
 for ((i=0; i<$length; i++));
@@ -37,12 +37,12 @@ do
     ip_target=$(echo $cluster_data | jq --raw-output ".[$i].IP")
     new_host_name=$(echo $cluster_data | jq --raw-output ".[$i].name")
 
-    printf "\n${LBLU}>> Updating the hosts and hostname files on $ip_target.${NC}\n\n"
+    printf "\n${CYAN}>> Updating the hosts and hostname files on $ip_target.${NC}\n\n"
     # Delete the local host files (quietly - they may not exist)
     sudo rm -f $localhostsfile > /dev/null 2>&1
     sudo rm -f $localhostnamefile > /dev/null 2>&1
 
-    printf "${LBLU}>> copy /etc/hosts${NC}\n"
+    printf "${CYAN}>> copy /etc/hosts${NC}\n"
 
     if [ $ip_target = $ip_addr_me ]
     then

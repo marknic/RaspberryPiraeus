@@ -1,10 +1,10 @@
 #!/bin/bash
 
+. _config_file.sh
+
 . _check_root.sh
 
 . _package_check.sh
-
-. _config_file.sh
 
 . _array_setup.sh
 
