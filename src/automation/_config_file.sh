@@ -10,7 +10,7 @@ daemondestfilename="/etc/docker/daemon.json"
 
 download_location="https://download.docker.com/linux/debian/dists/buster/pool/stable/armhf/"
 
-RED='\033[0;31m'
+RED='\033[1;31m'
 GRN='\033[0;32m'
 
 CYAN='\033[1;36m' # This is actually "light cyan"
@@ -22,6 +22,6 @@ NC='\033[0m' # No Color
 
 print_instruction () {
 
-    printf "${CYAN}>> $@ ${NC}\n"
+    printf "${CYAN}${@}${NC}\n"
 }
 

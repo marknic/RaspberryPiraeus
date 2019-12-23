@@ -9,6 +9,15 @@
 . _array_setup.sh
 
 
+print_instruction " _____ __   _ _______ _______ _______"
+print_instruction "   |   | \  | |______    |    |_____| |      |"
+print_instruction " __|__ |  \_| ______|    |    |     | |_____ |_____\n"
+
+print_instruction " _     _ _     _ ______  _______  ______ __   _ _______ _______ _______ _______"
+print_instruction " |____/  |     | |_____] |______ |_____/ | \  | |______    |    |______ |______"
+print_instruction " |    \_ |_____| |_____] |______ |    \_ |  \_| |______    |    |______ ______|\n"
+
+
 # Run this code on the master
 print_instruction "\nRemoving the swap file on $ip_addr_me\n"
 sudo dphys-swapfile swapoff
@@ -28,7 +37,7 @@ sudo apt-get update && sudo apt-get install -y apt-transport-https curl
 
 
 print_instruction "\nAdding link to Kubernetes repository and adding the APT key\n"
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 
 # Create a support file that will be copied to the nodes
 echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | tee kubernetes.list
@@ -76,6 +85,7 @@ do
 
         print_instruction "Copying kubernetes.list to worker machine.\n"
         sudo sshpass -p $pword sudo scp "kubernetes.list"  $piid@$ip_target:
+
         print_instruction "\nAdding link to Kubernetes repository and adding the APT key\n"
         # Add Kubernetes repository to the RPi package lists
         sudo sshpass -p $pword ssh $piid@$ip_target "sudo rm -f /etc/apt/sources.list.d/kubernetes.list"
@@ -103,8 +113,8 @@ do
 
 
 
-        print_instruction "\nkubeadm init...\n"
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo kubeadm init --ignore-preflight-errors=all --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address=$ip_addr_me
+        # print_instruction "\nkubeadm init...\n"
+        # sudo sshpass -p $pword ssh $piid@$ip_target sudo kubeadm init --ignore-preflight-errors=all --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address=$ip_addr_me
 
 
 

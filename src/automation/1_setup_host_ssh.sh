@@ -8,7 +8,13 @@
 
 . _array_setup.sh
 
+print_instruction " _______ _______ _______ _     _  _____       _     _  _____  _______ _______"
+print_instruction " |______ |______    |    |     | |_____]      |_____| |     | |______    |"
+print_instruction " ______| |______    |    |_____| |            |     | |_____| ______|    |\n"
 
+print_instruction " _______ _______ _     _"
+print_instruction " |______ |______ |_____|"
+print_instruction " ______| ______| |     |\n"
 
 # Step through all remote nodes and create an SSH key transfer
 for ((i=0; i<$length; i++));
