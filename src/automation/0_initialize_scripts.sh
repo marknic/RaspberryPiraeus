@@ -1,5 +1,10 @@
 #!/bin/bash
 
+. _config_file.sh
+
+. _check_root.sh
+
+
 print_instruction " _____ __   _ _____ _______ _____ _______        _____ ______ _______"
 print_instruction "   |   | \  |   |      |      |   |_____| |        |    ____/ |______"
 print_instruction " __|__ |  \_| __|__    |    __|__ |     | |_____ __|__ /_____ |______\n"
@@ -7,11 +12,6 @@ print_instruction " __|__ |  \_| __|__    |    __|__ |     | |_____ __|__ /_____
 print_instruction " _______ _______  ______ _____  _____  _______ _______"
 print_instruction " |______ |       |_____/   |   |_____]    |    |______"
 print_instruction " ______| |_____  |    \_ __|__ |          |    ______|\n"
-
-
-. _config_file.sh
-
-. _check_root.sh
 
 print_instruction "Setting the scripts to 'Executable'."
 
