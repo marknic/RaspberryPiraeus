@@ -2,13 +2,6 @@
 
 . _config_file.sh
 
-. _check_root.sh
-
-. _package_check.sh
-
-. _array_setup.sh
-
-
 print_instruction " _____ __   _ _______ _______ _______"
 print_instruction "   |   | \  | |______    |    |_____| |      |"
 print_instruction " __|__ |  \_| ______|    |    |     | |_____ |_____\n"
@@ -17,6 +10,11 @@ print_instruction " _     _ _     _ ______  _______  ______ __   _ _______ _____
 print_instruction " |____/  |     | |_____] |______ |_____/ | \  | |______    |    |______ |______"
 print_instruction " |    \_ |_____| |_____] |______ |    \_ |  \_| |______    |    |______ ______|\n"
 
+. _check_root.sh
+
+. _package_check.sh
+
+. _array_setup.sh
 
 # Run this code on the master
 print_instruction "\nRemoving the swap file on $ip_addr_me\n"

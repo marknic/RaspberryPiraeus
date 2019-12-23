@@ -2,12 +2,6 @@
 
 . _config_file.sh
 
-. _check_root.sh
-
-. _package_check.sh
-
-. _array_setup.sh
-
 print_instruction " _____ __   _ _______ _______ _______"
 print_instruction "   |   | \  | |______    |    |_____| |      |"
 print_instruction " __|__ |  \_| ______|    |    |     | |_____ |_____\n"
@@ -15,6 +9,12 @@ print_instruction " __|__ |  \_| ______|    |    |     | |_____ |_____\n"
 print_instruction " ______   _____  _______ _     _ _______  ______"
 print_instruction " |     \ |     | |       |____/  |______ |_____/"
 print_instruction " |_____/ |_____| |_____  |    \_ |______ |    \_\n"
+
+. _check_root.sh
+
+. _package_check.sh
+
+. _array_setup.sh
 
 sudo apt-get update
 sudo apt-get -y dist-upgrade

@@ -2,13 +2,6 @@
 
 . _config_file.sh
 
-. _check_root.sh
-
-. _package_check.sh
-
-. _array_setup.sh
-
-
 print_instruction " _______ _____ __   _ _______        _____ ______ _______"
 print_instruction " |______   |   | \  | |_____| |        |    ____/ |______"
 print_instruction " |       __|__ |  \_| |     | |_____ __|__ /_____ |______\n"
@@ -16,6 +9,12 @@ print_instruction " |       __|__ |  \_| |     | |_____ __|__ /_____ |______\n"
 print_instruction " __   _  _____  ______  _______ _______"
 print_instruction " | \  | |     | |     \ |______ |______"
 print_instruction " |  \_| |_____| |_____/ |______ ______|\n"
+
+. _check_root.sh
+
+. _package_check.sh
+
+. _array_setup.sh
 
 # output of kubeadm command will be used on workers
 joincmd=$(sudo kubeadm token create --print-join-command)
