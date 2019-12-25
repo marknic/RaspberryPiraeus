@@ -1,10 +1,12 @@
 #!/bin/bash
 
-. _config_file.sh
+piid=`cat piid.txt`
+
+printf "\npiid: ${piid}\n"
+printf "\nHOME: ${HOME}\n"
 
 # This script needs to run as the user "$piid" not root/sudo
 #  so it was put into a file and is run with the command: "sudo -u $piid ./_kube_config.sh"
-print_instruction "\nKubernetes config/startup..."
 
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config

@@ -24,21 +24,16 @@ sudo update-rc.d dphys-swapfile remove
 sudo apt-get -y purge dphys-swapfile
 
 print_instruction "\nUpdate and Upgrade"
-sudo apt update
-sudo apt -y upgrade
-
-print_instruction "\nModify IPTables"
-sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
-sudo update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
-sudo update-alternatives --set ebtables /usr/sbin/ebtables-legacy
-
-print_instruction "\nUpdate and install"
 sudo apt-get update
-sudo apt-get install -y apt-transport-https curl
-
+sudo apt-get -y upgrade
 
 print_instruction "\nAdding link to Kubernetes repository and adding the APT key\n"
 sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+
+print_instruction "\nModify iptables"
+sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
+sudo update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
+sudo update-alternatives --set ebtables /usr/sbin/ebtables-legacy
 
 # Create a support file that will be copied to the nodes
 echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | tee kubernetes.list
@@ -51,7 +46,8 @@ sudo apt-get update
 sudo apt-get install -y kubelet kubeadm kubectl
 
 print_instruction "Configuring Kubernetes with local user"
-sudo -u $piid ./_kube_config.sh
+echo $piid > piid.txt
+sudo -u $piid sh ./_kube_config.sh
 
 sudo apt-mark hold kubelet kubeadm kubectl
 
@@ -87,23 +83,33 @@ do
 
         print_instruction "\nUpdate and install"
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get update
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get install -y apt-transport-https curl
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y upgrade
 
         print_instruction "\nAdding link to Kubernetes repository and adding the APT key\n"
         sudo sshpass -p $pword ssh $piid@$ip_target sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 
+        print_instruction "\nModify iptables"
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo update-alternatives --set ebtables /usr/sbin/ebtables-legacy
+
         # Create a support file that will be copied to the nodes
+        print_instruction "Create a support file that will be copied to the nodes"
         sudo sshpass -p $pword ssh $piid@$ip_target echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | tee kubernetes.list
 
         # Add Kubernetes repository to the RPi package lists
+        print_instruction "Insert kubernetes.list file."
         sudo sshpass -p $pword ssh $piid@$ip_target sudo rm -f /etc/apt/sources.list.d/kubernetes.list
         sudo sshpass -p $pword ssh $piid@$ip_target sudo cp -f kubernetes.list /etc/apt/sources.list.d/kubernetes.list
 
+        print_instruction "Install kubectl."
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get update
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get install -y kubelet kubeadm kubectl
 
         print_instruction "Configuring Kubernetes with local user"
+        sudo sshpass -p $pword ssh $piid@$ip_target echo $piid > piid.txt
         sudo sshpass -p $pword ssh $piid@$ip_target sudo -u $piid ./_kube_config.sh
+        sudo sshpass -p $pword ssh $piid@$ip_target rm piid.txt
 
         print_instruction "Locking: kubelet kubeadm kubectl"
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-mark hold kubelet kubeadm kubectl
