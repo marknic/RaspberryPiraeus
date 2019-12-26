@@ -102,7 +102,7 @@ do
         sudo sshpass -p $pword ssh $piid@$ip_target sudo rm -f /etc/apt/sources.list.d/kubernetes.list
         sudo sshpass -p $pword ssh $piid@$ip_target sudo cp -f kubernetes.list /etc/apt/sources.list.d/kubernetes.list
 
-        print_instruction "Install kubectl."
+        print_instruction "Install kubelet kubeadm."
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get update
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get install -y kubelet kubeadm #kubectl
 
@@ -111,7 +111,7 @@ do
         # sudo sshpass -p $pword ssh $piid@$ip_target sudo -u $piid ./_kube_config.sh
         # sudo sshpass -p $pword ssh $piid@$ip_target rm piid.txt
 
-        print_instruction "Locking: kubelet kubeadm kubectl"
+        print_instruction "Locking: kubelet kubeadm" #kubectl"
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-mark hold kubelet kubeadm #kubectl
 
         # Do some cleanup
