@@ -45,14 +45,14 @@ sudo cp -f kubernetes.list /etc/apt/sources.list.d/kubernetes.list
 sudo apt-get update
 sudo apt-get install -y kubelet kubeadm kubectl
 
+print_instruction "\nkubeadm init...\n"
+sudo kubeadm init --ignore-preflight-errors=all --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address=$ip_addr_me
+
 print_instruction "Configuring Kubernetes with local user"
 echo $piid > piid.txt
 sudo -u $piid sh ./_kube_config.sh
 
 sudo apt-mark hold kubelet kubeadm kubectl
-
-print_instruction "\nkubeadm init...\n"
-sudo kubeadm init --ignore-preflight-errors=all --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address=$ip_addr_me
 
  # Do some cleanup
 print_instruction "\nDo some cleanup: autoremove\n"
@@ -104,15 +104,15 @@ do
 
         print_instruction "Install kubectl."
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get update
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get install -y kubelet kubeadm kubectl
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get install -y kubelet kubeadm #kubectl
 
-        print_instruction "Configuring Kubernetes with local user"
-        sudo sshpass -p $pword ssh $piid@$ip_target echo $piid > piid.txt
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo -u $piid ./_kube_config.sh
-        sudo sshpass -p $pword ssh $piid@$ip_target rm piid.txt
+        # print_instruction "Configuring Kubernetes with local user"
+        # sudo sshpass -p $pword ssh $piid@$ip_target echo $piid > piid.txt
+        # sudo sshpass -p $pword ssh $piid@$ip_target sudo -u $piid ./_kube_config.sh
+        # sudo sshpass -p $pword ssh $piid@$ip_target rm piid.txt
 
         print_instruction "Locking: kubelet kubeadm kubectl"
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-mark hold kubelet kubeadm kubectl
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-mark hold kubelet kubeadm #kubectl
 
         # Do some cleanup
         print_instruction "\nDo some cleanup: autoremove\n"

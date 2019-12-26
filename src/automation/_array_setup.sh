@@ -10,6 +10,7 @@ then
     if [ "$nodename" == "\"NODENAME\"" ]
     then
         printf "${RED}>> Cluster data file '_cluster.json' needs to be modified with the target cluster host names and IP addresses.${NC}\n\n"
+        printf "${RED}>> Example: 'nano _cluster.json'${NC}\n\n"
         exit 1
     else
         printf "${LGRN}Cluster data file '_cluster.json' has been modified...proceeding.${NC}\n\n"
