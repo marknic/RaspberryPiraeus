@@ -72,7 +72,7 @@ sudo apt-mark hold kubelet kubeadm kubectl
 
  # Do some cleanup
 print_instruction "\nDo some cleanup: autoremove\n"
-sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y autoremove
+sudo apt-get -y autoremove
 
 
 read -p "Press [Enter] key to setup workers..."
@@ -121,6 +121,24 @@ do
 
         print_instruction "Install kubelet kubeadm."
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt update
+
+        print_instruction "\nUpdate & install kubelet kubeadm kubectl"
+        x=1
+        while [ $x -le 5 ]
+        do
+            print_instruction "Updating..."
+            count=sudo sshpass -p $pword ssh $piid@$ip_target sudo apt update | grep -c "404  Not Found"
+
+            if (( count >= 0 ))
+            then
+                x=10
+            fi
+
+            x=$(( $x + 1 ))
+
+        done
+
+
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt install -y kubelet kubeadm
 
         # # print_instruction "Configuring Kubernetes with local user"
