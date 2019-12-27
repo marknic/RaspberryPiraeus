@@ -42,10 +42,11 @@ echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | tee kubernetes.lis
 print_instruction "\nAdd Kubernetes repository to the RPi package lists"
 sudo rm -f /etc/apt/sources.list.d/kubernetes.list
 sudo cp -f kubernetes.list /etc/apt/sources.list.d/kubernetes.list
+sudo echo 'Acquire::https::packages.cloud.google.com::Verify-Peer "false";' > /etc/apt/apt.conf
 
 print_instruction "\nUpdate & install kubelet kubeadm kubectl"
-sudo apt-get update
-sudo apt-get install -y kubelet kubeadm kubectl
+sudo apt update
+sudo apt install -y kubelet kubeadm kubectl
 
 print_instruction "\nkubeadm init...\n"
 sudo kubeadm init --ignore-preflight-errors=all --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address=$ip_addr_me
@@ -95,19 +96,18 @@ do
         sudo sshpass -p $pword ssh $piid@$ip_target sudo update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
         sudo sshpass -p $pword ssh $piid@$ip_target sudo update-alternatives --set ebtables /usr/sbin/ebtables-legacy
 
-        # Create a support file that will be copied to the nodes
-        print_instruction "Create a support file that will be copied to the nodes"
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee kubernetes.list
+        print_instruction "\nCreate a support file that will be copied to the nodes"
+        #sudo sshpass -p $pword ssh $piid@$ip_target sudo echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee kubernetes.list
         sudo sshpass -p $pword scp kubernetes.list $piid@$ip_target:
 
-        # Add Kubernetes repository to the RPi package lists
-        print_instruction "Insert kubernetes.list file."
+        print_instruction "\nAdd Kubernetes repository to the RPi package lists"
         sudo sshpass -p $pword ssh $piid@$ip_target sudo rm -f /etc/apt/sources.list.d/kubernetes.list
         sudo sshpass -p $pword ssh $piid@$ip_target sudo cp -f kubernetes.list /etc/apt/sources.list.d/kubernetes.list
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo echo 'Acquire::https::packages.cloud.google.com::Verify-Peer "false";' > /etc/apt/apt.conf
 
         print_instruction "Install kubelet kubeadm."
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get update
-        # sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get install -y kubelet kubeadm #kubectl
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt update
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt install -y kubelet kubeadm
 
         # # print_instruction "Configuring Kubernetes with local user"
         # # sudo sshpass -p $pword ssh $piid@$ip_target echo $piid > piid.txt
@@ -128,7 +128,8 @@ do
         # print_instruction "\nAdding link to Kubernetes repository and adding the APT key."
         # # Add Kubernetes repository to the RPi package lists
         # sudo sshpass -p $pword ssh $piid@$ip_target sudo rm -f /etc/apt/sources.list.d/kubernetes.list
-        # sudo sshpass -p $pword ssh $piid@$ip_target sudo mv -f kubernetes.list /etc/apt/sources.list.d/kubernetes.list
+        # sudo sshpass -p $pword ssh $piid@$ip_target sudo cp -f kubernetes.list /etc/apt/sources.list.d/kubernetes.list
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo echo 'Acquire::https::packages.cloud.google.com::Verify-Peer "false";' > /etc/apt/apt.conf
         # sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-key adv --fetch-keys https://packages.cloud.google.com/apt/doc/apt-key.gpg
 
         # print_instruction "\nUpdate and Upgrade"
