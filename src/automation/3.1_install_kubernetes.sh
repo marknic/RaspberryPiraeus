@@ -35,13 +35,15 @@ sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
 sudo update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
 sudo update-alternatives --set ebtables /usr/sbin/ebtables-legacy
 
+print_instruction "\nCreating support file for k8s: kubernetes.list"
 # Create a support file that will be copied to the nodes
 echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | tee kubernetes.list
 
-# Add Kubernetes repository to the RPi package lists
+print_instruction "\nAdd Kubernetes repository to the RPi package lists"
 sudo rm -f /etc/apt/sources.list.d/kubernetes.list
 sudo cp -f kubernetes.list /etc/apt/sources.list.d/kubernetes.list
 
+print_instruction "\nUpdate & install kubelet kubeadm kubectl"
 sudo apt-get update
 sudo apt-get install -y kubelet kubeadm kubectl
 
@@ -56,7 +58,7 @@ sudo apt-mark hold kubelet kubeadm kubectl
 
  # Do some cleanup
 print_instruction "\nDo some cleanup: autoremove\n"
-sudo sshpass -p $pword ssh $piid@$ip_target sudo apt -y autoremove
+sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y autoremove
 
 
 
@@ -95,7 +97,8 @@ do
 
         # Create a support file that will be copied to the nodes
         print_instruction "Create a support file that will be copied to the nodes"
-        sudo sshpass -p $pword ssh $piid@$ip_target echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | tee kubernetes.list
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee kubernetes.list
+        sudo sshpass -p $pword scp kubernetes.list $piid@$ip_target:
 
         # Add Kubernetes repository to the RPi package lists
         print_instruction "Insert kubernetes.list file."
@@ -116,7 +119,7 @@ do
 
         # Do some cleanup
         print_instruction "\nDo some cleanup: autoremove\n"
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt -y autoremove
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y autoremove
 
 
         # print_instruction "\nCopying kubernetes.list to worker machine."
