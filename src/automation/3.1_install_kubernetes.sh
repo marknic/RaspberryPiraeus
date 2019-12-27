@@ -24,8 +24,8 @@ sudo update-rc.d dphys-swapfile remove
 sudo apt-get -y purge dphys-swapfile
 
 print_instruction "\nUpdate and Upgrade"
-sudo apt-get update
-sudo apt-get -y upgrade
+sudo apt update
+sudo apt -y upgrade
 
 print_instruction "\nAdding link to Kubernetes repository and adding the APT key\n"
 sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
@@ -45,7 +45,20 @@ sudo cp -f kubernetes.list /etc/apt/sources.list.d/kubernetes.list
 sudo echo 'Acquire::https::packages.cloud.google.com::Verify-Peer "false";' > /etc/apt/apt.conf
 
 print_instruction "\nUpdate & install kubelet kubeadm kubectl"
-sudo apt update
+x=1
+while [ $x -le 5 ]
+do
+    print_instruction "Updating..."
+    count=sudo apt update | grep -c "404  Not Found"
+
+    if (( count >= 0 ))
+    then
+        x=10
+    fi
+
+    x=$(( $x + 1 ))
+
+done
 sudo apt install -y kubelet kubeadm kubectl
 
 print_instruction "\nkubeadm init...\n"
@@ -62,6 +75,7 @@ print_instruction "\nDo some cleanup: autoremove\n"
 sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y autoremove
 
 
+read -p "Press [Enter] key to setup workers..."
 
 
 for ((i=0; i<$length; i++));
