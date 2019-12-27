@@ -125,8 +125,10 @@ do
         sudo sshpass -p $pword ssh $piid@$ip_target sudo cp -f apt.conf /etc/apt/
 
         print_instruction "Install kubelet kubeadm."
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt update
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt install -y kubelet kubeadm
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get update
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get install -y kubelet kubeadm
+        # sudo sshpass -p $pword ssh $piid@$ip_target sudo apt update
+        # sudo sshpass -p $pword ssh $piid@$ip_target sudo apt install -y kubelet kubeadm
 
         # # print_instruction "Configuring Kubernetes with local user"
         # # sudo sshpass -p $pword ssh $piid@$ip_target echo $piid > piid.txt
