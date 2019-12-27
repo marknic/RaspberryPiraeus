@@ -105,7 +105,8 @@ do
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y upgrade
 
         print_instruction "\nAdding link to Kubernetes repository and adding the APT key\n"
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo wget https://packages.cloud.google.com/apt/doc/apt-key.gpg
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-key add apt-key.gpg
 
         print_instruction "\nModify iptables"
         sudo sshpass -p $pword ssh $piid@$ip_target sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
