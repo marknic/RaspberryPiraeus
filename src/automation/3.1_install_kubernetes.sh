@@ -70,14 +70,11 @@ print_instruction "Configuring Kubernetes with local user"
 echo $piid > piid.txt
 sudo -u $piid sh ./_kube_config.sh
 
-sudo apt-mark hold kubelet kubeadm kubectl
+#sudo apt-mark hold kubelet kubeadm kubectl
 
  # Do some cleanup
 print_instruction "\nDo some cleanup: autoremove\n"
 sudo apt-get -y autoremove
-
-
-read -p "Press [Enter] key to setup workers..."
 
 
 for ((i=0; i<$length; i++));
@@ -121,13 +118,14 @@ do
         sudo sshpass -p $pword ssh $piid@$ip_target sudo rm -f /etc/apt/sources.list.d/kubernetes.list
         sudo sshpass -p $pword ssh $piid@$ip_target sudo cp -f kubernetes.list /etc/apt/sources.list.d/kubernetes.list
 
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo rm -f /etc/apt/apt.conf
-        sudo sshpass -p $pword scp apt.conf $piid@$ip_target:
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo cp -f apt.conf /etc/apt/
-
         print_instruction "Install kubelet kubeadm."
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get update
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get install -y kubelet kubeadm
+
+        # sudo sshpass -p $pword ssh $piid@$ip_target sudo rm -f /etc/apt/apt.conf
+        # sudo sshpass -p $pword scp apt.conf $piid@$ip_target:
+        # sudo sshpass -p $pword ssh $piid@$ip_target sudo cp -f apt.conf /etc/apt/
+
         # sudo sshpass -p $pword ssh $piid@$ip_target sudo apt update
         # sudo sshpass -p $pword ssh $piid@$ip_target sudo apt install -y kubelet kubeadm
 
