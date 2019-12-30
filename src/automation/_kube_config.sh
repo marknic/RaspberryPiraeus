@@ -11,5 +11,11 @@ printf "\nHOME: ${HOME}\n"
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
-sudo -S -u $piid -i echo "export KUBECONFIG=${HOME}/.kube/config" >> ~/.bashrc
-sudo -S -u $piid -i source ~/.bashrc
+
+if grep -cq "KUBECONFIG" ~/.bashrc
+then
+    sudo -S -u $piid -i echo "export KUBECONFIG=${HOME}/.kube/config" >> ~/.bashrc
+    sudo -S -u $piid -i source ~/.bashrc
+fi
+
+

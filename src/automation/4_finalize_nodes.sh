@@ -27,23 +27,6 @@ print_instruction "\nInstalling Flannel\n\n"
 #sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 sudo curl -sSL https://raw.githubusercontent.com/coreos/flannel/v0.9.1/Documentation/kube-flannel.yml | sed "s/amd64/arm64/g" | kubectl create -f -
 
-#sudo kubectl taint nodes $(hostname) node-role.kubernetes.io/master=true:NoSchedule
-#sudo kubectl label node $(hostname) kubernetes.io/role=master node-role.kubernetes.io/master=
-
-#sudo iptables -P FORWARD ACCEPT
-#sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
-
-
-# Delete network interface(s) that match 'master cni0'
-#ip link show 2>/dev/null | grep 'master cni0' | while read ignore iface ignore; do
-#    iface=${iface%%@*}
-#    [ -z "$iface" ] || ip link delete $iface
-#done
-#ip link delete cni0
-#ip link delete flannel.1
-#rm -rf /var/lib/cni/
-#iptables-save | grep -v KUBE- | grep -v CNI- | iptables-restore
-
 
 for ((i=0; i<$length; i++));
 do
@@ -53,8 +36,6 @@ do
 
     if [ $ip_target != $ip_addr_me ]
     then
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-mark hold kubelet kubeadm kubectl docker-ce
-
         print_instruction "\n\n-----------\n"
         print_instruction "Joining $host_target/$ip_target to the Kubernetes Cluster\n\n"
 
