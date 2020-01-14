@@ -10,106 +10,51 @@ print_instruction " _     _ _     _ ______  _______  ______ __   _ _______ _____
 print_instruction " |____/  |     | |_____] |______ |_____/ | \  | |______    |    |______ |______"
 print_instruction " |    \_ |_____| |_____] |______ |    \_ |  \_| |______    |    |______ ______|\n"
 
+
 . _check_root.sh
 
 . _package_check.sh
 
 . _array_setup.sh
 
-doMaster=0
+print_instruction "\nUpdate & install kubelet kubeadm kubectl"
 
-while true; do
-    printf "\n\nDo you want to install Kubernetes on the master node?"
-    read -p "(y/n)?" yn
-    case $yn in
-        [Yy]* )
-            break
-            ;;
-        [Nn]* )
-            doMaster=1
-            break
-            ;;
-        * ) echo "Please answer (y)es or (n)o.";;
-    esac
+x=1
+
+while [ $x -le 5 ]
+do
+    print_instruction "Updating..."
+    count=sudo apt update | grep -c "404  Not Found"
+
+    if (( count >= 0 ))
+    then
+        x=10
+    fi
+
+    x=$(( $x + 1 ))
+
 done
+sudo apt install -y kubelet kubeadm kubectl
 
-if [ doMaster ]
-then
+print_instruction "\nkubeadm init...\n"
+sudo kubeadm init --ignore-preflight-errors=all --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address=$ip_addr_me
 
-    if [ $(swapon --show | grep -c "NAME") -gt 0 ]
-    then
-        # Run this code on the master
-        print_instruction "\nRemoving the swap file on $ip_addr_me\n"
-        sudo dphys-swapfile swapoff
-        sudo dphys-swapfile uninstall
-        sudo update-rc.d dphys-swapfile remove
-        sudo apt-get -y purge dphys-swapfile
-    fi
+print_instruction "Configuring Kubernetes with local user"
+echo $piid > piid.txt
+sudo -u $piid sh ./_kube_config.sh
 
-    if [ $(swapon --show | grep -c "NAME") -gt 0 ]
-    then
-        print_instruction "\nDiabling the swap file did not work...stopping."
-        exit 2
-    fi
+#sudo apt-mark hold kubelet kubeadm kubectl
 
-    print_instruction "\nUpdate and Upgrade"
-    sudo apt update
-    sudo apt -y upgrade
+# Do some cleanup
+print_instruction "\nDo some cleanup: autoremove\n"
+sudo apt-get -y autoremove
 
-    print_instruction "\nAdding link to Kubernetes repository and adding the APT key\n"
-    sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-
-    print_instruction "\nModify iptables"
-    sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
-    sudo update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
-    sudo update-alternatives --set ebtables /usr/sbin/ebtables-legacy
-
-    print_instruction "\nCreating support file for k8s: kubernetes.list"
-    # Create a support file that will be copied to the nodes
-    echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | tee kubernetes.list
-
-    print_instruction "\nAdd Kubernetes repository to the RPi package lists"
-    sudo rm -f /etc/apt/sources.list.d/kubernetes.list
-    sudo cp -f kubernetes.list /etc/apt/sources.list.d/kubernetes.list
-    sudo echo 'Acquire::https::packages.cloud.google.com::Verify-Peer "false";' > apt.conf
-    sudo rm -f /etc/apt/apt.conf
-    sudo cp -f apt.conf /etc/apt/
-
-    print_instruction "\nUpdate & install kubelet kubeadm kubectl"
-    x=1
-    while [ $x -le 5 ]
-    do
-        print_instruction "Updating..."
-        count=sudo apt update | grep -c "404  Not Found"
-
-        if (( count >= 0 ))
-        then
-            x=10
-        fi
-
-        x=$(( $x + 1 ))
-
-    done
-    sudo apt install -y kubelet kubeadm kubectl
-
-    print_instruction "\nkubeadm init...\n"
-    sudo kubeadm init --ignore-preflight-errors=all --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address=$ip_addr_me
-
-    print_instruction "Configuring Kubernetes with local user"
-    echo $piid > piid.txt
-    sudo -u $piid sh ./_kube_config.sh
-
-    #sudo apt-mark hold kubelet kubeadm kubectl
-
-    # Do some cleanup
-    print_instruction "\nDo some cleanup: autoremove\n"
-    sudo apt-get -y autoremove
-
-    print_instruction "\n Done installing on the master node. \n"
-fi
+print_instruction "\n Done installing on the master node. \n"
 
 
-read -p "Press [Enter] key to setup worker nodes..."
+
+read -rsn1 -p "Press any key to setup worker nodes..." keypressed; echo "";
+
 
 for ((i=0; i<$length; i++));
 do
@@ -174,5 +119,3 @@ do
 done
 
 . _worker_reboot.sh
-
-
