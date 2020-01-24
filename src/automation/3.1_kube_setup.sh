@@ -113,7 +113,8 @@ do
         sudo sshpass -p $pword ssh $piid@$ip_target sudo cp -f kubernetes.list /etc/apt/sources.list.d/kubernetes.list
 
         print_instruction "\nSetup apt.conf for install of k8s."
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo echo 'Acquire::https::packages.cloud.google.com::Verify-Peer "false";' > apt.conf
+        sudo sshpass -p $pword scp apt.conf $piid@$ip_target:
+        #sudo sshpass -p $pword ssh $piid@$ip_target sudo echo 'Acquire::https::packages.cloud.google.com::Verify-Peer "false";' > apt.conf
         sudo sshpass -p $pword ssh $piid@$ip_target sudo rm -f /etc/apt/apt.conf
         sudo sshpass -p $pword ssh $piid@$ip_target sudo cp -f apt.conf /etc/apt/
     fi
