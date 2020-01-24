@@ -54,6 +54,8 @@ echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | tee kubernetes.lis
 print_instruction "\nAdd Kubernetes repository to the RPi package lists"
 sudo rm -f /etc/apt/sources.list.d/kubernetes.list
 sudo cp -f kubernetes.list /etc/apt/sources.list.d/kubernetes.list
+
+print_instruction "\nSetup apt.conf for install of k8s."
 sudo echo 'Acquire::https::packages.cloud.google.com::Verify-Peer "false";' > apt.conf
 sudo rm -f /etc/apt/apt.conf
 sudo cp -f apt.conf /etc/apt/
@@ -110,6 +112,7 @@ do
         sudo sshpass -p $pword ssh $piid@$ip_target sudo rm -f /etc/apt/sources.list.d/kubernetes.list
         sudo sshpass -p $pword ssh $piid@$ip_target sudo cp -f kubernetes.list /etc/apt/sources.list.d/kubernetes.list
 
+        print_instruction "\nSetup apt.conf for install of k8s."
         sudo sshpass -p $pword ssh $piid@$ip_target sudo echo 'Acquire::https::packages.cloud.google.com::Verify-Peer "false";' > apt.conf
         sudo sshpass -p $pword ssh $piid@$ip_target sudo rm -f /etc/apt/apt.conf
         sudo sshpass -p $pword ssh $piid@$ip_target sudo cp -f apt.conf /etc/apt/
@@ -118,7 +121,5 @@ do
 done
 
 
-
 . _worker_reboot.sh
-
 

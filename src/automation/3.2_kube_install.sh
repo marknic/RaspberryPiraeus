@@ -52,7 +52,6 @@ sudo apt-get -y autoremove
 print_instruction "\n Done installing on the master node. \n"
 
 
-
 read -rsn1 -p "Press any key to setup worker nodes..." keypressed; echo "";
 
 
@@ -70,21 +69,7 @@ do
     then
 
         # Run this code across all machines
-        if [ $(swapon --show | grep -c "NAME") -gt 0 ]
-        then
-            print_instruction "\nRemoving swapfile on $host_target."
-            sudo sshpass -p $pword ssh $piid@$ip_target sudo dphys-swapfile swapoff
-            sudo sshpass -p $pword ssh $piid@$ip_target sudo dphys-swapfile uninstall
-            sudo sshpass -p $pword ssh $piid@$ip_target sudo update-rc.d dphys-swapfile remove
-            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y purge dphys-swapfile
-        fi
-
-        if [ $(swapon --show | grep -c "NAME") -gt 0 ]
-        then
-            print_instruction "\nDiabling the swap file did not work...stopping."
-            exit 2
-        fi
-
+        
         print_instruction "\nUpdate and install"
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get update
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y upgrade
