@@ -23,17 +23,23 @@ x=1
 
 while [ $x -le 5 ]
 do
-    print_instruction "Updating..."
+    print_instruction "Updating the master node..."
     count=sudo apt update | grep -c "404  Not Found"
 
     if (( count >= 0 ))
     then
         x=10
+        print_instruction "Update complete!"
+    else
+        print_instruction "Counting..."
+        x=$(( $x + 1 ))
     fi
-
-    x=$(( $x + 1 ))
-
 done
+
+print_instruction "\nUpgrading...\n"
+sudo apt-get -y upgrade
+
+print_instruction "\nInstalling kubelet kubeadm kubectl...\n"
 sudo apt install -y kubelet kubeadm kubectl
 
 print_instruction "\nkubeadm init...\n"
@@ -67,10 +73,9 @@ do
 
     if [ $ip_target != $ip_addr_me ]
     then
-
         # Run this code across all machines
-        
-        print_instruction "\nUpdate and install"
+
+        print_instruction "\nUpdate and upgrade"
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get update
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y upgrade
 
