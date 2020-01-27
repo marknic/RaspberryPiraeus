@@ -19,28 +19,14 @@ print_instruction " |    \_ |_____| |_____] |______ |    \_ |  \_| |______    | 
 
 print_instruction "\nUpdate & install kubelet kubeadm kubectl"
 
-x=1
-
-while [ $x -le 5 ]
-do
-    print_instruction "Updating the master node..."
-    count=sudo apt update | grep -c "404  Not Found"
-
-    if (( count >= 0 ))
-    then
-        x=10
-        print_instruction "Update complete!"
-    else
-        print_instruction "Counting..."
-        x=$(( $x + 1 ))
-    fi
-done
+print_instruction "\nUpdating...\n"
+sudo apt-get update
 
 print_instruction "\nUpgrading...\n"
 sudo apt-get -y upgrade
 
 print_instruction "\nInstalling kubelet kubeadm kubectl...\n"
-sudo apt install -y kubelet kubeadm kubectl
+sudo apt-get install -y kubelet kubeadm kubectl
 
 print_instruction "\nkubeadm init...\n"
 sudo kubeadm init --ignore-preflight-errors=all --pod-network-cidr 10.244.0.0/16 --apiserver-advertise-address=$ip_addr_me

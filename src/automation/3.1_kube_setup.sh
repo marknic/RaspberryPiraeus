@@ -36,8 +36,8 @@ then
 fi
 
 print_instruction "\nUpdate and Upgrade"
-sudo apt update
-sudo apt -y upgrade
+sudo apt-get update
+sudo apt-get -y upgrade
 
 print_instruction "\nAdding link to Kubernetes repository and adding the APT key\n"
 sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
