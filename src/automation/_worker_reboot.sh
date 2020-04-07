@@ -46,14 +46,14 @@ do
             then
                 sleep 2
             else
-                echo "$ip_target is back up as $host_name."
+                print_instruction "$ip_target is back up as $host_name."
             fi
         done
     fi
 done
 
-printf "\nRebooting $master_name ($ip_addr_me)...\n"
-printf "\nSSH connection will drop.\n"
-printf "\nYou will need to reconnect with the master when it is done rebooting.\n"
+print_instruction "\nRebooting $master_name ($ip_addr_me)..."
+print_instruction "\nSSH connection will drop."
+print_instruction "\nYou will need to reconnect with the master when it is done rebooting.\n"
 
 sudo reboot
