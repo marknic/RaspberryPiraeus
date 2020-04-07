@@ -20,7 +20,6 @@ sudo apt-get install -y software-properties-common
 
 sudo apt-get update && sudo apt-get -y dist-upgrade
 
-
 curl -fsSL https://get.docker.com -o get-docker.sh
 sh get-docker.sh
 

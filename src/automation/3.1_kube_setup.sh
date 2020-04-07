@@ -75,16 +75,6 @@ do
     if [ $ip_target != $ip_addr_me ]
     then
 
-        # Run this code across all machines
-        if [ $(swapon --show | grep -c "NAME") -gt 0 ]
-        then
-            print_instruction "\nRemoving swapfile on $host_target."
-            sudo sshpass -p $pword ssh $piid@$ip_target sudo dphys-swapfile swapoff
-            sudo sshpass -p $pword ssh $piid@$ip_target sudo dphys-swapfile uninstall
-            sudo sshpass -p $pword ssh $piid@$ip_target sudo update-rc.d dphys-swapfile remove
-            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y purge dphys-swapfile
-        fi
-
         if [ $(swapon --show | grep -c "NAME") -gt 0 ]
         then
             print_instruction "\nDiabling the swap file did not work...stopping."
