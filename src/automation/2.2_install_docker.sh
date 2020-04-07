@@ -21,6 +21,9 @@ sudo apt-get -y dist-upgrade
 
 sudo apt-get install -y software-properties-common
 
+sudo apt update && sudo apt -y dist-upgrade
+
+
 curl -fsSL https://get.docker.com -o get-docker.sh
 sh get-docker.sh
 
@@ -42,8 +45,8 @@ do
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get update
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y dist-upgrade
 
-        echo "$host_target/$ip_target: Installing package: software-properties-common"
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get install -y software-properties-common
+        # echo "$host_target/$ip_target: Installing package: software-properties-common"
+        # sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get install -y software-properties-common
 
         echo "$host_target/$ip_target: Installing Docker-CE Docker-CE-CLI ContainerD"
         sudo sshpass -p $pword ssh $piid@$ip_target curl -fsSL https://get.docker.com -o get-docker.sh

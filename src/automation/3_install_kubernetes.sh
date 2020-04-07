@@ -10,11 +10,11 @@
 
 
 # Run this code on the master
-printf "\nRemoving the swap file on $ip_addr_me\n"
-sudo dphys-swapfile swapoff
-sudo dphys-swapfile uninstall
-sudo update-rc.d dphys-swapfile remove
-sudo apt-get -y purge dphys-swapfile
+# printf "\nRemoving the swap file on $ip_addr_me\n"
+# sudo dphys-swapfile swapoff
+# sudo dphys-swapfile uninstall
+# sudo update-rc.d dphys-swapfile remove
+# sudo apt-get -y purge dphys-swapfile
 
 sudo apt update
 sudo apt upgrade -y
@@ -34,10 +34,10 @@ sudo apt-key adv --fetch-keys https://packages.cloud.google.com/apt/doc/apt-key.
 
 sudo apt -y update && sudo apt -y upgrade
 
-printf "\nAdding cgroup settings to /boot/cmdline.txt file\n"
-sudo cp /boot/cmdline.txt /boot/cmdline_backup.txt
+# printf "\nAdding cgroup settings to /boot/cmdline.txt file\n"
+# sudo cp /boot/cmdline.txt /boot/cmdline_backup.txt
 
-echo "$(head -n1 /boot/cmdline.txt) cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory" | sudo tee /boot/cmdline.txt
+# echo "$(head -n1 /boot/cmdline.txt) cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory" | sudo tee /boot/cmdline.txt
 
 
 printf "\napt-get -y update\n"
@@ -72,12 +72,12 @@ do
 
     if [ $ip_target != $ip_addr_me ]
     then
-        # Run this code across all machines
-        printf "Removing swapfile on $host_target.\n"
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo dphys-swapfile swapoff
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo dphys-swapfile uninstall
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo update-rc.d dphys-swapfile remove
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y purge dphys-swapfile
+        # # Run this code across all machines
+        # printf "Removing swapfile on $host_target.\n"
+        # sudo sshpass -p $pword ssh $piid@$ip_target sudo dphys-swapfile swapoff
+        # sudo sshpass -p $pword ssh $piid@$ip_target sudo dphys-swapfile uninstall
+        # sudo sshpass -p $pword ssh $piid@$ip_target sudo update-rc.d dphys-swapfile remove
+        # sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y purge dphys-swapfile
 
 
         printf "Copying kubernetes.list to worker machine.\n"
@@ -90,10 +90,10 @@ do
 
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt -y update && sudo apt -y upgrade
 
-        printf "Backing up /boot/cmdline.txt\n"
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo cp /boot/cmdline.txt /boot/cmdline_backup.txt
+        # printf "Backing up /boot/cmdline.txt\n"
+        # sudo sshpass -p $pword ssh $piid@$ip_target sudo cp /boot/cmdline.txt /boot/cmdline_backup.txt
 
-        sudo sshpass -p $pword ssh $piid@$ip_target echo "$(head -n1 /boot/cmdline.txt) cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory" | sudo tee /boot/cmdline.txt
+        # sudo sshpass -p $pword ssh $piid@$ip_target echo "$(head -n1 /boot/cmdline.txt) cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory" | sudo tee /boot/cmdline.txt
 
 
 
