@@ -18,6 +18,8 @@ do
 
     if [ "$ip_target" != "$ip_addr_me" ] ; then
         sshpass -p $pword ssh $piid@$ip_target "sudo reboot"
+    else
+        master_name=$(echo $cluster_data | jq --raw-output ".[$i].name")
     fi
 done
 
@@ -30,6 +32,7 @@ sleep 25
 for ((i=0; i<$length; i++));
 do
     ip_target=$(echo $cluster_data | jq --raw-output ".[$i].IP")
+    host_name=$(echo $cluster_data | jq --raw-output ".[$i].name")
 
     if [ "$ip_target" != "$ip_addr_me" ] ; then
 
@@ -43,12 +46,14 @@ do
             then
                 sleep 2
             else
-                echo "$ip_target is back up."
+                echo "$ip_target is back up as $host_name."
             fi
         done
     fi
 done
 
-printf "\nRebooting client machine...\n"
+printf "\nRebooting $master_name ($ip_addr_me)...\n"
+printf "\nSSH connection will drop.\n"
+printf "\nYou will need to reconnect with the master when it is done rebooting.\n"
 
 sudo reboot
