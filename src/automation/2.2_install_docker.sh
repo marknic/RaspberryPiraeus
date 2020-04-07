@@ -16,12 +16,9 @@ print_instruction " |_____/ |_____| |_____  |    \_ |______ |    \_\n"
 
 . _array_setup.sh
 
-sudo apt-get update
-sudo apt-get -y dist-upgrade
-
 sudo apt-get install -y software-properties-common
 
-sudo apt update && sudo apt -y dist-upgrade
+sudo apt-get update && sudo apt-get -y dist-upgrade
 
 
 curl -fsSL https://get.docker.com -o get-docker.sh
