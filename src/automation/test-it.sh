@@ -24,21 +24,20 @@ SYSCTL_FILE="sysctl.conf"
 BAK_FILE="${SYSCTL_FILE}.BAK"
 TMP_FILE="${SYSCTL_FILE}.TMP"
 ETC_FOLDER="/etc/"
+SED_REGEX_QUERY="s/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/"
 
 cp "$ETC_FOLDER$SYSCTL_FILE" "$SYSCTL_FILE"
 
 # Create a backup if it doesn't already exist
 [ ! -f "$ETC_FOLDER$BAK_FILE" ] && cp "$ETC_FOLDER$SYSCTL_FILE" "$ETC_FOLDER$BAK_FILE"
 
-
 # Create temporary file with an update - uncommented line
-cat "$SYSCTL_FILE" | sed -e "s/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/" > "$TMP_FILE"
+sed -i "$SED_REGEX_QUERY" $SYSCTL_FILE
 
 mv -f "$TMP_FILE" "$ETC_FOLDER$SYSCTL_FILE"
-rm "$TMP_FILE"
 
-ip_target=$(echo $cluster_data | jq --raw-output ".[$i].IP")
-host_target=$(echo $cluster_data | jq --raw-output ".[$i].name")
+ip_target=$(echo $cluster_data | jq --raw-output ".[0].IP")
+host_target=$(echo $cluster_data | jq --raw-output ".[0].name")
 
 print_instruction "/etc/sysctl.conf modified on: $host_target/$ip_target: "
 
@@ -50,18 +49,16 @@ do
 
     if [ $ip_target != $ip_addr_me ]
     then
-
         # Remote machine so use ssh
         sudo sshpass -p $pword ssh $piid@$ip_target cp "$ETC_FOLDER$SYSCTL_FILE" "$SYSCTL_FILE"
 
-        sudo sshpass -p $pword ssh $piid@$ip_target [ ! -f "$ETC_FOLDER$BAK_FILE" ] && cp "$ETC_FOLDER$SYSCTL_FILE" "$ETC_FOLDER$BAK_FILE"
-        sudo sshpass -p $pword ssh $piid@$ip_target cat "$SYSCTL_FILE" | sed -e "s/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/" > "$TMP_FILE"
+        sshpass -p $pword ssh $piid@$ip_target [ ! -f "$ETC_FOLDER$BAK_FILE" ] && sudo cp -f "$ETC_FOLDER$SYSCTL_FILE" "$ETC_FOLDER$BAK_FILE"
+        sudo sshpass -p $pword ssh $piid@$ip_target sed -i "$SED_REGEX_QUERY" $SYSCTL_FILE
 
-        sudo sshpass -p $pword ssh $piid@$ip_target mv -f "$TMP_FILE" "$ETC_FOLDER$SYSCTL_FILE"
-        sudo sshpass -p $pword ssh $piid@$ip_target rm "$TMP_FILE"
+        sudo sshpass -p $pword ssh $piid@$ip_target mv -f "$SYSCTL_FILE" "$ETC_FOLDER$SYSCTL_FILE"
+        sudo sshpass -p $pword ssh $piid@$ip_target rm "$SYSCTL_FILE"
 
         print_instruction "/etc/sysctl.conf modified on: $host_target/$ip_target: "
-
     fi
 done
 
