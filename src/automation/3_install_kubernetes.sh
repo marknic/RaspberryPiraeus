@@ -10,14 +10,9 @@
 
 
 # Run this code on the master
-# printf "\nRemoving the swap file on $ip_addr_me\n"
-# sudo dphys-swapfile swapoff
-# sudo dphys-swapfile uninstall
-# sudo update-rc.d dphys-swapfile remove
-# sudo apt-get -y purge dphys-swapfile
 
-sudo apt update
-sudo apt upgrade -y
+sudo apt-get update
+sudo apt-get upgrade -y
 
 
 printf "\nAdding link to Kubernetes repository and adding the APT key\n"
@@ -32,7 +27,7 @@ sudo rm -f /etc/apt/sources.list.d/kubernetes.list
 sudo cp -f kubernetes.list /etc/apt/sources.list.d/kubernetes.list
 sudo apt-key adv --fetch-keys https://packages.cloud.google.com/apt/doc/apt-key.gpg
 
-sudo apt -y update && sudo apt -y upgrade
+sudo apt-get -y update && sudo apt -y upgrade
 
 # printf "\nAdding cgroup settings to /boot/cmdline.txt file\n"
 # sudo cp /boot/cmdline.txt /boot/cmdline_backup.txt
