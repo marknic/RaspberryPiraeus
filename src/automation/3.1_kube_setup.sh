@@ -17,35 +17,10 @@ print_instruction " __|__ |  \_| ______|    |    |     | |_____ |_____      ____
 
 . _array_setup.sh
 
-
-
-if [ $(swapon --show | grep -c "NAME") -gt 0 ]
-then
-    # Run this code on the master
-    print_instruction "\nRemoving the swap file on $ip_addr_me\n"
-    sudo dphys-swapfile swapoff
-    sudo dphys-swapfile uninstall
-    sudo update-rc.d dphys-swapfile remove
-    sudo apt-get -y purge dphys-swapfile
-fi
-
-if [ $(swapon --show | grep -c "NAME") -gt 0 ]
-then
-    print_instruction "\nDiabling the swap file did not work...stopping."
-    exit 2
-fi
-
-print_instruction "\nUpdate and Upgrade"
-sudo apt-get update
-sudo apt-get -y upgrade
+kub_list="/etc/apt/sources.list.d/kubernetes.list"
 
 print_instruction "\nAdding link to Kubernetes repository and adding the APT key\n"
 sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-
-print_instruction "\nModify iptables"
-sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
-sudo update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
-sudo update-alternatives --set ebtables /usr/sbin/ebtables-legacy
 
 print_instruction "\nCreating support file for k8s: kubernetes.list"
 # Create a support file that will be copied to the nodes
@@ -53,7 +28,8 @@ echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | tee kubernetes.lis
 
 print_instruction "\nAdd Kubernetes repository to the RPi package lists"
 sudo rm -f /etc/apt/sources.list.d/kubernetes.list
-sudo cp -f kubernetes.list /etc/apt/sources.list.d/kubernetes.list
+
+#sudo cp -f kubernetes.list /etc/apt/sources.list.d/kubernetes.list
 
 print_instruction "\nSetup apt.conf for install of k8s."
 sudo echo 'Acquire::https::packages.cloud.google.com::Verify-Peer "false";' > apt.conf
