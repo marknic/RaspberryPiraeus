@@ -32,6 +32,9 @@ do
     fi
 done
 
+# Set up SSH keys
+sudo ssh-keygen -t rsa -b 4096
+
 printf "Done setting up SSH.\n\n"
 
 printf "${CYAN}>> Setting up host names and IP's.${NC}\n\n"
@@ -42,6 +45,11 @@ do
     # Get the IP to search for
     ip_target=$(echo $cluster_data | jq --raw-output ".[$i].IP")
     new_host_name=$(echo $cluster_data | jq --raw-output ".[$i].name")
+
+    # Remove ssh password requirement:
+    sshpass -p $pword ssh $piid@$ip_target "sudo mkdir /.ssh"
+    sshpass -p $pword scp -p -r .ssh/id_rsa.pub $piid@$ip_target:authorized_keys
+    sshpass -p $pword ssh $piid@$ip_target sudo cp authorized_keys .ssh/authorized_keys
 
     printf "\n${CYAN}>> Updating the hosts and hostname files on $ip_target.${NC}\n\n"
     # Delete the local host files (quietly - they may not exist)
