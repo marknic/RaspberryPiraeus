@@ -33,7 +33,7 @@ do
 done
 
 # Set up SSH keys
-sudo ssh-keygen -t rsa -b 4096
+ssh-keygen -t rsa -b 2048 -f ~/.ssh/od_rsa -N ""
 
 printf "Done setting up SSH.\n\n"
 
@@ -46,10 +46,7 @@ do
     ip_target=$(echo $cluster_data | jq --raw-output ".[$i].IP")
     new_host_name=$(echo $cluster_data | jq --raw-output ".[$i].name")
 
-    # Remove ssh password requirement:
-    sshpass -p $pword ssh $piid@$ip_target "sudo mkdir /.ssh"
-    sshpass -p $pword scp -p -r .ssh/id_rsa.pub $piid@$ip_target:authorized_keys
-    sshpass -p $pword ssh $piid@$ip_target sudo cp authorized_keys .ssh/authorized_keys
+    sshpass -p $pword ssh-copy-id -i ~/.ssh/id_rsa.pub $piid@$ip_target
 
     printf "\n${CYAN}>> Updating the hosts and hostname files on $ip_target.${NC}\n\n"
     # Delete the local host files (quietly - they may not exist)
@@ -64,7 +61,8 @@ do
         printf "done: cp $FILE_HOSTS\n"
     else
         # Copy machine host file to local host file
-        sudo sshpass -p $pword sudo scp "$piid@$ip_target:$FILE_HOSTS" $localhostsfile
+        #sudo sshpass -p $pword scp "$piid@$ip_target:$FILE_HOSTS" $localhostsfile
+        sudo scp "$piid@$ip_target:$FILE_HOSTS" $localhostsfile
     fi
 
     if ! test -f $localhostsfile; then
@@ -133,22 +131,27 @@ do
     else
         # Replace the machine hosts/hostname files
 
-        sudo sshpass -p $pword sudo scp $localhostnamefile  $piid@$ip_target:
-        sudo sshpass -p $pword sudo scp $localhostsfile  $piid@$ip_target:
+        #sudo sshpass -p $pword sudo scp $localhostnamefile  $piid@$ip_target:
+        #sudo sshpass -p $pword sudo scp $localhostsfile  $piid@$ip_target:
+        sudo scp $localhostnamefile  $piid@$ip_target:
+        sudo scp $localhostsfile  $piid@$ip_target:
 
         printf "."
 
-        sshpass -p $pword ssh $piid@$ip_target "sudo rm -f $FILE_HOSTS"
-        sshpass -p $pword ssh $piid@$ip_target "sudo mv -f $localhostsfile $FILE_HOSTS"
+        #sshpass -p $pword ssh $piid@$ip_target "sudo rm -f $FILE_HOSTS"
+        #sshpass -p $pword ssh $piid@$ip_target "sudo mv -f $localhostsfile $FILE_HOSTS"
+        ssh $piid@$ip_target "sudo rm -f $FILE_HOSTS"
+        ssh $piid@$ip_target "sudo mv -f $localhostsfile $FILE_HOSTS"
 
         printf "."
 
-        sshpass -p $pword ssh $piid@$ip_target "sudo rm -f $FILE_HOSTNAME"
-        sshpass -p $pword ssh $piid@$ip_target "sudo mv -f $localhostnamefile $FILE_HOSTNAME"
+        #sshpass -p $pword ssh $piid@$ip_target "sudo rm -f $FILE_HOSTNAME"
+        #sshpass -p $pword ssh $piid@$ip_target "sudo mv -f $localhostnamefile $FILE_HOSTNAME"
+        ssh $piid@$ip_target "sudo rm -f $FILE_HOSTNAME"
+        ssh $piid@$ip_target "sudo mv -f $localhostnamefile $FILE_HOSTNAME"
 
         printf "."
     fi
-
 
     printf "!\n\n"
 
