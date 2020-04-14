@@ -17,23 +17,23 @@ print_instruction " ______| ______| |     |\n"
 . _array_setup.sh
 
 # Step through all remote nodes and create an SSH key transfer
-for ((i=0; i<$length; i++));
-do
-    # Get the IP to search for
-    ip_target=$(echo $cluster_data | jq --raw-output ".[$i].IP")
-    host_target=$(echo $cluster_data | jq --raw-output ".[$i].name")
+# for ((i=0; i<$length; i++));
+# do
+#     # Get the IP to search for
+#     ip_target=$(echo $cluster_data | jq --raw-output ".[$i].IP")
+#     host_target=$(echo $cluster_data | jq --raw-output ".[$i].name")
 
-    if [ $ip_addr_me != $ip_target ] ; then
-        print_instruction "Attempting to synch ssh data for host: $host_target/$ip_target$\n"
+#     if [ $ip_addr_me != $ip_target ] ; then
+#         print_instruction "Attempting to synch ssh data for host: $host_target/$ip_target$\n"
 
-        # Attempt a copy to force the key transfer/password challenge
-        sudo scp $piid@$ip_target:/etc/hosts tmp.tmp
-        rm -f tmp.tmp > /dev/null 2>&1
-    fi
-done
+#         # Attempt a copy to force the key transfer/password challenge
+#         sudo scp $piid@$ip_target:/etc/hosts tmp.tmp
+#         rm -f tmp.tmp > /dev/null 2>&1
+#     fi
+# done
 
 # Set up SSH keys
-ssh-keygen -t rsa -b 2048 -f ~/.ssh/od_rsa -N ""
+ssh-keygen -t rsa -b 2048 -f /home/$piid/.ssh/id_rsa -N ""
 
 printf "Done setting up SSH.\n\n"
 
@@ -46,7 +46,9 @@ do
     ip_target=$(echo $cluster_data | jq --raw-output ".[$i].IP")
     new_host_name=$(echo $cluster_data | jq --raw-output ".[$i].name")
 
-    sshpass -p $pword ssh-copy-id -i ~/.ssh/id_rsa.pub $piid@$ip_target
+    if [ $ip_target != $ip_addr_me ]; then
+        sshpass -p $pword ssh-copy-id -i /home/$piid/.ssh/id_rsa.pub $piid@$ip_target
+    fi
 
     printf "\n${CYAN}>> Updating the hosts and hostname files on $ip_target.${NC}\n\n"
     # Delete the local host files (quietly - they may not exist)
