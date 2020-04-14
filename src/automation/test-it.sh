@@ -20,44 +20,21 @@ print_instruction "                   |_|       \n"
 
 . _array_setup.sh
 
-SYSCTL_FILE="sysctl.conf"
-BAK_FILE="${SYSCTL_FILE}.BAK"
-ETC_FOLDER="/etc/"
-SED_REGEX_QUERY="s/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/"
-
-cp "$ETC_FOLDER$SYSCTL_FILE" "$SYSCTL_FILE"
-
-# Create a backup if it doesn't already exist
-[ ! -f "$ETC_FOLDER$BAK_FILE" ] && cp "$ETC_FOLDER$SYSCTL_FILE" "$ETC_FOLDER$BAK_FILE"
-
-# Create temporary file with an update - uncommented line
-sed -i "$SED_REGEX_QUERY" $SYSCTL_FILE
-
-ip_target=$(echo $cluster_data | jq --raw-output ".[0].IP")
-host_target=$(echo $cluster_data | jq --raw-output ".[0].name")
-
-print_instruction "/etc/sysctl.conf modified on: $host_target/$ip_target: "
-
 for ((i=0; i<$length; i++));
 do
     # Get the IP to search for
     ip_target=$(echo $cluster_data | jq --raw-output ".[$i].IP")
-    host_target=$(echo $cluster_data | jq --raw-output ".[$i].name")
+    new_host_name=$(echo $cluster_data | jq --raw-output ".[$i].name")
 
-    if [ $ip_target != $ip_addr_me ]
-    then
-        print_instruction "/etc/sysctl.conf modifying: $host_target/$ip_target: "
-        # Remote machine so use ssh
-        sudo sshpass -p $pword ssh $piid@$ip_target cp "$ETC_FOLDER$SYSCTL_FILE" "$SYSCTL_FILE"
+    if [ $ip_target != $ip_addr_me ]; then
+        #sshpass -p $pword ssh-copy-id -i /home/$piid/.ssh/id_rsa.pub $piid@$ip_target
 
-        sshpass -p $pword ssh $piid@$ip_target [ ! -f "$ETC_FOLDER$BAK_FILE" ] && sudo cp -f "$ETC_FOLDER$SYSCTL_FILE" "$ETC_FOLDER$BAK_FILE"
-        sudo sshpass -p $pword ssh $piid@$ip_target sed -i "$SED_REGEX_QUERY" $SYSCTL_FILE
-
-        sudo sshpass -p $pword ssh $piid@$ip_target cp -f "$SYSCTL_FILE" "$ETC_FOLDER$SYSCTL_FILE"
-        sudo sshpass -p $pword ssh $piid@$ip_target rm "$SYSCTL_FILE"
-
-        print_instruction "/etc/sysctl.conf modified on: $host_target/$ip_target: "
+        sshpass -p $pword ssh -o "StrictHostKeyChecking=no" $piid@$ip_target sudo mkdir /home/pi/.ssh/
+        sshpass -p $pword ssh $piid@$ip_target sudo chown pi /home/pi/.ssh/
+        sshpass -p $pword scp -p -r .ssh/id_rsa.pub $piid@$ip_target:/home/pi/.ssh/authorized_keys
     fi
+
+
 done
 
 print_instruction "\nDone!\n"
