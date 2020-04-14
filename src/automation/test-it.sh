@@ -31,7 +31,7 @@ do
 
         sshpass -p $pword ssh -o "StrictHostKeyChecking=no" $piid@$ip_target sudo mkdir /home/pi/.ssh/
         sshpass -p $pword ssh $piid@$ip_target sudo chown pi /home/pi/.ssh/
-        sshpass -p $pword scp -p -r .ssh/id_rsa.pub $piid@$ip_target:/home/pi/.ssh/authorized_keys
+        sshpass -p $pword scp -p -r /home/pi/.ssh/id_rsa.pub $piid@$ip_target:/home/pi/.ssh/authorized_keys
     fi
 
 

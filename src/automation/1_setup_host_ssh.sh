@@ -49,7 +49,9 @@ do
     new_host_name=$(echo $cluster_data | jq --raw-output ".[$i].name")
 
     if [ $ip_target != $ip_addr_me ]; then
-        sshpass -p $pword ssh-copy-id -i /home/$piid/.ssh/id_rsa.pub $piid@$ip_target
+        sshpass -p $pword ssh -o "StrictHostKeyChecking=no" $piid@$ip_target sudo mkdir /home/pi/.ssh/
+        sshpass -p $pword ssh $piid@$ip_target sudo chown pi /home/pi/.ssh/
+        sshpass -p $pword scp -p -r /home/pi/.ssh/id_rsa.pub $piid@$ip_target:/home/pi/.ssh/authorized_keys
     fi
 
     printf "\n${CYAN}>> Updating the hosts and hostname files on $ip_target.${NC}\n\n"
