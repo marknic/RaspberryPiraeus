@@ -34,6 +34,8 @@ print_instruction " ______| ______| |     |\n"
 
 # Set up SSH keys
 ssh-keygen -t rsa -b 2048 -f /home/$piid/.ssh/id_rsa -N ""
+sudo chown $piid /home/$piid/.ssh/
+sudo chown $piid /home/$piid/.ssh/id_rsa
 
 printf "Done setting up SSH.\n\n"
 
