@@ -20,6 +20,14 @@ print_instruction "                   |_|       \n"
 
 . _array_setup.sh
 
+printf "Setting up SSH.\n\n"
+
+# Set up SSH keys
+ssh-keygen -t rsa -b 2048 -f /home/$piid/.ssh/id_rsa -N ""
+sudo chown -R $piid /home/$piid/.ssh/
+
+printf "Done creating SSH Keys.\n\n"
+
 for ((i=0; i<$length; i++));
 do
     # Get the IP to search for
@@ -27,14 +35,10 @@ do
     new_host_name=$(echo $cluster_data | jq --raw-output ".[$i].name")
 
     if [ $ip_target != $ip_addr_me ]; then
-        #sshpass -p $pword ssh-copy-id -i /home/$piid/.ssh/id_rsa.pub $piid@$ip_target
-
-        sshpass -p $pword ssh -o "StrictHostKeyChecking=no" $piid@$ip_target sudo mkdir /home/pi/.ssh/
-        sshpass -p $pword ssh $piid@$ip_target sudo chown pi /home/pi/.ssh/
-        sshpass -p $pword scp -p -r /home/pi/.ssh/id_rsa.pub $piid@$ip_target:/home/pi/.ssh/authorized_keys
+        sudo sshpass -p $pword ssh -o "StrictHostKeyChecking=no" $piid@$ip_target sudo mkdir /home/$piid/.ssh/
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo chown -R $piid /home/$piid/.ssh/
+        sudo sshpass -p $pword scp -p -r /home/$piid/.ssh/id_rsa.pub $piid@$ip_target:/home/$piid/.ssh/authorized_keys
     fi
-
-
 done
 
 print_instruction "\nDone!\n"

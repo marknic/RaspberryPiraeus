@@ -16,28 +16,13 @@ print_instruction " ______| ______| |     |\n"
 
 . _array_setup.sh
 
-# Step through all remote nodes and create an SSH key transfer
-# for ((i=0; i<$length; i++));
-# do
-#     # Get the IP to search for
-#     ip_target=$(echo $cluster_data | jq --raw-output ".[$i].IP")
-#     host_target=$(echo $cluster_data | jq --raw-output ".[$i].name")
-
-#     if [ $ip_addr_me != $ip_target ] ; then
-#         print_instruction "Attempting to synch ssh data for host: $host_target/$ip_target$\n"
-
-#         # Attempt a copy to force the key transfer/password challenge
-#         sudo scp $piid@$ip_target:/etc/hosts tmp.tmp
-#         rm -f tmp.tmp > /dev/null 2>&1
-#     fi
-# done
+printf "Setting up SSH.\n\n"
 
 # Set up SSH keys
 ssh-keygen -t rsa -b 2048 -f /home/$piid/.ssh/id_rsa -N ""
-sudo chown $piid /home/$piid/.ssh/
-sudo chown $piid /home/$piid/.ssh/id_rsa
+sudo chown -R $piid /home/$piid/.ssh/
 
-printf "Done setting up SSH.\n\n"
+printf "Done creating SSH Keys.\n\n"
 
 printf "${CYAN}>> Setting up host names and IP's.${NC}\n\n"
 # Clean up the hosts file before attempting to update with current information
@@ -49,9 +34,9 @@ do
     new_host_name=$(echo $cluster_data | jq --raw-output ".[$i].name")
 
     if [ $ip_target != $ip_addr_me ]; then
-        sshpass -p $pword ssh -o "StrictHostKeyChecking=no" $piid@$ip_target sudo mkdir /home/pi/.ssh/
-        sshpass -p $pword ssh $piid@$ip_target sudo chown pi /home/pi/.ssh/
-        sshpass -p $pword scp -p -r /home/pi/.ssh/id_rsa.pub $piid@$ip_target:/home/pi/.ssh/authorized_keys
+        sudo sshpass -p $pword ssh -o "StrictHostKeyChecking=no" $piid@$ip_target sudo mkdir /home/pi/.ssh/
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo chown pi /home/pi/.ssh/
+        sudo sshpass -p $pword scp -p -r /home/pi/.ssh/id_rsa.pub $piid@$ip_target:/home/pi/.ssh/authorized_keys
     fi
 
     printf "\n${CYAN}>> Updating the hosts and hostname files on $ip_target.${NC}\n\n"
@@ -68,45 +53,37 @@ do
     else
         # Copy machine host file to local host file
         #sudo sshpass -p $pword scp "$piid@$ip_target:$FILE_HOSTS" $localhostsfile
-        sudo scp "$piid@$ip_target:$FILE_HOSTS" $localhostsfile
+        scp "$piid@$ip_target:$FILE_HOSTS" $localhostsfile
     fi
 
     if ! test -f $localhostsfile; then
         cp -f _hosts.data $localhostsfile
     fi
 
-    sudo sed -i -e "/127.0.1.1/d" $localhostsfile
+    sudo chown $piid $localhostsfile
+    sed -i -e "/127.0.1.1/d" $localhostsfile
 
-    sudo echo "127.0.1.1    $new_host_name" >> $localhostsfile
+    echo "127.0.1.1    $new_host_name" >> $localhostsfile
 
     # Create the hostname file (to be copied to the remote machine's /etc/ folder)
-    sudo echo "$new_host_name" > $localhostnamefile
+    echo "$new_host_name" > $localhostnamefile
 
     j=0
     while [ $j -lt $length ]
     do
-        ip_to_remove=$(echo $cluster_data | jq --raw-output ".[$j].IP")
+        ip_to_change=$(echo $cluster_data | jq --raw-output ".[$j].IP")
 
         # Indicate that work is being done
         printf "."
 
         # Delete the lines containing the IP address
-        sudo sed -i -e "/$ip_to_remove/d" $localhostsfile
+        sed -i -e "/$ip_to_change/d" $localhostsfile
 
-        ((j++))
-    done
+        if [ $ip_target != $ip_to_change ]; then
 
-    # Execute the script to add the host IP/Names
-    j=0
-    while [ $j -lt $length ]
-    do
-        ip_to_add=$(echo $cluster_data | jq --raw-output ".[$j].IP")
-        host_to_add=$(echo $cluster_data | jq --raw-output ".[$j].name")
+            host_to_add=$(echo $cluster_data | jq --raw-output ".[$j].name")
 
-        if [ $ip_target != $ip_to_add ]
-        then
-
-            sudo echo "$ip_to_add  $host_to_add" >> $localhostsfile
+            echo "$ip_to_change  $host_to_add" >> $localhostsfile
 
             # Indicate that work is being done
             printf "-"
@@ -115,9 +92,8 @@ do
         ((j++))
     done
 
-
     # Remove the redundant entry in the hosts file
-    sudo sed -i -e "/$ip_target/d" $localhostsfile
+    sed -i -e "/$ip_target/d" $localhostsfile
 
     printf "."
 
