@@ -27,7 +27,6 @@ sudo apt update && sudo apt -y dist-upgrade
 printf "\nRemoving the swap file on $ip_addr_me\n"
 sudo dphys-swapfile swapoff
 sudo dphys-swapfile uninstall
-sudo update-rc.d dphys-swapfile remove
 sudo apt-get -y purge dphys-swapfile
 
 for ((i=0; i<$length; i++));
@@ -49,11 +48,10 @@ do
 
         sudo sshpass -p $pword ssh $piid@$ip_target echo "$(head -n1 /boot/cmdline.txt) cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory" | sudo tee /boot/cmdline.txt
 
-                # Run this code across all machines
-        printf "Removing swapfile on $host_target.\n"
+        # Run this code across all machines
+        printf "Removing swapfile on $ip_target.\n"
         sudo sshpass -p $pword ssh $piid@$ip_target sudo dphys-swapfile swapoff
         sudo sshpass -p $pword ssh $piid@$ip_target sudo dphys-swapfile uninstall
-        #sudo sshpass -p $pword ssh $piid@$ip_target sudo update-rc.d dphys-swapfile remove
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y purge dphys-swapfile
 
     fi
