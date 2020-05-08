@@ -21,10 +21,43 @@ sudo apt-get update && sudo apt-get -y dist-upgrade
 
 curl -fsSL https://get.docker.com -o get-docker.sh | sh
 
-printf "\nCreating 'docker' group.\n"
-sudo usermod $piid -aG docker
 
-printf "\nCopying $daemonjsonfile to $daemondestfilename\n"
+######  if ! grep -q docker /etc/group; then sudo groupadd docker; fi
+
+if [ ! grep -q docker /etc/group]; then
+    print_instruction "\nCreating 'docker' group.\n"
+    sudo groupadd docker
+fi
+
+
+
+
+######  if ! id $piid | grep -q "docker"; then sudo usermod $piid -aG docker; fi
+
+
+# if the ID doesn't exist in the group...add it
+if [ ! id $piid | grep -q "docker" ]; then
+    print_instruction "Adding $piid to the 'docker' group.\n"
+    sudo usermod $piid -aG docker
+fi
+
+
+
+
+
+######  if [ ! -d "$DOCKER_ETC_DIR" ]; then sudo mkdir $DOCKER_ETC_DIR; else sudo rm -f $daemondestfilename > /dev/null 2>&1; fi
+
+if [ ! -d "$DOCKER_ETC_DIR" ]; then
+    # If $DOCKER_ETC_DIR does not exist.
+    sudo mkdir $DOCKER_ETC_DIR
+else
+    sudo rm -f $daemondestfilename > /dev/null 2>&1
+fi
+
+
+
+
+print_instruction "\nCopying $daemonjsonfile to $daemondestfilename\n"
 sudo cp -f $daemonjsonfile $daemondestfilename
 
 # Create a backup if it doesn't already exist
@@ -59,6 +92,7 @@ do
         sudo sshpass -p $pword ssh $piid@$ip_target sh get-docker.sh
 
         printf "\nCreating 'docker' group on $host_target.\n"
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo groupadd docker
         sudo sshpass -p $pword ssh $piid@$ip_target sudo usermod $piid -aG docker
 
         printf "\nCopying $daemonjsonfile to $daemondestfilename on $host_target\n"
