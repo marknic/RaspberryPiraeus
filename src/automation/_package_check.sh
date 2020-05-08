@@ -19,7 +19,7 @@ install_and_validate_package() {
     done
 }
 
-printf "\n Verifying Package:\n    jq "
+printf "\n Verifying Package:\n    $1 "
 # install jq here - it is used to parse the json data
 install_and_validate_package jq
 
