@@ -14,17 +14,16 @@ install_and_validate_package() {
         else
             echo "Attempting to install package: $1  This is attempt $attempt_num."
             (( attempt_num++ ))
-            sudo apt-get install -y jq
+            sudo apt-get install -y $1
         fi
     done
 }
 
-printf "\n Verifying Package:  jq "
+printf "\n Verifying Package:  jq \n"
 # install jq here - it is used to parse the json data
 install_and_validate_package jq
 
 
-printf "\n Verifying Package:  sshpass"
+printf "\n Verifying Package:  sshpass \n"
 # install sshpass here - it is used to parse the json data
 install_and_validate_package sshpass
-

@@ -15,7 +15,9 @@ print_instruction " |_____] |_____| |_____|    |\n"
 
 . _array_setup.sh
 
-sudo apt-get install -y software-properties-common
+#sudo apt-get install -y software-properties-common
+
+install_and_validate_package software-properties-common
 
 printf "\nAdding cgroup settings to /boot/cmdline.txt file\n"
 sudo cp /boot/cmdline.txt /boot/cmdline_backup.txt
@@ -28,6 +30,8 @@ printf "\nRemoving the swap file on $ip_addr_me\n"
 sudo dphys-swapfile swapoff
 sudo dphys-swapfile uninstall
 sudo apt-get -y purge dphys-swapfile
+
+sudo apt-get -y autoremove
 
 for ((i=0; i<$length; i++));
 do
