@@ -15,6 +15,7 @@ print_instruction " |_____] |_____| |_____|    |\n"
 
 . _array_setup.sh
 
+sudo apt-get clean
 sudo apt-get --fix-missing update
 sudo apt-get -y --fix-missing upgrade
 
@@ -50,6 +51,10 @@ do
     if [ $ip_target != $ip_addr_me ]
     then
 
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get clean
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get --fix-missing update
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y --fix-missing dist-upgrade
+
         echo "$host_target/$ip_target: Installing package: software-properties-common"
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get install -y software-properties-common
 
@@ -62,15 +67,11 @@ do
 
 
         # if the cgroup text does not exist in the cmdline.txt file, add it
-        sudo sshpass -p $pword ssh $piid@$ip_target  grep $CGROUP -f $CMDLINE_TXT ]
+        sudo sshpass -p $pword ssh $piid@$ip_target grep -i $CGROUP_TEST $CMDLINE_TXT
 
         if [ $? -ne 0 ]; then
-            sudo sshpass -p $pword ssh $piid@$ip_target echo "$(head -n1 $CMDLINE_TXT) $CGROUP" | sudo tee $CMDLINE_TXT
+            sudo sshpass -p $pword ssh $piid@$ip_target "echo "$(head -n1 $CMDLINE_TXT) $CGROUP" | sudo tee $CMDLINE_TXT"
         fi
-
-
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get --fix-missing update
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y --fix-missing dist-upgrade
 
 
         # Run this code across all machines
