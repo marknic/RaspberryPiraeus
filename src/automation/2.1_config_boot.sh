@@ -15,16 +15,21 @@ print_instruction " |_____] |_____| |_____|    |\n"
 
 . _array_setup.sh
 
-#sudo apt-get install -y software-properties-common
+sudo apt-get --fix-missing update
+sudo apt-get -y --fix-missing upgrade
 
 install_and_validate_package software-properties-common
 
-printf "\nAdding cgroup settings to /boot/cmdline.txt file\n"
-sudo cp /boot/cmdline.txt /boot/cmdline_backup.txt
+printf "\nAdding cgroup settings to $CMDLINE_TXT file\n"
 
-echo "$(head -n1 /boot/cmdline.txt) cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory" | sudo tee /boot/cmdline.txt
+if [ ! -f $CMDLINE_TXT_BACKUP ]; then
+    print_instruction "Making backup of cmdline.txt -> cmdline_backup.txt"
+    sudo cp $CMDLINE_TXT $CMDLINE_TXT_BACKUP
+fi
 
-sudo apt update && sudo apt -y dist-upgrade
+if [ ! grep $CGROUP -f $CMDLINE_TXT ]; then
+    echo "$(head -n1 $CMDLINE_TXT) $CGROUP" | sudo tee $CMDLINE_TXT
+fi
 
 printf "\nRemoving the swap file on $ip_addr_me\n"
 sudo dphys-swapfile swapoff
@@ -44,20 +49,37 @@ do
 
     if [ $ip_target != $ip_addr_me ]
     then
+
         echo "$host_target/$ip_target: Installing package: software-properties-common"
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get install -y software-properties-common
 
-        printf "Backing up /boot/cmdline.txt\n"
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo cp /boot/cmdline.txt /boot/cmdline_backup.txt
+        sudo sshpass -p $pword ssh $piid@$ip_target test -f $CMDLINE_TXT_BACKUP
 
-        sudo sshpass -p $pword ssh $piid@$ip_target echo "$(head -n1 /boot/cmdline.txt) cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory" | sudo tee /boot/cmdline.txt
+        if [ $? -ne 0 ]; then
+            print_instruction "Making backup of cmdline.txt -> cmdline_backup.txt"
+            sudo sshpass -p $pword ssh $piid@$ip_target sudo cp $CMDLINE_TXT $CMDLINE_TXT_BACKUP
+        fi
+
+
+        # if the cgroup text does not exist in the cmdline.txt file, add it
+        sudo sshpass -p $pword ssh $piid@$ip_target  grep $CGROUP -f $CMDLINE_TXT ]
+
+        if [ $? -ne 0 ]; then
+            sudo sshpass -p $pword ssh $piid@$ip_target echo "$(head -n1 $CMDLINE_TXT) $CGROUP" | sudo tee $CMDLINE_TXT
+        fi
+
+
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get --fix-missing update
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y --fix-missing dist-upgrade
+
 
         # Run this code across all machines
         printf "Removing swapfile on $ip_target.\n"
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo dphys-swapfile swapoff
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo dphys-swapfile uninstall
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y purge dphys-swapfile
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo dphys-swapfile swapoff > /dev/null 2>&1
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo dphys-swapfile uninstall > /dev/null 2>&1
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y purge dphys-swapfile > /dev/null 2>&1
 
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y autoremove > /dev/null 2>&1
     fi
 done
 
