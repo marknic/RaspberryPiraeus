@@ -23,18 +23,30 @@ sudo apt-get -y --fix-missing dist-upgrade
 sudo apt-get install -y software-properties-common
 
 # Install docker
-curl -fsSL https://get.docker.com -o get-docker.sh | sh
+curl -fsSL https://get.docker.com -o get-docker.sh
 
-# if the docker group doesn't exist...add it
-if [ ! grep -q docker /etc/group]; then
+sh get-docker.sh
+
+
+grep -q docker /etc/group
+
+if [ $? -ne 0 ]; then
     print_instruction "\nCreating 'docker' group.\n"
     sudo groupadd docker
+else
+    print_instruction "'docker' group exists.\n"
 fi
 
+
 # if the ID doesn't exist in the group...add it
-if [ ! id $piid | grep -q 'docker' ]; then
+id $piid | grep -q 'docker'
+
+if [ $? -ne 0 ]
+then
     print_instruction "Adding $piid to the 'docker' group.\n"
     sudo usermod $piid -aG docker
+else
+    print_instruction "$piid exists within the 'docker' group.\n"
 fi
 
 
