@@ -1,5 +1,6 @@
 FILE_HOSTNAME="/etc/hostname"
 FILE_HOSTS="/etc/hosts"
+FILE_KUB_LIST_DATA="_kub_list.txt"
 SYSCTL_FILE="sysctl.conf"
 BAK_FILE="${SYSCTL_FILE}.BAK"
 ETC_FOLDER="/etc/"
@@ -18,6 +19,7 @@ daemonjsonfile="_daemon.json"
 daemondestfilename="/etc/docker/daemon.json"
 
 download_location="https://download.docker.com/linux/debian/dists/buster/pool/stable/armhf/"
+kub_list="/etc/apt/sources.list.d/kubernetes.list"
 
 RED='\033[1;31m'
 GRN='\033[0;32m'
