@@ -25,9 +25,14 @@ sudo apt-get -y dist-upgrade
 print_instruction "\nkubeadm init...\n"
 sudo kubeadm init --pod-network-cidr=10.244.0.0/16
 
-runuser -l $piid -c 'mkdir -p $HOME/.kube'
-cp /etc/kubernetes/admin.conf ~/.kube/config
-sudo chown $(id -u):$(id -g) $HOME/.kube/config
+print_instruction "\nmkdir as pi\n"
+runuser -l $piid -c "mkdir -p /home/$piid/.kube"
+
+print_instruction "\nCopy\n"
+sudo cp /etc/kubernetes/admin.conf /home/$piid/.kube/config
+
+print_instruction "\nchown\n"
+runuser -l $piid -c 'sudo chown $(id -u):$(id -g) $HOME/.kube/config'
 
 
 # output of kubeadm command will be used on workers
@@ -62,4 +67,4 @@ do
 done
 
 
-. _worker_reboot.sh
+print_instruction "\n
