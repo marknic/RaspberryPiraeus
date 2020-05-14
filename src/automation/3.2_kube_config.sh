@@ -39,9 +39,9 @@ runuser -l $piid -c 'sudo chown $(id -u):$(id -g) $HOME/.kube/config'
 joincmd=$(sudo kubeadm token create --print-join-command)
 
 print_instruction "\nInstalling Flannel\n\n"
-kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+runuser -l $piid -c "kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml"
 
-kubectl get pods --all-namespaces
+runuser -l $piid -c "kubectl get pods --all-namespaces"
 
 
 
@@ -67,4 +67,4 @@ do
 done
 
 
-print_instruction "\n
+print_instruction "\nRun 'kubectl get nodes' to see the cluster.\n"
