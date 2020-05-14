@@ -25,8 +25,8 @@ sudo apt-get -y dist-upgrade
 print_instruction "\nkubeadm init...\n"
 sudo kubeadm init --pod-network-cidr=10.244.0.0/16
 
-mkdir -p ~.kube
-sudo cp /etc/kubernetes/admin.conf ~/.kube/config
+runuser -l $piid -c 'mkdir -p $HOME/.kube'
+cp /etc/kubernetes/admin.conf ~/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 
