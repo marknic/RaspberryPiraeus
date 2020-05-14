@@ -28,7 +28,8 @@ if [ ! -f $CMDLINE_TXT_BACKUP ]; then
     sudo cp $CMDLINE_TXT $CMDLINE_TXT_BACKUP
 fi
 
-if [ ! grep $CGROUP -f $CMDLINE_TXT ]; then
+grep $CGROUP -f $CMDLINE_TXT
+if [ $? -ne 0 ]; then
     echo "$(head -n1 $CMDLINE_TXT) $CGROUP" | sudo tee $CMDLINE_TXT
 fi
 

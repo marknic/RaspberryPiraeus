@@ -34,13 +34,18 @@ print_instruction "\nAdding link to Kubernetes repository and adding the APT key
 sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 
 
+print_instruction "\nUpdating and checking for installation keys.\n"
+# Just in case the keys aren't loaded, check for it and then use those keys to indicate
+# what needs to be installed
 sudo apt-get update 2>&1 1>/dev/null | sed -ne 's/.*NO_PUBKEY //p' |
 while read key;
 do
     sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys "$key"
 done
 
-sudo apt-get update
+print_instruction "\nInstall kubeadm kubectl kubelet\n"
+
+sudo apt-get --fix-missing update
 sudo apt-get -y install kubeadm kubectl kubelet
 
 
