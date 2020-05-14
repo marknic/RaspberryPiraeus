@@ -34,6 +34,12 @@ print_instruction "\nAdding link to Kubernetes repository and adding the APT key
 sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 
 
+sudo apt-get update 2>&1 1>/dev/null | sed -ne 's/.*NO_PUBKEY //p' |
+while read key;
+do
+    sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys "$key"
+done
+
 sudo apt-get update
 sudo apt-get -y install kubeadm kubectl kubelet
 
@@ -43,28 +49,42 @@ do
 
     # Get the IP to search for
     ip_target=$(echo $cluster_data | jq --raw-output ".[$i].IP")
-    host_target=$(echo $cluster_data | jq --raw-output ".[$i].name")
-
-    print_instruction "\n-----------"
-    print_instruction "Configuring $host_target/$ip_target\n"
 
     if [ $ip_target != $ip_addr_me ]
     then
+        host_target=$(echo $cluster_data | jq --raw-output ".[$i].name")
 
-        print_instruction "\nCreating support file for k8s: kubernetes.list"
-        # Create a support file that will be copied to the nodes
-        sudo sshpass -p $pword ssh $piid@$ip_target echo "deb http://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee "$kub_list"
+        print_instruction "\n-----------"
+        print_instruction "Configuring $host_target/$ip_target\n"
+
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get clean
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get --fix-missing update
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y --fix-missing upgrade
+
+        sudo sshpass -p $pword ssh $piid@$ip_target test -f $kub_list
+
+        if [ $? -ne 0 ]; then
+            print_instruction "Creating $kub_list."
+            sudo sshpass -p $pword scp -p -r $FILE_KUB_LIST_DATA $piid@$ip_target:$FILE_KUB_LIST_DATA
+            sudo sshpass -p $pword ssh $piid@$ip_target "sudo cp $FILE_KUB_LIST_DATA $kub_list"
+        fi
 
         print_instruction "\nAdding link to Kubernetes repository and adding the APT key\n"
         sudo sshpass -p $pword ssh $piid@$ip_target sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 
-        sudo sshpass -p $pword ssh $piid@$ip_target test -f $kub_list
-        if [ $? -ne 0 ]; then
-            sudo sshpass -p $pword scp -p -r $FILE_KUB_LIST_DATA $piid@$ip_target:$kub_list
-        fi
+        rm -f keys.txt
 
+        sudo sshpass -p $pword ssh $piid@$ip_target "sudo apt-get update 2>&1 1>/dev/null | sed -ne 's/.*NO_PUBKEY //p'" > keys.txt
+
+        cat keys.txt |
+        while read key;
+        do
+            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys "$key"
+        done
+
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get update
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y install kubeadm kubectl kubelet
     fi
-
 done
 
 

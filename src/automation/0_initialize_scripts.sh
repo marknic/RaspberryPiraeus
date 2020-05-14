@@ -18,6 +18,5 @@ print_instruction "Setting the scripts to 'Executable'."
 chmod +x 1_setup_host_ssh.sh
 chmod +x 2.1_config_boot.sh
 chmod +x 2.2_install_docker.sh
-chmod +x 3.1_kube_setup.sh
-chmod +x 3.2_kube_install.sh
-chmod +x 4_finalize_nodes.sh
+chmod +x 3.1_kube_install.sh
+chmod +x 3.2_kube_config.sh
