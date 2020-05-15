@@ -43,8 +43,8 @@ do
         cp $FILE_HOSTS $localhostsfile
     else
         # Set Local time on the RPi (Optional)
-        sudo sshpass -p $pword ssh "sudo ln -fs /usr/share/zoneinfo/$zonelocation /etc/localtime"
-        sudo sshpass -p $pword ssh "sudo dpkg-reconfigure --frontend noninteractive tzdata"
+        sudo sshpass -p $pword ssh $piid@$ip_target "sudo ln -fs /usr/share/zoneinfo/$zonelocation /etc/localtime"
+        sudo sshpass -p $pword ssh $piid@$ip_target "sudo dpkg-reconfigure --frontend noninteractive tzdata"
 
         sudo sshpass -p $pword ssh -o "StrictHostKeyChecking=no" $piid@$ip_target sudo mkdir /home/$piid/.ssh/
         sudo sshpass -p $pword ssh $piid@$ip_target sudo chown -R $piid /home/$piid/.ssh/
