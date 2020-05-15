@@ -17,6 +17,10 @@ print_instruction " ___] ___] |  |\n"
 
 printf "Setting up SSH.\n\n"
 
+# Set Local time on the RPi (Optional)
+sudo ln -fs /usr/share/zoneinfo/$zonelocation /etc/localtime
+sudo dpkg-reconfigure --frontend noninteractive tzdata
+
 # # Set up SSH keys
 ssh-keygen -t rsa -b 2048 -f /home/$piid/.ssh/id_rsa -N ""
 sudo chown -R $piid /home/$piid/.ssh/
@@ -38,6 +42,10 @@ do
     if [ $ip_target == $ip_addr_me ]; then
         cp $FILE_HOSTS $localhostsfile
     else
+        # Set Local time on the RPi (Optional)
+        sudo sshpass -p $pword ssh "sudo ln -fs /usr/share/zoneinfo/$zonelocation /etc/localtime"
+        sudo sshpass -p $pword ssh "sudo dpkg-reconfigure --frontend noninteractive tzdata"
+
         sudo sshpass -p $pword ssh -o "StrictHostKeyChecking=no" $piid@$ip_target sudo mkdir /home/$piid/.ssh/
         sudo sshpass -p $pword ssh $piid@$ip_target sudo chown -R $piid /home/$piid/.ssh/
         sudo sshpass -p $pword scp -p -r /home/$piid/.ssh/id_rsa.pub $piid@$ip_target:/home/$piid/.ssh/authorized_keys

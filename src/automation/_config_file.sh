@@ -1,3 +1,5 @@
+zonelocation="America/Chicago"
+
 FILE_HOSTNAME="/etc/hostname"
 FILE_HOSTS="/etc/hosts"
 FILE_KUB_LIST_DATA="_kub_list.txt"
