@@ -15,23 +15,31 @@ print_instruction " |_____] |_____| |_____|    |\n"
 
 . _array_setup.sh
 
+result=0
+print_instruction "Clean, Update and Upgrade\n"
 sudo apt-get clean
+if [ $? -ne 0 ]; then result=1 fi
 sudo apt-get --fix-missing update
+if [ $? -ne 0 ]; then result=1 fi
 sudo apt-get -y --fix-missing upgrade
+if [ $? -ne 0 ]; then result=1 fi
+if [ result -eq 1 ]; then print_instruction "$RED Clean, Update and Upgrade FAILED.$NC"
 
-printf "\nAdding cgroup settings to $CMDLINE_TXT file\n"
+print_instruction "Adding cgroup settings to $CMDLINE_TXT file\n"
 
 if [ ! -f $CMDLINE_TXT_BACKUP ]; then
-    print_instruction "Making backup of cmdline.txt -> cmdline_backup.txt"
+    print_instruction "Making backup of cmdline.txt -> cmdline_backup.txt\n"
     sudo cp $CMDLINE_TXT $CMDLINE_TXT_BACKUP
 fi
 
+print_instruction "Grepping $CGROUP_TEST"
 grep $CGROUP -f $CMDLINE_TXT
 if [ $? -ne 0 ]; then
+    print_instruction "Writing $CGROUP out to $CMDLINE_TXT.\n"
     echo "$(head -n1 $CMDLINE_TXT) $CGROUP" | sudo tee $CMDLINE_TXT
 fi
 
-printf "\nRemoving the swap file on $ip_addr_me\n"
+print_instruction "Removing the swap file on $ip_addr_me\n"
 print_instruction "dphys-swapfile swapoff (master)..."
     sudo dphys-swapfile swapoff
 print_result $?
@@ -54,13 +62,13 @@ for ((i=0; i<$length; i++));
 do
     # Get the IP to search for
     ip_target=$(echo $cluster_data | jq --raw-output ".[$i].IP")
-    host_target=$(echo $cluster_data | jq --raw-output ".[$i].name")
-
-    printf "\n\n-----------\n"
-    printf "Configuring $host_target/$ip_target\n\n"
 
     if [ $ip_target != $ip_addr_me ]
     then
+
+        host_target=$(echo $cluster_data | jq --raw-output ".[$i].name")
+
+        print_instruction "Processing $host_target/$ip_target:"
 
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get clean
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get --fix-missing update
@@ -74,27 +82,28 @@ do
         fi
 
         # if the cgroup text does not exist in the cmdline.txt file, add it
+        print_instruction "Grepping $CGROUP_TEST"
         sudo sshpass -p $pword ssh $piid@$ip_target grep -i $CGROUP_TEST $CMDLINE_TXT
 
         if [ $? -ne 0 ]; then
+            print_instruction "Inserting \'$CGROUP\' into $CMDLINE_TX"
             sudo sshpass -p $pword ssh $piid@$ip_target "echo "$(head -n1 $CMDLINE_TXT) $CGROUP" | sudo tee $CMDLINE_TXT"
         fi
 
         # Run this code across all machines
-        printf "Removing swapfile on $ip_target.\n"
-        print_instruction "dphys-swapfile swapoff (master)..."
+        print_instruction "dphys-swapfile swapoff ($ip_target:$new_host_name)..."
             sudo sshpass -p $pword ssh $piid@$ip_target sudo dphys-swapfile swapoff > /dev/null 2>&1
         print_result $?
 
-        print_instruction "dphys-swapfile uninstall (master)..."
+        print_instruction "dphys-swapfile uninstall ($ip_target:$new_host_name)..."
             sudo sshpass -p $pword ssh $piid@$ip_target sudo dphys-swapfile uninstall > /dev/null 2>&1
         print_result $?
 
-        print_instruction "apt-get -y purge dphys-swapfile (master)..."
+        print_instruction "apt-get -y purge dphys-swapfile ($ip_target:$new_host_name)..."
             sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y purge dphys-swapfile > /dev/null 2>&1
         print_result $?
 
-        print_instruction "apt-get -y autoremove (master)..."
+        print_instruction "apt-get -y autoremove ($ip_target:$new_host_name)..."
             sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y autoremove > /dev/null 2>&1
         print_result $?
     fi

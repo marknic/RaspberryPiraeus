@@ -44,7 +44,7 @@ do
 
     print_instruction "Deleting $localhostsfile so it can be recreated.\n"
     rm -f $localhostsfile > /dev/null 2>&1
-    print_instruction "Deleting $localhostsfile so it can be recreated.\n"
+    print_instruction "Deleting $localhostnamefile so it can be recreated.\n"
     rm -f $localhostnamefile > /dev/null 2>&1
 
     # Create the hostname file (to be copied to the remote machine's /etc/ folder)
@@ -54,10 +54,8 @@ do
         cp $FILE_HOSTS $localhostsfile
     else
 
-        printf "Setting up local time (worker).\n"
-
         # Set Local time on the RPi (Optional)
-        print_instruction "Setting up local time (master)..."
+        print_instruction "Setting up local time ($ip_target:$new_host_name)..."
             sudo sshpass -p $pword ssh $piid@$ip_target "sudo ln -fs /usr/share/zoneinfo/$zonelocation /etc/localtime"
         print_result $?
 
