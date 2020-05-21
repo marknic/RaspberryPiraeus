@@ -23,7 +23,8 @@ sudo apt-get --fix-missing update
 if [ $? -ne 0 ]; then result=1 fi
 sudo apt-get -y --fix-missing upgrade
 if [ $? -ne 0 ]; then result=1 fi
-if [ result -eq 1 ]; then print_instruction "$RED Clean, Update and Upgrade FAILED.$NC"
+
+if [ result -eq 1 ]; then print_instruction "$RED Clean, Update and Upgrade FAILED.$NC" fi
 
 print_instruction "Adding cgroup settings to $CMDLINE_TXT file\n"
 
@@ -33,7 +34,7 @@ if [ ! -f $CMDLINE_TXT_BACKUP ]; then
 fi
 
 print_instruction "Grepping $CGROUP_TEST"
-grep $CGROUP -f $CMDLINE_TXT
+grep "$CGROUP" -q $CMDLINE_TXT
 if [ $? -ne 0 ]; then
     print_instruction "Writing $CGROUP out to $CMDLINE_TXT.\n"
     echo "$(head -n1 $CMDLINE_TXT) $CGROUP" | sudo tee $CMDLINE_TXT
@@ -83,7 +84,7 @@ do
 
         # if the cgroup text does not exist in the cmdline.txt file, add it
         print_instruction "Grepping $CGROUP_TEST"
-        sudo sshpass -p $pword ssh $piid@$ip_target grep -i $CGROUP_TEST $CMDLINE_TXT
+        sudo sshpass -p $pword ssh $piid@$ip_target grep -q "$CGROUP_TEST" $CMDLINE_TXT
 
         if [ $? -ne 0 ]; then
             print_instruction "Inserting \'$CGROUP\' into $CMDLINE_TX"
