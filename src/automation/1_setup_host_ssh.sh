@@ -21,7 +21,7 @@ printf "Setting up local time (master).\n\n"
 sudo ln -fs /usr/share/zoneinfo/$zonelocation /etc/localtime
 sudo dpkg-reconfigure --frontend noninteractive tzdata
 
-printf "Setting up SSH.\n\n"
+printf "Setting up SSH to communicate with the workers.\n\n"
 
 # # Set up SSH keys
 ssh-keygen -t rsa -b 2048 -f /home/$piid/.ssh/id_rsa -N ""
@@ -45,12 +45,13 @@ do
         cp $FILE_HOSTS $localhostsfile
     else
 
-        printf "Setting up local time (worker).\n\n"
+        printf "Setting up local time (worker).\n"
 
         # Set Local time on the RPi (Optional)
         sudo sshpass -p $pword ssh $piid@$ip_target "sudo ln -fs /usr/share/zoneinfo/$zonelocation /etc/localtime"
         sudo sshpass -p $pword ssh $piid@$ip_target "sudo dpkg-reconfigure --frontend noninteractive tzdata"
 
+        printf "Copying the SSH public key from the master to the worker.\n"
         sudo sshpass -p $pword ssh -o "StrictHostKeyChecking=no" $piid@$ip_target sudo mkdir /home/$piid/.ssh/
         sudo sshpass -p $pword ssh $piid@$ip_target sudo chown -R $piid /home/$piid/.ssh/
         sudo sshpass -p $pword scp -p -r /home/$piid/.ssh/id_rsa.pub $piid@$ip_target:/home/$piid/.ssh/authorized_keys
@@ -58,6 +59,8 @@ do
         sshpass -p $pword scp "$piid@$ip_target:$FILE_HOSTS" $localhostsfile
     fi
 
+    printf "Setting up the local hosts file\n"
+    
     # Remove the line with 127.0.1.1 in it
     sed -i -e "/127.0.1.1/d" $localhostsfile
 
