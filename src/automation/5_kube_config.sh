@@ -57,11 +57,11 @@ do
         print_instruction "\n\n-----------\n"
         print_instruction "Joining $host_target/$ip_target to the Kubernetes Cluster\n\n"
 
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo runuser -l $piid -c $joincmd
+        sudo sshpass -p $pword ssh $piid@$ip_target "sudo $joincmd"
 
         # Label the worker nodes
         print_instruction "\nLabeling worker: $host_target.\n"
-        runuser -l $piid -c "kubectl label node $host_target node-role.kubernetes.io/worker=worker"
+        sudo runuser -l $piid -c "kubectl label node $host_target node-role.kubernetes.io/worker=worker"
     fi
 
 done

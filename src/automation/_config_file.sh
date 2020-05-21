@@ -19,6 +19,7 @@ localhostnamefile="hostname.local"
 clusterfile="_cluster.json"
 daemonjsonfile="_daemon.json"
 daemondestfilename="/etc/docker/daemon.json"
+sourcefolder="~/RaspberryPiraeus/src/automation"
 
 download_location="https://download.docker.com/linux/debian/dists/buster/pool/stable/armhf/"
 kub_list="/etc/apt/sources.list.d/kubernetes.list"

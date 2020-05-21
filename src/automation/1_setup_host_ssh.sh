@@ -17,6 +17,14 @@ print_instruction " ___] ___] |  |\n"
 
 printf "Setting up SSH.\n\n"
 
+grep -q "cd $sourcefolder" ~/.bashrc
+
+if [ $? -ne 0 ];
+then
+    sudo runuser -l $piid -c "printf \"alias cdpi=\'cd $sourcefolder\'\n\" >>.bash_aliases"
+    source ~/.bashrc
+fi
+
 # Set Local time on the RPi (Optional)
 sudo ln -fs /usr/share/zoneinfo/$zonelocation /etc/localtime
 sudo dpkg-reconfigure --frontend noninteractive tzdata
