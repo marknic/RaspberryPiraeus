@@ -26,3 +26,6 @@ install_and_validate_package jq
 
 # install sshpass here - it is used to include passwords on SSH commands
 install_and_validate_package sshpass
+
+
+install_and_validate_package software-properties-common

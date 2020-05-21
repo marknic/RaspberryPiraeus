@@ -38,3 +38,12 @@ print_instruction () {
     printf "${CYAN}${@}${NC}\n"
 }
 
+print_result () {
+
+    if [ $1 -ne 0 ]; then
+        print_instruction "$RED..Issue detected.$NC\n"
+    else
+        print_instruction "$GRN..Succeeded.$NC\n"
+    fi
+}
+

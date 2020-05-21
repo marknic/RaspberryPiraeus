@@ -16,16 +16,27 @@ print_instruction " |_____/ |_____| |_____  |    \_ |______ |    \_\n"
 
 . _array_setup.sh
 
+print_instruction "apt-get clean..."
 sudo apt-get clean
-sudo apt-get --fix-missing update
-sudo apt-get -y --fix-missing dist-upgrade
+print_result $?
 
-sudo apt-get install -y software-properties-common
+print_instruction "apt-get --fix-missing update..."
+sudo apt-get --fix-missing update
+print_result $?
+
+print_instruction "apt-get -y --fix-missing dist-upgrade..."
+sudo apt-get -y --fix-missing dist-upgrade
+print_result $?
+
 
 # Install docker
+print_instruction "Getting docker install script..."
 curl -fsSL https://get.docker.com -o get-docker.sh
+print_result $?
 
+print_instruction "Installing Docker via script..."
 sh get-docker.sh
+print_result $?
 
 
 grep -q docker /etc/group
@@ -67,7 +78,9 @@ sudo cp -f $daemonjsonfile $daemondestfilename
 [ ! -f "$ETC_FOLDER$BAK_FILE" ] && cp "$ETC_FOLDER$SYSCTL_FILE" "$ETC_FOLDER$BAK_FILE"
 
 # Create temporary file with an update - uncommented line
-sed -i "$SED_REGEX_QUERY" $SYSCTL_FILE
+if [ -f $SYSCTL_FILE ]; then
+    sed -i "$SED_REGEX_QUERY" $SYSCTL_FILE
+fi
 
 ip_target=$(echo $cluster_data | jq --raw-output ".[0].IP")
 host_target=$(echo $cluster_data | jq --raw-output ".[0].name")
@@ -84,17 +97,30 @@ do
     if [ $ip_target != $ip_addr_me ]
     then
         # Remote machine so use ssh
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get clean
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get --fix-missing update
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y --fix-missing dist-upgrade
+        print_instruction "apt-get clean..."
+            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get clean
+        print_result $?
 
-        echo "$host_target/$ip_target: Installing package: software-properties-common"
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get install -y software-properties-common
+        print_instruction "apt-get --fix-missing update..."
+            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get --fix-missing update
+        print_result $?
+
+        print_instruction "apt-get -y --fix-missing dist-upgrade..."
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y --fix-missing dist-upgrade
+        print_result $?
+
+        print_instruction "Installing software-properties-common..."
+            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get install -y software-properties-common
+        print_result $?
 
         # Install docker
-        echo "$host_target/$ip_target: Installing Docker"
-        sudo sshpass -p $pword ssh $piid@$ip_target curl -fsSL https://get.docker.com -o get-docker.sh
-        sudo sshpass -p $pword ssh $piid@$ip_target sh get-docker.sh
+        print_instruction "Getting docker install script..."
+            sudo sshpass -p $pword ssh $piid@$ip_target curl -fsSL https://get.docker.com -o get-docker.sh
+        print_result $?
+
+        print_instruction "Getting docker install script..."
+            sudo sshpass -p $pword ssh $piid@$ip_target sh get-docker.sh
+        print_result $?
 
         # if the docker group doesn't exist...add it
         printf "\nCreating 'docker' group on $host_target.\n"
@@ -120,9 +146,6 @@ do
         printf "\nCopying $daemonjsonfile to $daemondestfilename on $host_target\n"
         sudo sshpass -p $pword sudo scp $daemonjsonfile $piid@$ip_target:
         sudo sshpass -p $pword ssh $piid@$ip_target sudo cp -f $daemonjsonfile $daemondestfilename
-
-
-
 
         print_instruction "Modifying $ETC_FOLDER$SYSCTL_FILE on $host_target/$ip_target: "
 

@@ -19,8 +19,6 @@ sudo apt-get clean
 sudo apt-get --fix-missing update
 sudo apt-get -y --fix-missing upgrade
 
-install_and_validate_package software-properties-common
-
 printf "\nAdding cgroup settings to $CMDLINE_TXT file\n"
 
 if [ ! -f $CMDLINE_TXT_BACKUP ]; then
@@ -34,11 +32,23 @@ if [ $? -ne 0 ]; then
 fi
 
 printf "\nRemoving the swap file on $ip_addr_me\n"
-sudo dphys-swapfile swapoff
-sudo dphys-swapfile uninstall
-sudo apt-get -y purge dphys-swapfile
+print_instruction "dphys-swapfile swapoff (master)..."
+    sudo dphys-swapfile swapoff
+print_result $?
 
-sudo apt-get -y autoremove
+print_instruction "dphys-swapfile uninstall (master)..."
+    sudo dphys-swapfile uninstall
+print_result $?
+
+print_instruction "apt-get -y purge dphys-swapfile (master)..."
+    sudo apt-get -y purge dphys-swapfile
+print_result $?
+
+
+print_instruction "apt-get -y autoremove (master)..."
+    sudo apt-get -y autoremove
+print_result $?
+
 
 for ((i=0; i<$length; i++));
 do
@@ -56,16 +66,12 @@ do
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get --fix-missing update
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y --fix-missing dist-upgrade
 
-        echo "$host_target/$ip_target: Installing package: software-properties-common"
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get install -y software-properties-common
-
         sudo sshpass -p $pword ssh $piid@$ip_target test -f $CMDLINE_TXT_BACKUP
 
         if [ $? -ne 0 ]; then
             print_instruction "Making backup of cmdline.txt -> cmdline_backup.txt"
             sudo sshpass -p $pword ssh $piid@$ip_target sudo cp $CMDLINE_TXT $CMDLINE_TXT_BACKUP
         fi
-
 
         # if the cgroup text does not exist in the cmdline.txt file, add it
         sudo sshpass -p $pword ssh $piid@$ip_target grep -i $CGROUP_TEST $CMDLINE_TXT
@@ -74,14 +80,23 @@ do
             sudo sshpass -p $pword ssh $piid@$ip_target "echo "$(head -n1 $CMDLINE_TXT) $CGROUP" | sudo tee $CMDLINE_TXT"
         fi
 
-
         # Run this code across all machines
         printf "Removing swapfile on $ip_target.\n"
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo dphys-swapfile swapoff > /dev/null 2>&1
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo dphys-swapfile uninstall > /dev/null 2>&1
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y purge dphys-swapfile > /dev/null 2>&1
+        print_instruction "dphys-swapfile swapoff (master)..."
+            sudo sshpass -p $pword ssh $piid@$ip_target sudo dphys-swapfile swapoff > /dev/null 2>&1
+        print_result $?
 
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y autoremove > /dev/null 2>&1
+        print_instruction "dphys-swapfile uninstall (master)..."
+            sudo sshpass -p $pword ssh $piid@$ip_target sudo dphys-swapfile uninstall > /dev/null 2>&1
+        print_result $?
+
+        print_instruction "apt-get -y purge dphys-swapfile (master)..."
+            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y purge dphys-swapfile > /dev/null 2>&1
+        print_result $?
+
+        print_instruction "apt-get -y autoremove (master)..."
+            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y autoremove > /dev/null 2>&1
+        print_result $?
     fi
 done
 

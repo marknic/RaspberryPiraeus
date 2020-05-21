@@ -15,19 +15,26 @@ print_instruction " ___] ___] |  |\n"
 
 . _array_setup.sh
 
-printf "Setting up local time (master).\n\n"
-
 # Set Local time on the RPi (Optional)
-sudo ln -fs /usr/share/zoneinfo/$zonelocation /etc/localtime
-sudo dpkg-reconfigure --frontend noninteractive tzdata
+print_instruction "Setting up local time (master)..."
+    sudo ln -fs /usr/share/zoneinfo/$zonelocation /etc/localtime
+print_result $?
 
-printf "Setting up SSH to communicate with the workers.\n\n"
+print_instruction "dpkg-reconfigure..."
+    sudo dpkg-reconfigure --frontend noninteractive tzdata
+print_result $?
+
+printf "Setting up SSH to communicate with the workers.\n"
 
 # # Set up SSH keys
-ssh-keygen -t rsa -b 2048 -f /home/$piid/.ssh/id_rsa -N ""
+print_instruction "apt-get --fix-missing update..."
+    ssh-keygen -t rsa -b 2048 -f /home/$piid/.ssh/id_rsa -N ""
+print_result $?
+
 sudo chown -R $piid /home/$piid/.ssh/
 
 printf "Done creating SSH Keys.\n\n"
+
 
 for ((i=0; i<$length; i++));
 do
@@ -35,7 +42,9 @@ do
     ip_target=$(echo $cluster_data | jq --raw-output ".[$i].IP")
     new_host_name=$(echo $cluster_data | jq --raw-output ".[$i].name")
 
+    print_instruction "Deleting $localhostsfile so it can be recreated.\n"
     rm -f $localhostsfile > /dev/null 2>&1
+    print_instruction "Deleting $localhostsfile so it can be recreated.\n"
     rm -f $localhostnamefile > /dev/null 2>&1
 
     # Create the hostname file (to be copied to the remote machine's /etc/ folder)
@@ -48,19 +57,28 @@ do
         printf "Setting up local time (worker).\n"
 
         # Set Local time on the RPi (Optional)
-        sudo sshpass -p $pword ssh $piid@$ip_target "sudo ln -fs /usr/share/zoneinfo/$zonelocation /etc/localtime"
-        sudo sshpass -p $pword ssh $piid@$ip_target "sudo dpkg-reconfigure --frontend noninteractive tzdata"
+        print_instruction "Setting up local time (master)..."
+            sudo sshpass -p $pword ssh $piid@$ip_target "sudo ln -fs /usr/share/zoneinfo/$zonelocation /etc/localtime"
+        print_result $?
 
-        printf "Copying the SSH public key from the master to the worker.\n"
+        print_instruction "dpkg-reconfigure..."
+            sudo sshpass -p $pword ssh $piid@$ip_target "sudo dpkg-reconfigure --frontend noninteractive tzdata"
+        print_result $?
+
         sudo sshpass -p $pword ssh -o "StrictHostKeyChecking=no" $piid@$ip_target sudo mkdir /home/$piid/.ssh/
         sudo sshpass -p $pword ssh $piid@$ip_target sudo chown -R $piid /home/$piid/.ssh/
-        sudo sshpass -p $pword scp -p -r /home/$piid/.ssh/id_rsa.pub $piid@$ip_target:/home/$piid/.ssh/authorized_keys
 
-        sshpass -p $pword scp "$piid@$ip_target:$FILE_HOSTS" $localhostsfile
+        print_instruction "Copying the SSH public key from the master to the worker.\n"
+            sudo sshpass -p $pword scp -p -r /home/$piid/.ssh/id_rsa.pub $piid@$ip_target:/home/$piid/.ssh/authorized_keys
+        print_result $?
+
+        print_instruction "Copying hosts file to worker.\n"
+            sshpass -p $pword scp "$piid@$ip_target:$FILE_HOSTS" $localhostsfile
+        print_result $?
     fi
 
     printf "Setting up the local hosts file\n"
-    
+
     # Remove the line with 127.0.1.1 in it
     sed -i -e "/127.0.1.1/d" $localhostsfile
 
