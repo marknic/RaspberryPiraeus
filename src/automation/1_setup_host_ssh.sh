@@ -15,15 +15,6 @@ print_instruction " ___] ___] |  |\n"
 
 . _array_setup.sh
 
-grep -q "cd $sourcefolder" ~/.bashrc
-
-if [ $? -ne 0 ];
-then
-    printf "Setting up alias...\n\n"
-    sudo runuser -l $piid -c "printf \"alias cdpi=\'cd $sourcefolder\'\n\" >>.bash_aliases"
-    source ~/.bashrc
-fi
-
 printf "Setting up local time (master).\n\n"
 
 # Set Local time on the RPi (Optional)
