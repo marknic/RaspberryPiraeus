@@ -15,19 +15,22 @@ print_instruction " ___] ___] |  |\n"
 
 . _array_setup.sh
 
-printf "Setting up SSH.\n\n"
-
 grep -q "cd $sourcefolder" ~/.bashrc
 
 if [ $? -ne 0 ];
 then
+    printf "Setting up alias...\n\n"
     sudo runuser -l $piid -c "printf \"alias cdpi=\'cd $sourcefolder\'\n\" >>.bash_aliases"
     source ~/.bashrc
 fi
 
+printf "Setting up local time (master).\n\n"
+
 # Set Local time on the RPi (Optional)
 sudo ln -fs /usr/share/zoneinfo/$zonelocation /etc/localtime
 sudo dpkg-reconfigure --frontend noninteractive tzdata
+
+printf "Setting up SSH.\n\n"
 
 # # Set up SSH keys
 ssh-keygen -t rsa -b 2048 -f /home/$piid/.ssh/id_rsa -N ""
@@ -50,6 +53,9 @@ do
     if [ $ip_target == $ip_addr_me ]; then
         cp $FILE_HOSTS $localhostsfile
     else
+
+        printf "Setting up local time (worker).\n\n"
+
         # Set Local time on the RPi (Optional)
         sudo sshpass -p $pword ssh $piid@$ip_target "sudo ln -fs /usr/share/zoneinfo/$zonelocation /etc/localtime"
         sudo sshpass -p $pword ssh $piid@$ip_target "sudo dpkg-reconfigure --frontend noninteractive tzdata"

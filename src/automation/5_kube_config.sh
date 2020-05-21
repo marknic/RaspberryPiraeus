@@ -39,7 +39,7 @@ runuser -l $piid -c 'sudo chown $(id -u):$(id -g) $HOME/.kube/config'
 joincmd=$(sudo kubeadm token create --print-join-command)
 
 print_instruction "\nInstalling Flannel\n\n"
-runuser -l $piid -c "kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml"
+runuser -l $piid -c "sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml"
 
 runuser -l $piid -c "kubectl get pods --all-namespaces"
 
@@ -61,7 +61,7 @@ do
 
         # Label the worker nodes
         print_instruction "\nLabeling worker: $host_target.\n"
-        sudo runuser -l $piid -c "kubectl label node $host_target node-role.kubernetes.io/worker=worker"
+        sudo kubectl label node $host_target node-role.kubernetes.io/worker=worker
     fi
 
 done
