@@ -17,11 +17,11 @@ print_instruction " ___] ___] |  |\n"
 
 # Set Local time on the RPi (Optional)
 print_instruction "Setting up local time (master)..."
-    execute_command_with_retry "sudo ln -fs /usr/share/zoneinfo/$zonelocation /etc/localtime"
+    execute_command_with_retry "timedatectl set-timezone "'"'$zonelocation'"'
 print_result $?
 
 print_instruction "dpkg-reconfigure..."
-    execute_command_with_retry "sudo dpkg-reconfigure --frontend noninteractive tzdata"
+    execute_command_with_retry "timedatectl status"
 print_result $?
 
 printf "Setting up SSH to communicate with the workers.\n"
@@ -56,11 +56,11 @@ do
 
         # Set Local time on the RPi (Optional)
         print_instruction "Setting up local time ($ip_target:$new_host_name)..."
-            execute_remote_command_with_retry "sudo ln -fs /usr/share/zoneinfo/$zonelocation /etc/localtime"
+            execute_remote_command_with_retry "timedatectl set-timezone "'"'$zonelocation'"'
         print_result $?
 
         print_instruction "dpkg-reconfigure..."
-            execute_remote_command_with_retry "sudo dpkg-reconfigure --frontend noninteractive tzdata"
+            execute_remote_command_with_retry "timedatectl status"
         print_result $?
 
         sudo sshpass -p $pword ssh -o "StrictHostKeyChecking=no" $piid@$ip_target sudo mkdir /home/$piid/.ssh/
