@@ -15,15 +15,6 @@ print_instruction " ___] ___] |  |\n"
 
 . _array_setup.sh
 
-# Set Local time on the RPi (Optional)
-print_instruction "Setting up local time (master)..."
-    execute_command_with_retry "timedatectl set-timezone "'"'$zonelocation'"'
-print_result $?
-
-print_instruction "dpkg-reconfigure..."
-    execute_command_with_retry "timedatectl status"
-print_result $?
-
 printf "Setting up SSH to communicate with the workers.\n"
 
 # # Set up SSH keys
@@ -53,15 +44,6 @@ do
     if [ $ip_target == $ip_addr_me ]; then
         cp $FILE_HOSTS $localhostsfile
     else
-
-        # Set Local time on the RPi (Optional)
-        print_instruction "Setting up local time ($ip_target:$new_host_name)..."
-            execute_remote_command_with_retry "timedatectl set-timezone "'"'$zonelocation'"'
-        print_result $?
-
-        print_instruction "dpkg-reconfigure..."
-            execute_remote_command_with_retry "timedatectl status"
-        print_result $?
 
         sudo sshpass -p $pword ssh -o "StrictHostKeyChecking=no" $piid@$ip_target sudo mkdir /home/$piid/.ssh/
         sudo sshpass -p $pword ssh $piid@$ip_target sudo chown -R $piid /home/$piid/.ssh/
