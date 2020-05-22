@@ -57,7 +57,7 @@ do
         # Set Local time on the RPi (Optional)
         print_instruction "Setting up local time ($ip_target:$new_host_name)..."
             sudo sshpass -p $pword ssh $piid@$ip_target "sudo ln -fs /usr/share/zoneinfo/$zonelocation /etc/localtime"
-        print_result $?
+        print_result $?                                  
 
         print_instruction "dpkg-reconfigure..."
             sudo sshpass -p $pword ssh $piid@$ip_target "sudo dpkg-reconfigure --frontend noninteractive tzdata"
