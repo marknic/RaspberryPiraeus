@@ -17,11 +17,11 @@ print_instruction " ___] ___] |  |\n"
 
 # Set Local time on the RPi (Optional)
 print_instruction "Setting up local time (master)..."
-    sudo ln -fs /usr/share/zoneinfo/$zonelocation /etc/localtime
+    execute_command_with_retry "sudo ln -fs /usr/share/zoneinfo/$zonelocation /etc/localtime"
 print_result $?
 
 print_instruction "dpkg-reconfigure..."
-    sudo dpkg-reconfigure --frontend noninteractive tzdata
+    execute_command_with_retry "sudo dpkg-reconfigure --frontend noninteractive tzdata"
 print_result $?
 
 printf "Setting up SSH to communicate with the workers.\n"
@@ -56,11 +56,11 @@ do
 
         # Set Local time on the RPi (Optional)
         print_instruction "Setting up local time ($ip_target:$new_host_name)..."
-            sudo sshpass -p $pword ssh $piid@$ip_target "sudo ln -fs /usr/share/zoneinfo/$zonelocation /etc/localtime"
-        print_result $?                                  
+            execute_remote_command_with_retry "sudo ln -fs /usr/share/zoneinfo/$zonelocation /etc/localtime"
+        print_result $?
 
         print_instruction "dpkg-reconfigure..."
-            sudo sshpass -p $pword ssh $piid@$ip_target "sudo dpkg-reconfigure --frontend noninteractive tzdata"
+            execute_remote_command_with_retry "sudo dpkg-reconfigure --frontend noninteractive tzdata"
         print_result $?
 
         sudo sshpass -p $pword ssh -o "StrictHostKeyChecking=no" $piid@$ip_target sudo mkdir /home/$piid/.ssh/

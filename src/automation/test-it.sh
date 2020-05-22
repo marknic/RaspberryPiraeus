@@ -20,6 +20,43 @@ print_instruction "                   |_|       \n"
 
 . _array_setup.sh
 
+
+execute_remote_command_with_retry() {
+    local -r -i max_attempts=3
+    local -i attempt_num=1
+
+    until sudo sshpass -p $pword ssh $piid@$ip_target $1
+    do
+        if (( attempt_num == max_attempts ))
+        then
+            print_instruction "Attempt $attempt_num failed and there are no more attempts."
+            return 1
+        else
+            print_instruction "Attempting to execute command.  This is attempt $attempt_num."
+            (( attempt_num++ ))
+            sudo sshpass -p $pword ssh $piid@$ip_target $1
+        fi
+    done
+}
+
+execute_command_with_retry() {
+    local -r -i max_attempts=3
+    local -i attempt_num=1
+
+    until eval $1
+    do
+        if (( attempt_num == max_attempts ))
+        then
+            print_instruction "Attempt $attempt_num failed and there are no more attempts."
+            return 1
+        else
+            print_instruction "Attempting to execute command.  This is attempt $attempt_num."
+            (( attempt_num++ ))
+            eval $1
+        fi
+    done
+}
+
 for ((i=0; i<$length; i++));
 do
     # Get the IP to search for
@@ -32,11 +69,12 @@ do
 
         # Set Local time on the RPi (Optional)
         print_instruction "Setting up local time ($ip_target:$new_host_name)..."
-            sudo sshpass -p $pword ssh $piid@$ip_target "sudo ln -fs /usr/share/zoneinfo/$zonelocation /etc/localtime"
+            #sudo sshpass -p $pword ssh $piid@$ip_target "sudo ln -fs /usr/share/zoneinfo/$zonelocation /etc/localtime"
+            execute_remote_command_with_retry "sudo ln -fs /usr/share/zoneinfo/$zonelocation /etc/localtime"
         print_result $?
 
         print_instruction "dpkg-reconfigure..."
-            sudo sshpass -p $pword ssh $piid@$ip_target "sudo dpkg-reconfigure --frontend noninteractive tzdata"
+            #sudo sshpass -p $pword ssh $piid@$ip_target "sudo dpkg-reconfigure --frontend noninteractive tzdata"
         print_result $?
     fi
 
