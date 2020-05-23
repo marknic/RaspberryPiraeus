@@ -24,7 +24,7 @@ print_instruction "timedatectl status..."
     execute_command_with_retry "timedatectl status"
 print_result $?
 
-
+ 
 for ((i=0; i<$length; i++));
 do
     # Get the IP to search for
