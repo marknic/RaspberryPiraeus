@@ -47,4 +47,4 @@ done
 
 print_instruction "\nDone!\n"
 
-. _worker_reboot.sh
+
