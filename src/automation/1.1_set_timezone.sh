@@ -34,7 +34,7 @@ do
     if [ $ip_target != $ip_addr_me ]; then
         # Set Local time on the worker RPi (Optional)
         print_instruction "Setting up local time ($ip_target:$new_host_name)..."
-            execute_remote_command_with_retry "timedatectl set-timezone "'"'$zonelocation'"'
+            execute_remote_command_with_retry "sudo timedatectl set-timezone "'"'$zonelocation'"'
         print_result $?
 
         print_instruction "dpkg-reconfigure..."
