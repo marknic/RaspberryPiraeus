@@ -11,7 +11,7 @@ print_instruction "    |    __|__ |  |  | |______ /_____ |_____| |  \_| |______\
 
 . _check_root.sh
 
-. _package_check.sh
+. _package_check.sh 
 
 . _array_setup.sh
 
@@ -24,7 +24,7 @@ print_instruction "timedatectl status..."
     execute_command_with_retry "timedatectl status"
 print_result $?
 
- 
+
 for ((i=0; i<$length; i++));
 do
     # Get the IP to search for
