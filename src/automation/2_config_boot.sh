@@ -24,7 +24,7 @@ if [ $? -ne 0 ]; then result=1; fi
 sudo apt-get -y --fix-missing upgrade
 if [ $? -ne 0 ]; then result=1; fi
 
-if [ result -eq 1 ]; then print_instruction "$RED Clean, Update and Upgrade FAILED.$NC"; fi
+if [ $result -eq 1 ]; then print_instruction "$RED Clean, Update and Upgrade FAILED.$NC"; fi
 
 print_instruction "Adding cgroup settings to $CMDLINE_TXT file\n"
 
@@ -33,7 +33,7 @@ if [ ! -f $CMDLINE_TXT_BACKUP ]; then
     sudo cp $CMDLINE_TXT $CMDLINE_TXT_BACKUP
 fi
 
-print_instruction "Grepping" $CGROUP_TEST"
+print_instruction "Grepping $CGROUP_TEST"
 grep "$CGROUP" -q $CMDLINE_TXT
 if [ $? -ne 0 ]; then
     print_instruction "Writing $CGROUP out to $CMDLINE_TXT.\n"

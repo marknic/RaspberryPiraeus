@@ -17,7 +17,7 @@ print_instruction "    |    __|__ |  |  | |______ /_____ |_____| |  \_| |______\
 
 # Set Local time on the Master RPi (Optional)
 print_instruction "Setting up local time (master)..."
-    execute_command_with_retry "timedatectl set-timezone "'"'$zonelocation'"'
+    execute_command_with_retry "sudo timedatectl set-timezone "'"'$zonelocation'"'
 print_result $?
 
 print_instruction "timedatectl status..."
