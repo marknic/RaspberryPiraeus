@@ -2,12 +2,12 @@
 
 . _config_file.sh
 
-print_instruction " _______  _____  __   _ _______ _____  ______"
-print_instruction " |       |     | | \  | |______   |   |  ____"
-print_instruction " |_____  |_____| |  \_| |       __|__ |_____|\n"
-print_instruction " ______   _____   _____  _______"
-print_instruction " |_____] |     | |     |    |"
-print_instruction " |_____] |_____| |_____|    |\n"
+print_instruction " _______ _  _  _ _______  _____  "
+print_instruction " |______ |  |  | |_____| |_____] "
+print_instruction " ______| |__|__| |     | |     \n"
+print_instruction " _______ _____        _______  "
+print_instruction " |______   |   |      |______  "
+print_instruction " |       __|__ |_____ |______\n"
 
 . _check_root.sh
 
