@@ -11,11 +11,11 @@ print_instruction "    |    __|__ |  |  | |______ /_____ |_____| |  \_| |______\
 
 . _check_root.sh
 
-. _package_check.sh 
+. _package_check.sh
 
 . _array_setup.sh
 
-# Set Local time on the RPi (Optional)
+# Set Local time on the Master RPi (Optional)
 print_instruction "Setting up local time (master)..."
     execute_command_with_retry "timedatectl set-timezone "'"'$zonelocation'"'
 print_result $?
@@ -32,7 +32,7 @@ do
     new_host_name=$(echo $cluster_data | jq --raw-output ".[$i].name")
 
     if [ $ip_target != $ip_addr_me ]; then
-        # Set Local time on the RPi (Optional)
+        # Set Local time on the worker RPi (Optional)
         print_instruction "Setting up local time ($ip_target:$new_host_name)..."
             execute_remote_command_with_retry "timedatectl set-timezone "'"'$zonelocation'"'
         print_result $?
