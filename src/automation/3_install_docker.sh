@@ -84,7 +84,9 @@ if [ -f $SYSCTL_FILE ]; then
     print_result $?
 
     # Going to use the sysctl.conf file to copy to the workers
-    cp $ETC_FOLDER$SYSCTL_FILE $SYSCTL_FILE
+    print_instruction "Copying $ETC_FOLDER$SYSCTL_FILE to local folder... "
+        cp $ETC_FOLDER$SYSCTL_FILE .
+    print_result $?
 fi
 
 
