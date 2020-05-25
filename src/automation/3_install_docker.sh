@@ -17,25 +17,25 @@ print_instruction " |_____/ |_____| |_____  |    \_ |______ |    \_\n"
 . _array_setup.sh
 
 print_instruction "apt-get clean..."
-sudo apt-get clean
+    sudo apt-get clean
 print_result $?
 
 print_instruction "apt-get --fix-missing update..."
-sudo apt-get --fix-missing update
+    sudo apt-get --fix-missing update
 print_result $?
 
 print_instruction "apt-get -y --fix-missing dist-upgrade..."
-sudo apt-get -y --fix-missing dist-upgrade
+    sudo apt-get -y --fix-missing dist-upgrade
 print_result $?
 
 
 # Install docker
 print_instruction "Getting docker install script..."
-curl -fsSL https://get.docker.com -o get-docker.sh
+    curl -fsSL https://get.docker.com -o get-docker.sh
 print_result $?
 
 print_instruction "Installing Docker via script..."
-sh get-docker.sh
+    sh get-docker.sh
 print_result $?
 
 
@@ -43,7 +43,8 @@ grep -q docker /etc/group
 
 if [ $? -ne 0 ]; then
     print_instruction "\nCreating 'docker' group.\n"
-    sudo groupadd docker
+        sudo groupadd docker
+    print_result $?
 else
     print_instruction "'docker' group exists.\n"
 fi
@@ -61,7 +62,6 @@ else
 fi
 
 
-
 if [ ! -d "$DOCKER_ETC_DIR" ]; then
     # If $DOCKER_ETC_DIR does not exist.
     sudo mkdir $DOCKER_ETC_DIR
@@ -69,9 +69,9 @@ else
     sudo rm -f $daemondestfilename > /dev/null 2>&1
 fi
 
-print_instruction "\nCopying $daemonjsonfile to $daemondestfilename\n"
-sudo cp -f $daemonjsonfile $daemondestfilename
-
+print_instruction "\nCopying $daemonjsonfile to $daemondestfilename..."
+    sudo cp -f $daemonjsonfile $daemondestfilename
+print_result $?
 
 
 # Create a backup if it doesn't already exist
@@ -79,13 +79,19 @@ sudo cp -f $daemonjsonfile $daemondestfilename
 
 # Create temporary file with an update - uncommented line
 if [ -f $SYSCTL_FILE ]; then
-    sed -i "$SED_REGEX_QUERY" $SYSCTL_FILE
+    print_instruction "Modifying $ETC_FOLDER$SYSCTL_FILE on: $host_target/$ip_target... "
+        sudo sed -i "$SED_REGEX_QUERY" $ETC_FOLDER$SYSCTL_FILE
+    print_result $?
+
+    # Going to use the sysctl.conf file to copy to the workers
+    cp $ETC_FOLDER$SYSCTL_FILE $SYSCTL_FILE
 fi
 
-ip_target=$(echo $cluster_data | jq --raw-output ".[0].IP")
-host_target=$(echo $cluster_data | jq --raw-output ".[0].name")
 
-print_instruction "$ETC_FOLDER$SYSCTL_FILE modified on: $host_target/$ip_target: "
+#ip_target=$(echo $cluster_data | jq --raw-output ".[0].IP")
+#host_target=$(echo $cluster_data | jq --raw-output ".[0].name")
+
+
 
 
 for ((i=0; i<$length; i++));
@@ -123,35 +129,46 @@ do
         print_result $?
 
         # if the docker group doesn't exist...add it
-        printf "\nCreating 'docker' group on $host_target.\n"
         sudo sshpass -p $pword ssh $piid@$ip_target grep -q docker /etc/group
 
         if [ $? -ne 0 ]; then
-            sudo sshpass -p $pword ssh $piid@$ip_target sudo groupadd docker
+            print_instruction "\nCreating 'docker' group on $host_target...\n"
+                sudo sshpass -p $pword ssh $piid@$ip_target sudo groupadd docker
+            print_result $?
+        else
+            print_instruction "'docker' group exists.\n"
         fi
 
         # if the ID doesn't exist in the group...add it
         sudo sshpass -p $pword ssh $piid@$ip_target id pi | grep -q 'docker'
 
         if [ $? -ne 0 ]; then
-            print_instruction "Adding $piid to the docker group\n"
-            sudo sshpass -p $pword ssh $piid@$ip_target sudo usermod $piid -aG docker
+            print_instruction "Adding $piid to the docker group...\n"
+                sudo sshpass -p $pword ssh $piid@$ip_target sudo usermod $piid -aG docker
+            print_result $?
+        else
+            print_instruction "$piid already exists in the docker group."
         fi
 
         sudo sshpass -p $pword ssh $piid@$ip_target test -d $DOCKER_ETC_DIR
         if [ $? -ne 0 ]; then
-            sudo sshpass -p $pword ssh $piid@$ip_target mkdir $DOCKER_ETC_DIR
+            print_instruction "Creating folder: $DOCKER_ETC_DIR..."
+                sudo sshpass -p $pword ssh $piid@$ip_target mkdir $DOCKER_ETC_DIR
+            print_result $?
         fi
 
-        printf "\nCopying $daemonjsonfile to $daemondestfilename on $host_target\n"
-        sudo sshpass -p $pword sudo scp $daemonjsonfile $piid@$ip_target:
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo cp -f $daemonjsonfile $daemondestfilename
+        print_instruction "\nCopying $daemonjsonfile to $daemondestfilename on $host_target\n"
+            sudo sshpass -p $pword sudo scp $daemonjsonfile $piid@$ip_target:
+            sudo sshpass -p $pword ssh $piid@$ip_target sudo cp -f $daemonjsonfile $daemondestfilename
+        print_result $?
 
-        print_instruction "Modifying $ETC_FOLDER$SYSCTL_FILE on $host_target/$ip_target: "
+        print_instruction "Copying $SYSCTL_FILE to the worker: $host_target/$ip_target... "
+            sudo sshpass -p $pword scp -p -r $SYSCTL_FILE $piid@$ip_target:
+        print_result $?
 
-        sshpass -p $pword ssh $piid@$ip_target [ ! -f "$ETC_FOLDER$BAK_FILE" ] && sudo cp -f "$ETC_FOLDER$SYSCTL_FILE" "$ETC_FOLDER$BAK_FILE"
-
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo sed -i "$SED_REGEX_QUERY" $SYSCTL_FILE
+        print_instruction "Copying $SYSCTL_FILE to the folder: $ETC_FOLDER... "
+            sudo sshpass -p $pword ssh $piid@$ip_target sudo cp -f "$SYSCTL_FILE" "$ETC_FOLDER"
+        print_result $?
 
         print_instruction "$ETC_FOLDER$SYSCTL_FILE modified on: $host_target/$ip_target: "
     fi
