@@ -75,19 +75,20 @@ print_result $?
 
 
 # Create a backup if it doesn't already exist
-[ ! -f "$ETC_FOLDER$BAK_FILE" ] && cp "$ETC_FOLDER$SYSCTL_FILE" "$ETC_FOLDER$BAK_FILE"
+print_instruction "Create $ETC_FOLDER$BAK_FILE if it doesn't exist... "
+    [ ! -f "$ETC_FOLDER$BAK_FILE" ] && cp "$ETC_FOLDER$SYSCTL_FILE" "$ETC_FOLDER$BAK_FILE"
+print_result $?
+
 
 # Create temporary file with an update - uncommented line
-if [ -f $SYSCTL_FILE ]; then
-    print_instruction "Modifying $ETC_FOLDER$SYSCTL_FILE on: $host_target/$ip_target... "
-        sudo sed -i "$SED_REGEX_QUERY" $ETC_FOLDER$SYSCTL_FILE
-    print_result $?
+print_instruction "Modifying $ETC_FOLDER$SYSCTL_FILE on: $host_target/$ip_target... "
+    sudo sed -i "$SED_REGEX_QUERY" $ETC_FOLDER$SYSCTL_FILE
+print_result $?
 
-    # Going to use the sysctl.conf file to copy to the workers
-    print_instruction "Copying $ETC_FOLDER$SYSCTL_FILE to local folder... "
-        cp $ETC_FOLDER$SYSCTL_FILE .
-    print_result $?
-fi
+# Going to use the sysctl.conf file to copy to the workers
+print_instruction "Copying $ETC_FOLDER$SYSCTL_FILE to local folder... "
+    cp $ETC_FOLDER$SYSCTL_FILE .
+print_result $?
 
 
 #ip_target=$(echo $cluster_data | jq --raw-output ".[0].IP")
