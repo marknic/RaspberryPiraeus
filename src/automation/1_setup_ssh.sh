@@ -15,7 +15,7 @@ print_instruction " ______| ______| |     | \n"
 
 . _array_setup.sh
 
-printf "Setting up SSH to communicate with the workers.\n"
+print_instruction "Setting up SSH to communicate with the workers.\n"
 
 # # Set up SSH keys
 print_instruction "apt-get --fix-missing update..."
@@ -24,11 +24,7 @@ print_result $?
 
 sudo chown -R $piid /home/$piid/.ssh/
 
-printf "Done creating SSH Keys.\n\n"
-
-print_instruction "Set up the nameserver (DNS) file to allow apt-get to work reliably..."
-    sudo cp -f _nameserver.txt /etc/resolv.conf
-print_result $?
+print_instruction "Done creating SSH Keys.\n\n"
 
 for ((i=0; i<$length; i++));
 do
@@ -60,7 +56,7 @@ do
         print_result $?
     fi
 
-    printf "Setting up the local hosts file\n"
+    print_instruction "Setting up the local hosts file\n"
 
     # Remove the line with 127.0.1.1 in it
     sed -i -e "/127.0.1.1/d" $localhostsfile
@@ -68,7 +64,7 @@ do
     # Replace the removed line with the updated line
     echo "127.0.1.1       $new_host_name" >> $localhostsfile
 
-    print_instruction "Adding other cluster hosts to the current hosts file."
+    print_instruction "Adding worker hosts to the current hosts file."
     for ((j=0; j<$length; j++));
     do
         ip_to_change=$(echo $cluster_data | jq --raw-output ".[$j].IP")
@@ -82,36 +78,29 @@ do
     done
 
     if [ $ip_target == $ip_addr_me ]; then
-        sudo rm -f $FILE_HOSTS
-        sudo rm -f $FILE_HOSTNAME
-
-        sudo mv -f $localhostsfile     $FILE_HOSTS
-        sudo mv -f $localhostnamefile  $FILE_HOSTNAME
+        print_instruction "Copy the host files..."
+        sudo cp -f $localhostsfile     $FILE_HOSTS
+        print_result $?
+        sudo cp -f $localhostnamefile  $FILE_HOSTNAME
+        print_result $?
     else
+
         print_instruction "Copy the host files over to the worker(s)."
         sshpass -p $pword scp $localhostnamefile  $piid@$ip_target:
+        print_result $?
         sshpass -p $pword scp $localhostsfile     $piid@$ip_target:
+        print_result $?
 
         print_instruction "Remove the existing host files."
         sshpass -p $pword ssh $piid@$ip_target sudo rm -f $FILE_HOSTS
+        print_result $?
         sshpass -p $pword ssh $piid@$ip_target sudo rm -f $FILE_HOSTNAME
+        print_result $?
 
         print_instruction "Move the new host files into /etc/.\n"
         sshpass -p $pword ssh $piid@$ip_target sudo mv -f $localhostsfile    $FILE_HOSTS
+        print_result $?
         sshpass -p $pword ssh $piid@$ip_target sudo mv -f $localhostnamefile $FILE_HOSTNAME
-
-        print_instruction "Set up the nameserver to allow update to work reliably on $new_host_name"
-
-        print_instruction "Copy the _nameserver.txt file over to the worker:"
-            sshpass -p $pword scp _nameserver.txt  $piid@$ip_target:
-        print_result $?
-
-        print_instruction "Remove the current resolve.conf file..."
-            sshpass -p $pword ssh $piid@$ip_target sudo rm -f "$ETC_FOLDER$resolveconf"
-        print_result $?
-
-        print_instruction "Copy _nameserver.txt file to $ETC_FOLDER$resolveconf..."
-            sudo cp -f _nameserver.txt "$ETC_FOLDER$resolveconf"
         print_result $?
 
     fi
