@@ -29,15 +29,21 @@ print_instruction "apt-get -y --fix-missing dist-upgrade..."
 print_result $?
 
 
-# Install docker
-print_instruction "Getting docker install script..."
-    curl -fsSL https://get.docker.com -o get-docker.sh
-print_result $?
+# This command will fail if docker is not installed
+sudo docker ps > /dev/null 2>&1
 
-print_instruction "Installing Docker via script..."
-    sh get-docker.sh
-print_result $?
+# Only do this if docker has not been installed yet
+if [ $? -ne 0 ]
+then
+    # Install docker
+    print_instruction "Getting docker install script..."
+        curl -fsSL https://get.docker.com -o get-docker.sh
+    print_result $?
 
+    print_instruction "Installing Docker via script..."
+        sh get-docker.sh
+    print_result $?
+fi
 
 grep -q docker /etc/group
 
@@ -122,15 +128,20 @@ do
             sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get install -y software-properties-common
         print_result $?
 
-        # Install docker
-        print_instruction "Getting docker install script..."
-            sudo sshpass -p $pword ssh $piid@$ip_target curl -fsSL https://get.docker.com -o get-docker.sh
-        print_result $?
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo docker ps > /dev/null 2>&1
 
-        print_instruction "Getting docker install script..."
-            sudo sshpass -p $pword ssh $piid@$ip_target sh get-docker.sh
-        print_result $?
+        if [ $? -ne 0 ]
+        then
+            # Install docker
+            print_instruction "Getting docker install script..."
+                sudo sshpass -p $pword ssh $piid@$ip_target curl -fsSL https://get.docker.com -o get-docker.sh
+            print_result $?
 
+            print_instruction "Getting docker install script..."
+                sudo sshpass -p $pword ssh $piid@$ip_target sh get-docker.sh
+            print_result $?
+        fi
+        
         # if the docker group doesn't exist...add it
         sudo sshpass -p $pword ssh $piid@$ip_target grep -q docker /etc/group
 
