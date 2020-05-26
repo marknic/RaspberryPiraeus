@@ -80,11 +80,13 @@ print_instruction "\nCopying $daemonjsonfile to $daemondestfilename..."
 print_result $?
 
 
-# Create a backup if it doesn't already exist
-print_instruction "Create $ETC_FOLDER$BAK_FILE if it doesn't exist... "
-    [ ! -f "$ETC_FOLDER$BAK_FILE" ] && cp "$ETC_FOLDER$SYSCTL_FILE" "$ETC_FOLDER$BAK_FILE"
-print_result $?
-
+if [ ! -f "$ETC_FOLDER$BAK_FILE" ]
+then
+    # Create a backup if it doesn't already exist
+    print_instruction "Create $ETC_FOLDER$BAK_FILE if it doesn't exist... "
+        cp "$ETC_FOLDER$SYSCTL_FILE" "$ETC_FOLDER$BAK_FILE"
+    print_result $?
+fi
 
 # Create temporary file with an update - uncommented line
 print_instruction "Modifying $ETC_FOLDER$SYSCTL_FILE on: $host_target/$ip_target... "
@@ -141,7 +143,7 @@ do
                 sudo sshpass -p $pword ssh $piid@$ip_target sh get-docker.sh
             print_result $?
         fi
-        
+
         # if the docker group doesn't exist...add it
         sudo sshpass -p $pword ssh $piid@$ip_target grep -q docker /etc/group
 
