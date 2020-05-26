@@ -51,11 +51,6 @@ execute_remote_command_with_retry() {
     local -r -i max_attempts=3
     local -i attempt_num=1
 
-    echo 1: $1
-    echo pword: $pword
-    echo piid: $piid
-    echo ip_target: $ip_target
-    
     until sudo sshpass -p $pword ssh $piid@$ip_target $1
     do
         if (( attempt_num == max_attempts ))
