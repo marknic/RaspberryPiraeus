@@ -26,7 +26,7 @@ print_instruction "\nCreating support file for k8s: kubernetes.list"
 
 if [ ! -f $kub_list ]; then
     print_instruction "Creating $kub_list..."
-    sudo cp $FILE_KUB_LIST_DATA $kub_list
+        sudo cp $FILE_KUB_LIST_DATA $kub_list
     print_result $?
 fi
 
@@ -58,7 +58,7 @@ print_result $?
 
 
 print_instruction "\nInstall kubeadm kubectl kubelet..."
-sudo apt-get -y install kubeadm kubectl kubelet
+    sudo apt-get -y install kubeadm kubectl kubelet
 print_result $?
 
 for ((i=0; i<$length; i++));
@@ -75,13 +75,15 @@ do
         print_instruction "Configuring $host_target/$ip_target\n"
 
         print_instruction "Clean..."
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get clean
+            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get clean
         print_result $?
+
         print_instruction "Update..."
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get --fix-missing update
+            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get --fix-missing update
         print_result $?
+
         print_instruction "Upgrade..."
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y --fix-missing upgrade
+            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y --fix-missing upgrade
         print_result $?
 
         print_instruction "Checking to see if $kub_list already exists..."
@@ -105,7 +107,7 @@ do
 
 
         print_instruction "\nUpdating and checking for installation keys on: $host_target..."
-        sudo sshpass -p $pword ssh $piid@$ip_target "sudo apt-get update 2>&1 1>/dev/null | sed -ne 's/.*NO_PUBKEY //p'" > keys.txt
+            sudo sshpass -p $pword ssh $piid@$ip_target "sudo apt-get update 2>&1 1>/dev/null | sed -ne 's/.*NO_PUBKEY //p'" > keys.txt
         print_result $?
 
         cat keys.txt |

@@ -21,7 +21,7 @@ sudo apt-get update
 sudo apt-get -y dist-upgrade
 
 print_instruction "\nkubeadm init...\n"
-sudo kubeadm init --pod-network-cidr=10.244.0.0/16
+sudo kubeadm init --apiserver-advertise-address=$ip_addr_me --pod-network-cidr=10.244.0.0/16
 
 print_instruction "\nmkdir as pi\n"
 runuser -l $piid -c "mkdir -p /home/$piid/.kube"
