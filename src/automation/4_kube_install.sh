@@ -85,8 +85,7 @@ do
         print_result $?
 
         print_instruction "Checking to see if $kub_list already exists..."
-            sudo sshpass -p $pword ssh $piid@$ip_target test -f $kub_list
-        print_result $?
+        sudo sshpass -p $pword ssh $piid@$ip_target test -f $kub_list
 
         if [ $? -ne 0 ]; then
             print_instruction "\nCopy kubernetes.list to the worker: $host_target..."
