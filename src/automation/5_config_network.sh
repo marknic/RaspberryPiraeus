@@ -17,20 +17,37 @@ print_instruction " |  \_| |______    |    |__|__| |_____| |    \_ |    \_ \n"
 
 print_instruction "\nUpdate & configure kubernetes..."
 
-sudo apt-get update
-sudo apt-get -y dist-upgrade
+print_instruction "\nUpdate..."
+    sudo apt-get clean
+print_result $?
 
-print_instruction "\nkubeadm init...\n"
-sudo kubeadm init --apiserver-advertise-address=$ip_addr_me --pod-network-cidr=10.244.0.0/16
+print_instruction "\nUpdate..."
+    sudo apt-get update
+print_result $?
 
-print_instruction "\nmkdir as pi\n"
-runuser -l $piid -c "mkdir -p /home/$piid/.kube"
+print_instruction "\nUpgrade..."
+    sudo apt-get -y dist-upgrade
+print_result $?
 
-print_instruction "\nCopy\n"
-sudo cp /etc/kubernetes/admin.conf /home/$piid/.kube/config
+print_instruction "\nkubeadm reset..."
+    sudo kubeadm reset -f
+print_result $?
 
-print_instruction "\nchown\n"
-runuser -l $piid -c 'sudo chown $(id -u):$(id -g) $HOME/.kube/config'
+print_instruction "\nkubeadm init..."
+    sudo kubeadm init --apiserver-advertise-address=$ip_addr_me --pod-network-cidr=10.244.0.0/16
+print_result $?
+
+print_instruction "\nmkdir .kube as pi..."
+    runuser -l $piid -c "mkdir -p /home/$piid/.kube"
+print_result $?
+
+print_instruction "\nCopy admin.conf to .kube/config..."
+    sudo cp /etc/kubernetes/admin.conf /home/$piid/.kube/config
+print_result $?
+
+print_instruction "\nchown .kube/config..."
+    runuser -l $piid -c 'sudo chown $(id -u):$(id -g) $HOME/.kube/config'
+print_result $?
 
 
 # output of kubeadm command will be used on workers
@@ -39,10 +56,11 @@ joincmd=$(sudo kubeadm token create --print-join-command)
 print_instruction "\nInstalling Flannel\n\n"
 runuser -l $piid -c "sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml"
 
-runuser -l $piid -c "kubectl get pods --all-namespaces"
+print_instruction "\nkubectl get pods..."
+sudo runuser -l $piid -c "kubectl get pods --all-namespaces"
 
 
-
+exit
 for ((i=0; i<$length; i++));
 do
     # Get the IP to search for
@@ -52,14 +70,14 @@ do
     then
         host_target=$(echo $cluster_data | jq --raw-output ".[$i].name")
 
-        print_instruction "\n\n-----------\n"
-        print_instruction "Joining $host_target/$ip_target to the Kubernetes Cluster\n\n"
-
-        sudo sshpass -p $pword ssh $piid@$ip_target "sudo $joincmd"
+        print_instruction "Joining $host_target/$ip_target to the Kubernetes Cluster\n"
+            sudo sshpass -p $pword ssh $piid@$ip_target "sudo $joincmd"
+        print_result $?
 
         # Label the worker nodes
         print_instruction "\nLabeling worker: $host_target.\n"
-        sudo kubectl label node $host_target node-role.kubernetes.io/worker=worker
+            sudo kubectl label node $host_target node-role.kubernetes.io/worker=worker
+        print_result $?
     fi
 
 done
