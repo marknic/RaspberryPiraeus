@@ -40,7 +40,8 @@ lc_val="${new_locale:0:len}"
 
 grep "export LANG=$lc_val" /home/$piid/.bashrc
 
-if [ $? -ne 0 ] then;
+if [ $? -ne 0 ]
+then
     print_instruction "Add LANG setting with $lc_val to .bashrc..."
         echo "export LANG=$lc_val" >> .bashrc
     print_result $?
@@ -48,7 +49,8 @@ fi
 
 grep "export LANG=$lc_val" /home/$piid/.bashrc
 
-if [ $? -ne 0 ] then;
+if [ $? -ne 0 ]
+then
     print_instruction "Add LC_ALL setting with $lc_val to .bashrc..."
         echo "export LC_ALL=$lc_val" >> .bashrc
     print_result $?
