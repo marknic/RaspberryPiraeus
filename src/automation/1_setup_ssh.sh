@@ -44,6 +44,18 @@ do
         cp $FILE_HOSTS $localhostsfile
     else
 
+        sudo sshpass -p $pword ssh -o "StrictHostKeyChecking=no" $piid@$ip_target sudo mkdir /home/$piid/.ssh/
+        sudo sshpass -p $pword ssh $piid@$ip_target sudo chown -R $piid /home/$piid/.ssh/
+
+        print_instruction "Copying the SSH public key from the master to the worker.\n"
+            sudo sshpass -p $pword scp -p -r /home/$piid/.ssh/id_rsa.pub $piid@$ip_target:/home/$piid/.ssh/authorized_keys
+        print_result $?
+
+        print_instruction "Copying hosts file to worker.\n"
+            sshpass -p $pword scp "$piid@$ip_target:$FILE_HOSTS" $localhostsfile
+        print_result $?
+
+
         print_instruction "apt-get clean on worker: $ip_target.\n"
             sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get clean
         print_result $?
@@ -56,16 +68,6 @@ do
             sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y --fix-missing dist-upgrade
         print_result $?
 
-        sudo sshpass -p $pword ssh -o "StrictHostKeyChecking=no" $piid@$ip_target sudo mkdir /home/$piid/.ssh/
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo chown -R $piid /home/$piid/.ssh/
-
-        print_instruction "Copying the SSH public key from the master to the worker.\n"
-            sudo sshpass -p $pword scp -p -r /home/$piid/.ssh/id_rsa.pub $piid@$ip_target:/home/$piid/.ssh/authorized_keys
-        print_result $?
-
-        print_instruction "Copying hosts file to worker.\n"
-            sshpass -p $pword scp "$piid@$ip_target:$FILE_HOSTS" $localhostsfile
-        print_result $?
     fi
 
     print_instruction "Setting up the local hosts file\n"
