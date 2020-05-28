@@ -38,13 +38,21 @@ print_result $?
 
 lc_val="${new_locale:0:len}"
 
-print_instruction "Add LANG setting with $lc_val to .bashrc..."
-    echo "export LANG=$lc_val" >> .bashrc
-print_result $?
+grep "export LANG=$lc_val" /home/$piid/.bashrc
 
-print_instruction "Add LC_ALL setting with $lc_val to .bashrc..."
-    echo "export LC_ALL=$lc_val" >> .bashrc
-print_result $?
+if [ $? -ne 0 ] then;
+    print_instruction "Add LANG setting with $lc_val to .bashrc..."
+        echo "export LANG=$lc_val" >> .bashrc
+    print_result $?
+fi
+
+grep "export LANG=$lc_val" /home/$piid/.bashrc
+
+if [ $? -ne 0 ] then;
+    print_instruction "Add LC_ALL setting with $lc_val to .bashrc..."
+        echo "export LC_ALL=$lc_val" >> .bashrc
+    print_result $?
+fi
 
 print_instruction "Make changes current to the session..."
     source .bashrc
@@ -79,13 +87,20 @@ do
             sudo sshpass -p $pword ssh $piid@$ip_target "sudo sed -i 's/$new_locale/# $new_locale/g' /etc/locale.gen"
         print_result $?
 
-        print_instruction "Add LANG setting with $lc_val to .bashrc..."
-            sudo sshpass -p $pword ssh $piid@$ip_target "echo 'export LANG=$lc_val' >> $HOME/.bashrc"
-        print_result $?
+        sudo sshpass -p $pword ssh $piid@$ip_target "grep 'export LANG=$lc_val' /home/$piid/.bashrc"
 
-        print_instruction "Add LC_ALL setting with $lc_val to .bashrc..."
-            sudo sshpass -p $pword ssh $piid@$ip_target "echo 'export LC_ALL=$lc_val' >> $HOME/.bashrc"
-        print_result $?
+        if [ $? -ne 0 ] then;
+            print_instruction "Add LANG setting with $lc_val to .bashrc..."
+                sudo sshpass -p $pword ssh $piid@$ip_target "echo 'export LANG=$lc_val' >> /home/$piid/.bashrc"
+            print_result $?
+        fi
+
+        sudo sshpass -p $pword ssh $piid@$ip_target "grep 'export LC_ALL=$lc_val' /home/$piid/.bashrc"
+        if [ $? -ne 0 ] then;
+            print_instruction "Add LC_ALL setting with $lc_val to .bashrc..."
+                sudo sshpass -p $pword ssh $piid@$ip_target "echo 'export LC_ALL=$lc_val' >> /home/$piid/.bashrc"
+            print_result $?
+        fi
 
         print_instruction "Make changes current to the session..."
             sudo sshpass -p $pword ssh $piid@$ip_target "source .bashrc"
