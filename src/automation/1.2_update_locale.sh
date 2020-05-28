@@ -23,12 +23,12 @@ print_instruction " |_____ |_____| |_____  |     | |_____ |______   \n"
 
 # Comment out the original locale...
 print_instruction "Comment out the old locale: $orig_locale..."
-    sudo sed -i "s/$orig_locale/# $orig_locale/g" /etc/locale.gen
+    sudo sed -i "s/^$orig_locale/# $orig_locale/g" /etc/locale.gen
 print_result $?
 
 # Uncomment the new locale
 print_instruction "Uncomment the new locale: $new_locale..."
-    sudo sed -i "s/# $new_locale/$new_locale/g" /etc/locale.gen
+    sudo sed -i "s/^# $new_locale/$new_locale/g" /etc/locale.gen
 print_result $?
 
 print_instruction "Calculate the country/locale code only..."
@@ -82,12 +82,12 @@ do
 
         # Comment out the original locale...
         print_instruction "Comment out the old locale: $orig_locale..."
-            sudo sshpass -p $pword ssh $piid@$ip_target "sudo sed -i 's/$orig_locale/# $orig_locale/g' /etc/locale.gen"
+            sudo sshpass -p $pword ssh $piid@$ip_target "sudo sed -i 's/^$orig_locale/# $orig_locale/g' /etc/locale.gen"
         print_result $?
 
         # Uncomment the new locale
         print_instruction "Uncomment the new locale: $new_locale..."
-            sudo sshpass -p $pword ssh $piid@$ip_target "sudo sed -i 's/$new_locale/# $new_locale/g' /etc/locale.gen"
+            sudo sshpass -p $pword ssh $piid@$ip_target "sudo sed -i 's/^# $new_locale/$new_locale/g' /etc/locale.gen"
         print_result $?
 
         sudo sshpass -p $pword ssh $piid@$ip_target "grep 'export LANG=$lc_val' /home/$piid/.bashrc"
@@ -112,7 +112,7 @@ do
         print_result $?
 
         print_instruction "Execute locale-gen with the current settings..."
-        sudo sshpass -p $pword ssh $piid@$ip_target "sudo locale-gen"
+            sudo sshpass -p $pword ssh $piid@$ip_target "sudo locale-gen"
         print_result $?
 
         print_instruction "Execute locale-gen with the current settings..."
