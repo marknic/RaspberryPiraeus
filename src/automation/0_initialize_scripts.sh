@@ -14,8 +14,8 @@ print_instruction "  ____            _       _                  "
 print_instruction " / ___|  ___ _ __(_)_ __ | |_ ___            "
 print_instruction " \___ \ / __| !__| | !_ \| __/ __|           "
 print_instruction "  ___) | (__| |  | | |_) | |_\__ \           "
-print_instruction " |____/ \___|_|  |_| .__/ \__|___/         /n"
-print_instruction "                   |_|
+print_instruction " |____/ \___|_|  |_| .__/ \__|___/           "
+print_instruction "                   |_|                     \n"
 
 
 
