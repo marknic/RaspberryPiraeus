@@ -9,7 +9,7 @@ print_instruction "  ___) |  __/ |_                                 "
 print_instruction " |____/ \___|\__|                                "
 print_instruction "  _____ _                                        "
 print_instruction " |_   _(_)_ __ ___   ___ _______  _ __   ___     "
-print_instruction "   | | | | '_ ' _ \ / _ \_  / _ \| '_ \ / _ \    "
+print_instruction "   | | | | !_ ! _ \ / _ \_  / _ \| !_ \ / _ \    "
 print_instruction "   | | | | | | | | |  __// / (_) | | | |  __/    "
 print_instruction "   |_| |_|_| |_| |_|\___/___\___/|_| |_|\___|  \n"
 

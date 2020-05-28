@@ -4,12 +4,12 @@
 
 print_instruction "  ____                                           "
 print_instruction " |  _ \ ___ _ __ ___   _____   _____             "
-print_instruction " | |_) / _ \ '_ ' _ \ / _ \ \ / / _ \            "
+print_instruction " | |_) / _ \ !_ ! _ \ / _ \ \ / / _ \            "
 print_instruction " |  _ <  __/ | | | | | (_) \ V /  __/            "
 print_instruction " |_| \_\___|_| |_| |_|\___/ \_/ \___|            "
 print_instruction "  ____                       _____ _ _           "
 print_instruction " / ___|_      ____ _ _ __   |  ___(_) | ___      "
-print_instruction " \___ \ \ /\ / / _' | '_ \  | |_  | | |/ _ \     "
+print_instruction " \___ \ \ /\ / / _! | !_ \  | |_  | | |/ _ \     "
 print_instruction "  ___) \ V  V / (_| | |_) | |  _| | | |  __/     "
 print_instruction " |____/ \_/\_/ \__,_| .__/  |_|   |_|_|\___|   \n"
 
