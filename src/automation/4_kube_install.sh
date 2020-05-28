@@ -2,18 +2,22 @@
 
 . _config_file.sh
 
-print_instruction " _     _ _     _ ______  _______  ______ __   _ _______ _______ _______ _______"
-print_instruction " |____/  |     | |_____] |______ |_____/ | \  | |______    |    |______ |______"
-print_instruction " |    \_ |_____| |_____] |______ |    \_ |  \_| |______    |    |______ ______|\n"
-
-print_instruction " _____ __   _ _______ _______ _______                  /"
-print_instruction "   |   | \  | |______    |    |_____| |      |        /"
-print_instruction " __|__ |  \_| ______|    |    |     | |_____ |_____  /\n"
-
-print_instruction " _______ _______ _______ _     _  _____ "
-print_instruction " |______ |______    |    |     | |_____]"
-print_instruction " ______| |______    |    |_____| |      \n"
-
+print_instruction "  _  __     _                          _                 "
+print_instruction " | |/ /   _| |__   ___ _ __ _ __   ___| |_ ___  ___      "
+print_instruction " | ' / | | | '_ \ / _ \ '__| '_ \ / _ \ __/ _ \/ __|     "
+print_instruction " | . \ |_| | |_) |  __/ |  | | | |  __/ ||  __/\__ \     "
+print_instruction " |_|\_\__,_|_.__/ \___|_|  |_| |_|\___|\__\___||___/     "
+print_instruction "  ___           _        _ _      __                     "
+print_instruction " |_ _|_ __  ___| |_ __ _| | |    / /                     "
+print_instruction "  | || '_ \/ __| __/ _' | | |   / /                      "
+print_instruction "  | || | | \__ \ || (_| | | |  / /                       "
+print_instruction " |___|_| |_|___/\__\__,_|_|_| /_/                        "
+print_instruction "  ____       _                                           "
+print_instruction " / ___|  ___| |_ _   _ _ __                              "
+print_instruction " \___ \ / _ \ __| | | | '_ \                             "
+print_instruction "  ___) |  __/ |_| |_| | |_) |                            "
+print_instruction " |____/ \___|\__|\__,_| .__/                             "
+print_instruction "                      |_|                              \n"
 
 . _check_root.sh
 
