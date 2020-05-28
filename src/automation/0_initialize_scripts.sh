@@ -17,6 +17,7 @@ print_instruction "Setting the scripts to 'Executable'."
 
 chmod +x 1_setup_ssh.sh
 chmod +x 1.1_set_timezone.sh
+chmod +x 1.2_set_timezone.sh
 chmod +x 2_swap_file.sh
 chmod +x 3_install_docker.sh
 chmod +x 4_kube_install.sh
