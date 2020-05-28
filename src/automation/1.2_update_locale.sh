@@ -74,7 +74,8 @@ do
     # Get the IP to search for
     ip_target=$(echo $cluster_data | jq --raw-output ".[$i].IP")
 
-    if [ $ip_target != $ip_addr_me ]; then
+    if [ $ip_target != $ip_addr_me ]
+    then
 
         new_host_name=$(echo $cluster_data | jq --raw-output ".[$i].name")
 
@@ -91,14 +92,16 @@ do
 
         sudo sshpass -p $pword ssh $piid@$ip_target "grep 'export LANG=$lc_val' /home/$piid/.bashrc"
 
-        if [ $? -ne 0 ] then;
+        if [ $? -ne 0 ]
+        then
             print_instruction "Add LANG setting with $lc_val to .bashrc..."
                 sudo sshpass -p $pword ssh $piid@$ip_target "echo 'export LANG=$lc_val' >> /home/$piid/.bashrc"
             print_result $?
         fi
 
         sudo sshpass -p $pword ssh $piid@$ip_target "grep 'export LC_ALL=$lc_val' /home/$piid/.bashrc"
-        if [ $? -ne 0 ] then;
+        if [ $? -ne 0 ]
+        then
             print_instruction "Add LC_ALL setting with $lc_val to .bashrc..."
                 sudo sshpass -p $pword ssh $piid@$ip_target "echo 'export LC_ALL=$lc_val' >> /home/$piid/.bashrc"
             print_result $?
