@@ -172,7 +172,7 @@ do
         sudo sshpass -p $pword ssh $piid@$ip_target test -d $DOCKER_ETC_DIR
         if [ $? -ne 0 ]; then
             print_instruction "Creating folder: $DOCKER_ETC_DIR..."
-                sudo sshpass -p $pword ssh $piid@$ip_target mkdir $DOCKER_ETC_DIR
+                sudo sshpass -p $pword ssh $piid@$ip_target sudo mkdir $DOCKER_ETC_DIR
             print_result $?
         fi
 

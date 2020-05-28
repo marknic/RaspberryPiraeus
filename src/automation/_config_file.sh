@@ -1,4 +1,18 @@
+
+# Valid time zones:  https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 zonelocation="America/Chicago"
+
+#  /etc/locale
+#  Valid locale codes:  cat /usr/share/i18n/SUPPORTED
+orig_locale="en_GB.UTF-8 UTF-8"
+new_locale="en_US.UTF-8 UTF-8"
+
+#  Valid country codes for Keyboard layout (under "Current Codes" / "Alpha-2 code"): https://en.wikipedia.org/wiki/ISO_3166-1#Current_codes
+#  data held here:  /etc/default/keyboard
+orig_keyboard="gb"
+new_keyboard="us"
+
+
 
 FILE_HOSTNAME="/etc/hostname"
 FILE_HOSTS="/etc/hosts"
