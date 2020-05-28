@@ -44,6 +44,18 @@ do
         cp $FILE_HOSTS $localhostsfile
     else
 
+        print_instruction "apt-get clean on worker: $ip_target.\n"
+            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get clean
+        print_result $?
+
+        print_instruction "apt-get update on worker: $ip_target.\n"
+            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get --fix-missing update
+        print_result $?
+
+        print_instruction "apt-get upgrade on worker: $ip_target.\n"
+            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y --fix-missing dist-upgrade
+        print_result $?
+
         sudo sshpass -p $pword ssh -o "StrictHostKeyChecking=no" $piid@$ip_target sudo mkdir /home/$piid/.ssh/
         sudo sshpass -p $pword ssh $piid@$ip_target sudo chown -R $piid /home/$piid/.ssh/
 
