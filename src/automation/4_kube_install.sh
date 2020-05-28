@@ -30,6 +30,9 @@ if [ ! -f $kub_list ]; then
     print_result $?
 fi
 
+print_instruction "\nStart Docker Service...\n"
+    sudo systemctl start docker.service
+print_result $?
 
 print_instruction "\nAdding link to Kubernetes repository and adding the APT key...\n"
     sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
@@ -116,9 +119,20 @@ do
             print_instruction "\nReplacing missing key: $key ..."
                 sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys "$key"
             print_result $?
+
         done
 
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get update
+        print_instruction "Clean..."
+            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get clean
+        print_result $?
+
+        print_instruction "Update..."
+            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get --fix-missing update
+        print_result $?
+
+        print_instruction "Upgrade..."
+            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y --fix-missing upgrade
+        print_result $?
 
         print_instruction "\nInstall kubeadm kubectl kubelet..."
             sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y install kubeadm kubectl kubelet

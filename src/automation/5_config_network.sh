@@ -57,8 +57,8 @@ print_instruction "\nInstalling Flannel\n\n"
 runuser -l $piid -c "sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml"
 
 print_instruction "\nkubectl get pods..."
-sudo runuser -l $piid -c "kubectl get pods --all-namespaces"
-
+    sudo runuser -l $piid -c "kubectl get pods --all-namespaces"
+print_result $?
 
 exit
 for ((i=0; i<$length; i++));
@@ -84,3 +84,4 @@ done
 
 
 print_instruction "\nRun 'kubectl get nodes' to see the cluster.\n"
+

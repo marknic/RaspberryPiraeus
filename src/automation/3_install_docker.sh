@@ -130,10 +130,13 @@ do
             sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get install -y software-properties-common
         print_result $?
 
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo docker ps > /dev/null 2>&1
+        print_instruction "Check to see if Docker is already installed."
+            sudo sshpass -p $pword ssh $piid@$ip_target sudo docker ps > /dev/null 2>&1
 
         if [ $? -ne 0 ]
         then
+            print_instruction "Docker is not installed.  Installing..."
+
             # Install docker
             print_instruction "Getting docker install script..."
                 sudo sshpass -p $pword ssh $piid@$ip_target curl -fsSL https://get.docker.com -o get-docker.sh
