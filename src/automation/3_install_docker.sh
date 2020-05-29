@@ -32,6 +32,10 @@ print_instruction "apt-get -y --fix-missing dist-upgrade..."
 print_result $?
 
 
+print_instruction "\nAdding link to Raspbian Docker repository and adding the APT key...\n"
+    sudo curl -fsSL https://download.docker.com/linux/raspbian/gpg  | sudo apt-key add -
+print_result $?
+
 # This command will fail if docker is not installed
 sudo docker ps > /dev/null 2>&1
 
@@ -102,11 +106,6 @@ print_instruction "Copying $ETC_FOLDER$SYSCTL_FILE to local folder... "
 print_result $?
 
 
-#ip_target=$(echo $cluster_data | jq --raw-output ".[0].IP")
-#host_target=$(echo $cluster_data | jq --raw-output ".[0].name")
-
-
-
 
 for ((i=0; i<$length; i++));
 do
@@ -131,6 +130,10 @@ do
 
         print_instruction "Installing software-properties-common..."
             sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get install -y software-properties-common
+        print_result $?
+
+        print_instruction "\nAdding link to Kubernetes repository and adding the APT key"
+            sudo sshpass -p $pword ssh $piid@$ip_target sudo curl -s https://download.docker.com/linux/raspbian/gpg | sudo apt-key add -
         print_result $?
 
         print_instruction "Check to see if Docker is already installed."

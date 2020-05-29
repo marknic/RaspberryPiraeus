@@ -52,6 +52,11 @@ print_instruction () {
     printf "${CYAN}${@}${NC}\n"
 }
 
+print_warning () {
+
+    printf "${YLOW}${@}${NC}\n"
+}
+
 print_result () {
 
     if [ $1 -ne 0 ]; then
@@ -96,3 +101,22 @@ execute_command_with_retry() {
         fi
     done
 }
+
+kill_process_if_port_used() {
+
+    if [ -n "$1" ]
+    then
+        print_warning "A port value must be passed into 'kill_process_if_port_used()'"
+        return 1
+    else
+        val=$(sudo netstat -lnp | grep $1 | egrep -o "[0-9]+/" | egrep -o "[0-9]+")
+
+        if [ -n "$val" ]
+        then
+            print_instruction "\nKilling process $val..."
+                sudo kill $val
+            print_result $?
+        fi
+    fi
+}
+

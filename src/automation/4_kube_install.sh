@@ -34,10 +34,6 @@ if [ ! -f $kub_list ]; then
     print_result $?
 fi
 
-print_instruction "\nStart Docker Service...\n"
-    sudo systemctl start docker.service
-print_result $?
-
 print_instruction "\nAdding link to Kubernetes repository and adding the APT key...\n"
     sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 print_result $?
