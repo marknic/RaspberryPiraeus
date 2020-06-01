@@ -11,7 +11,8 @@ print_instruction "  ____                       _____ _ _           "
 print_instruction " / ___|_      ____ _ _ __   |  ___(_) | ___      "
 print_instruction " \___ \ \ /\ / / _! | !_ \  | |_  | | |/ _ \     "
 print_instruction "  ___) \ V  V / (_| | |_) | |  _| | | |  __/     "
-print_instruction " |____/ \_/\_/ \__,_| .__/  |_|   |_|_|\___|   \n"
+print_instruction " |____/ \_/\_/ \__,_| .__/  |_|   |_|_|\___|     "
+print_instruction "                    |_|                        \n"
 
 . _check_root.sh
 
@@ -29,20 +30,6 @@ sudo apt-get -y --fix-missing upgrade
 if [ $? -ne 0 ]; then result=1; fi
 
 if [ $result -eq 1 ]; then print_instruction "$RED Clean, Update and Upgrade FAILED.$NC"; fi
-
-print_instruction "Adding cgroup settings to $CMDLINE_TXT file\n"
-
-if [ ! -f $CMDLINE_TXT_BACKUP ]; then
-    print_instruction "Making backup of cmdline.txt -> cmdline_backup.txt\n"
-    sudo cp $CMDLINE_TXT $CMDLINE_TXT_BACKUP
-fi
-
-print_instruction "Grepping $CGROUP_TEST"
-grep "$CGROUP" -q $CMDLINE_TXT
-if [ $? -ne 0 ]; then
-    print_instruction "Writing $CGROUP out to $CMDLINE_TXT.\n"
-    echo "$(head -n1 $CMDLINE_TXT) $CGROUP" | sudo tee $CMDLINE_TXT
-fi
 
 print_instruction "Removing the swap file on $ip_addr_me\n"
 print_instruction "dphys-swapfile swapoff (master)..."
@@ -78,22 +65,6 @@ do
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get clean
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get --fix-missing update
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y --fix-missing dist-upgrade
-
-        sudo sshpass -p $pword ssh $piid@$ip_target test -f $CMDLINE_TXT_BACKUP
-
-        if [ $? -ne 0 ]; then
-            print_instruction "Making backup of cmdline.txt -> cmdline_backup.txt"
-            sudo sshpass -p $pword ssh $piid@$ip_target sudo cp $CMDLINE_TXT $CMDLINE_TXT_BACKUP
-        fi
-
-        # if the cgroup text does not exist in the cmdline.txt file, add it
-        print_instruction "Grepping $CGROUP_TEST"
-        sudo sshpass -p $pword ssh $piid@$ip_target grep -q "$CGROUP_TEST" $CMDLINE_TXT
-
-        if [ $? -ne 0 ]; then
-            print_instruction "Inserting \'$CGROUP\' into $CMDLINE_TX"
-            sudo sshpass -p $pword ssh $piid@$ip_target "echo "$(head -n1 $CMDLINE_TXT) $CGROUP" | sudo tee $CMDLINE_TXT"
-        fi
 
         # Run this code across all machines
         print_instruction "dphys-swapfile swapoff ($ip_target:$new_host_name)..."

@@ -31,6 +31,18 @@ print_instruction "apt-get -y --fix-missing dist-upgrade..."
     sudo apt-get -y --fix-missing dist-upgrade
 print_result $?
 
+print_instruction "Adding cgroup settings to $BOOT_FOLDER$CMDLINE_TXT file\n"
+
+if [ ! -f $CMDLINE_TXT_BACKUP ]; then
+    print_instruction "Making backup of cmdline.txt -> cmdline_backup.txt\n"
+    sudo cp $BOOT_FOLDER$CMDLINE_TXT $BOOT_FOLDER$CMDLINE_TXT_BACKUP
+fi
+
+if [ $? -ne 0 ]; then
+    print_instruction "Copying $CMDLINE_TXT to $BOOT_FOLDER$CMDLINE_TXT.\n"
+        sudo cp -f $CMDLINE_TXT $BOOT_FOLDER$CMDLINE_TXT
+    print_result $?
+fi
 
 print_instruction "\nAdding link to Raspbian Docker repository and adding the APT key...\n"
     sudo curl -fsSL https://download.docker.com/linux/raspbian/gpg  | sudo apt-key add -
@@ -131,6 +143,26 @@ do
         print_instruction "Installing software-properties-common..."
             sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get install -y software-properties-common
         print_result $?
+
+        print_instruction "Adding cgroup settings to $BOOT_FOLDER$CMDLINE_TXT file\n"
+
+        sudo sshpass -p $pword ssh $piid@$ip_target test -f $BOOT_FOLDER$CMDLINE_TXT_BACKUP
+
+        if [ $? -ne 0 ]; then
+            print_instruction "Making backup of $BOOT_FOLDER$CMDLINE_TXT -> $BOOT_FOLDER$CMDLINE_TXT_BACKUP"
+                sudo sshpass -p $pword ssh $piid@$ip_target sudo cp $BOOT_FOLDER$CMDLINE_TXT $BOOT_FOLDER$CMDLINE_TXT_BACKUP
+            print_result $?
+        fi
+
+        if [ $? -ne 0 ]; then
+            print_instruction "Copying $CMDLINE_TXT to worker $ip_target..."
+                sshpass -p $pword scp "$piid@$ip_target:$CMDLINE_TXT" $CMDLINE_TXT
+            print_result $?
+
+            print_instruction "Copying $CMDLINE_TXT to $BOOT_FOLDER$CMDLINE_TXT..."
+                sudo sshpass -p $pword ssh $piid@$ip_target sudo cp $CMDLINE_TXT $BOOT_FOLDER$CMDLINE_TXT
+            print_result $?
+        fi
 
         print_instruction "\nAdding link to Kubernetes repository and adding the APT key"
             sudo sshpass -p $pword ssh $piid@$ip_target sudo curl -s https://download.docker.com/linux/raspbian/gpg | sudo apt-key add -

@@ -55,11 +55,6 @@ do
             sudo sshpass -p $pword scp -p -r /home/$piid/.ssh/id_rsa.pub $piid@$ip_target:/home/$piid/.ssh/authorized_keys
         print_result $?
 
-        print_instruction "Copying hosts file to worker.\n"
-            sshpass -p $pword scp "$piid@$ip_target:$FILE_HOSTS" $localhostsfile
-        print_result $?
-
-
         print_instruction "apt-get clean on worker: $ip_target.\n"
             sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get clean
         print_result $?
