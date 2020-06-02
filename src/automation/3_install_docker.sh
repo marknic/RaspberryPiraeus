@@ -2,7 +2,7 @@
 
 . _config_file.sh
 
-print_instruction "   ___           _        _ _        "
+print_instruction "  ___           _        _ _         "
 print_instruction " |_ _|_ __  ___| |_ __ _| | |        "
 print_instruction "  | || !_ \/ __| __/ _! | | |        "
 print_instruction "  | || | | \__ \ || (_| | | |        "

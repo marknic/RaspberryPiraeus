@@ -107,9 +107,6 @@ kill_process_if_port_used() {
 
     if [ -n "$1" ]
     then
-        print_warning "A port value must be passed into 'kill_process_if_port_used()'"
-        return 1
-    else
         val=$(sudo netstat -lnp | grep $1 | egrep -o "[0-9]+/" | egrep -o "[0-9]+")
 
         if [ -n "$val" ]
@@ -118,6 +115,10 @@ kill_process_if_port_used() {
                 sudo kill $val
             print_result $?
         fi
+    else
+        print_warning "A port value must be passed into 'kill_process_if_port_used()'"
+        return 1
     fi
+    
 }
 

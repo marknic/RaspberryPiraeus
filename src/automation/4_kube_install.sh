@@ -77,18 +77,6 @@ do
         print_instruction "\n-----------"
         print_instruction "Configuring $host_target/$ip_target\n"
 
-        print_instruction "Clean..."
-            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get clean
-        print_result $?
-
-        print_instruction "Update..."
-            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get --fix-missing update
-        print_result $?
-
-        print_instruction "Upgrade..."
-            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y --fix-missing upgrade
-        print_result $?
-
         print_instruction "Checking to see if $kub_list already exists..."
         sudo sshpass -p $pword ssh $piid@$ip_target test -f $kub_list
 
@@ -141,5 +129,5 @@ do
 done
 
 
-. _worker_reboot.sh
+#. _worker_reboot.sh
 

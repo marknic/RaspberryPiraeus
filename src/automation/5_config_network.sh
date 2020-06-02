@@ -58,7 +58,7 @@ then
 fi
 
 print_instruction "\nmkdir .kube as pi..."
-    runuser -l $piid -c "mkdir -p /home/$piid/.kube"
+    sudo runuser -l $piid -c "mkdir -p /home/$piid/.kube"
 print_result $?
 
 print_instruction "\nCopy admin.conf to .kube/config..."
@@ -66,7 +66,7 @@ print_instruction "\nCopy admin.conf to .kube/config..."
 print_result $?
 
 print_instruction "\nchown .kube/config..."
-    runuser -l $piid -c 'sudo chown $(id -u):$(id -g) $HOME/.kube/config'
+    sudo runuser -l $piid -c "sudo chown $piid:$piid home/$piid/.kube/config"
 print_result $?
 
 print_instruction "\nAdding KUBECONFIG env var to .bashrc..."
