@@ -18,7 +18,6 @@ print_instruction " |____/ \___|_|  |_| .__/ \__|___/           "
 print_instruction "                   |_|                     \n"
 
 
-
 print_instruction "Setting the scripts to 'Executable'."
 
 chmod +x 1_setup_ssh.sh
@@ -27,6 +26,7 @@ chmod +x 2_swap_file.sh
 chmod +x 3_install_docker.sh
 chmod +x 4_kube_install.sh
 chmod +x reboot_now.sh
+chmod +x cmds.sh
 
 print_instruction "\nExecute the scripts in this way:"
 print_instruction "sudo ./1_setup_ssh.sh"
