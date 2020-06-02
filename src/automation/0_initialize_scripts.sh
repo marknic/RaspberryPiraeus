@@ -22,10 +22,15 @@ print_instruction "                   |_|                     \n"
 print_instruction "Setting the scripts to 'Executable'."
 
 chmod +x 1_setup_ssh.sh
-chmod +x 1.1_set_timezone.sh
-chmod +x 1.2_update_locale.sh
+chmod +x 1.1_locale_and_time.sh
 chmod +x 2_swap_file.sh
 chmod +x 3_install_docker.sh
 chmod +x 4_kube_install.sh
-chmod +x 5_config_network.sh
 chmod +x reboot_now.sh
+
+print_instruction "\nExecute the scripts in this way:"
+print_instruction "sudo ./1_setup_ssh.sh"
+print_instruction "sudo ./1.1_locale_and_time.sh"
+print_instruction "sudo ./2_swap_file.sh"
+print_instruction "sudo ./3_install_docker.sh"
+print_instruction "sudo ./4_kube_install.sh"

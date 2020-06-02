@@ -21,7 +21,7 @@ print_instruction " |_| \_|\___|\__| \_/\_/ \___/|_|  |_|\_\  \n"
 
 print_instruction "\nUpdate & configure kubernetes..."
 
-print_instruction "\nUpdate..."
+print_instruction "\clean..."
     sudo apt-get clean
 print_result $?
 
@@ -33,30 +33,21 @@ print_instruction "\nUpgrade..."
     sudo apt-get -y dist-upgrade
 print_result $?
 
-if [ -e kubiniterr.flg ]
-then
-    print_instruction "\nkubeadm reset..."
-        sudo kubeadm reset -f
-    print_result $?
-fi
 
-if ! -e kubinitok.flg ]
-then
-    print_instruction "\nkubeadm init setting advertise-address=$ip_addr_me and network-cidr=10.244.0.0/16..."
+
+
+
+
+print_instruction "\nkubeadm init setting advertise-address=$ip_addr_me and network-cidr=10.244.0.0/16..."
+    if [ -f /etc/kubernetes/manifests/kube-apiserver.yaml ]
+    then  # If we've tried once and partially succeeded and yet failed - try again without the preflight checks
+        sudo kubeadm init --apiserver-advertise-address=$ip_addr_me --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=all
+    else  # Init with the full preflight checks
         sudo kubeadm init --apiserver-advertise-address=$ip_addr_me --pod-network-cidr=10.244.0.0/16
-        result=$?
+    fi
+print_result $?
 
-        if [ result -ne 0 ]
-        then
-            touch kubiniterr.flg
-        else
-            rm -f kubiniterr.flg
-            touch kubinitok.flg
-        fi
-
-    print_result $result
-fi
-
+# Need to run this as $piid (pi) but we're running as root with sudo so...runuser
 print_instruction "\nmkdir .kube as pi..."
     sudo runuser -l $piid -c "mkdir -p /home/$piid/.kube"
 print_result $?
@@ -66,38 +57,30 @@ print_instruction "\nCopy admin.conf to .kube/config..."
 print_result $?
 
 print_instruction "\nchown .kube/config..."
-    sudo runuser -l $piid -c "sudo chown $piid:$piid home/$piid/.kube/config"
+    sudo runuser -l $piid -c "sudo chown $piid:$piid /home/$piid/.kube/config"
 print_result $?
 
-print_instruction "\nAdding KUBECONFIG env var to .bashrc..."
-    sudo echo "export KUBECONFIG=/home/$piid/.kube/config" >> .bashrc
-    source .bashrc
-print_result $?
-
-
-sudo rm -f /etc/kubernetes/manifests/*
-sudo rm -f /etc/kubernetes/kubelet.conf
-
-for n in 10250 10251 10252
-do
-  print_instruction "Port $n"
-    kill_process_if_port_used $n
-  print_result $?
-done
+# print_instruction "\nAdding KUBECONFIG env var to .bashrc..."
+#     sudo echo "export KUBECONFIG=/home/$piid/.kube/config" >> .bashrc
+#     source .bashrc
+# print_result $?
 
 
 # output of kubeadm command will be used on workers
 joincmd=$(sudo kubeadm token create --print-join-command)
 
 print_instruction "\nInstalling Flannel\n\n"
-runuser -l $piid -c "sudo kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml"
+sudo runuser -l $piid -c "kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml"
 
 print_instruction "\nkubectl get pods..."
     sudo runuser -l $piid -c "kubectl get pods --all-namespaces"
 print_result $?
 
-print_instruction "\nExiting!!!"
-exit
+
+
+
+
+
 for ((i=0; i<$length; i++));
 do
     # Get the IP to search for

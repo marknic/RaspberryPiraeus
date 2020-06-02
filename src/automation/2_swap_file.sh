@@ -21,9 +21,7 @@ print_instruction "                    |_|                        \n"
 . _array_setup.sh
 
 result=0
-print_instruction "Clean, Update and Upgrade\n"
-sudo apt-get clean
-if [ $? -ne 0 ]; then result=1; fi
+print_instruction "Update and Upgrade\n"
 sudo apt-get --fix-missing update
 if [ $? -ne 0 ]; then result=1; fi
 sudo apt-get -y --fix-missing upgrade

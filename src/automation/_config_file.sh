@@ -103,22 +103,70 @@ execute_command_with_retry() {
     done
 }
 
-kill_process_if_port_used() {
+# kill_process_if_port_used() {
 
-    if [ -n "$1" ]
-    then
-        val=$(sudo netstat -lnp | grep $1 | egrep -o "[0-9]+/" | egrep -o "[0-9]+")
+#     if [ -n "$1" ]
+#     then
+#         val=$(sudo netstat -lnp | grep $1 | egrep -o "[0-9]+/" | egrep -o "[0-9]+")
 
-        if [ -n "$val" ]
-        then
-            print_instruction "\nKilling process $val..."
-                sudo kill $val
-            print_result $?
-        fi
+#         if [ -n "$val" ]
+#         then
+#             print_instruction "\nKilling process $val..."
+#                 sudo kill $val
+#             print_result $?
+#         fi
+#     else
+#         print_warning "A port value must be passed into 'kill_process_if_port_used()'"
+#         return 1
+#     fi
+
+# }
+
+
+install_package() {
+
+    result=0
+
+    tst=$(apt-cache search --names-only "$1")
+
+    if [ ${#tst} -eq 0 ]; then
+        print_warning "$1 does not exist as a package! skipping..."
+        result=1
     else
-        print_warning "A port value must be passed into 'kill_process_if_port_used()'"
-        return 1
+        if [ ! dpkg -l "$1" &> /dev/null ]; then
+            print_instruction "\nInstall $1..."
+                sudo apt-get -y install $1
+                result=$?
+            print_result $result
+        else
+            print_instruction "$1 already installed...skipping..."
+        fi
     fi
-    
+
+    return $result
+}
+
+
+install_package_remote() {
+
+    result=0
+
+    tst=$(sudo sshpass -p $pword ssh $piid@$ip_target apt-cache search --names-only "$1")
+
+    if [ ${#tst} -eq 0 ]; then
+        print_warning "$1 does not exist as a package! skipping..."
+        result=1
+    else
+        if [ ! sudo sshpass -p $pword ssh $piid@$ip_target dpkg -l "$1" &> /dev/null ]; then
+            print_instruction "\nInstall $1..."
+                sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y install $1
+                result=$?
+            print_result $result
+        else
+            print_instruction "$1 already installed...skipping..."
+        fi
+    fi
+
+    return $result
 }
 
