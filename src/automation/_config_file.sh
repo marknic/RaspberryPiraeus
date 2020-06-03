@@ -127,20 +127,13 @@ install_package() {
 
     result=0
 
-    tst=$(apt-cache search --names-only "$1")
-
-    if [ ${#tst} -eq 0 ]; then
-        print_warning "$1 does not exist as a package! skipping..."
-        result=1
+    if [ ! dpkg -l "$1" &> /dev/null ]; then
+        print_instruction "\nInstall $1..."
+            sudo apt-get -y install $1
+            result=$?
+        print_result $result
     else
-        if [ ! dpkg -l "$1" &> /dev/null ]; then
-            print_instruction "\nInstall $1..."
-                sudo apt-get -y install $1
-                result=$?
-            print_result $result
-        else
-            print_instruction "$1 already installed...skipping..."
-        fi
+        print_instruction "$1 already installed...skipping..."
     fi
 
     return $result
@@ -151,22 +144,54 @@ install_package_remote() {
 
     result=0
 
-    tst=$(sudo sshpass -p $pword ssh $piid@$ip_target apt-cache search --names-only "$1")
-
-    if [ ${#tst} -eq 0 ]; then
-        print_warning "$1 does not exist as a package! skipping..."
-        result=1
+    if [ ! sudo sshpass -p $pword ssh $piid@$ip_target dpkg -l "$1" &> /dev/null ]; then
+        print_instruction "\nInstall $1..."
+            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y install $1
+            result=$?
+        print_result $result
     else
-        if [ ! sudo sshpass -p $pword ssh $piid@$ip_target dpkg -l "$1" &> /dev/null ]; then
-            print_instruction "\nInstall $1..."
-                sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y install $1
-                result=$?
-            print_result $result
-        else
-            print_instruction "$1 already installed...skipping..."
-        fi
+        print_instruction "$1 already installed...skipping..."
     fi
 
     return $result
 }
+
+
+update_locale_setting() {
+
+    # $1: setting
+    # $2: value
+
+    grep "export $1=" /home/$piid/.bashrc &> /dev/null
+
+    if [ $? -ne 0 ]
+    then
+        print_instruction "Add $1 setting with $2 to .bashrc..."
+            echo "export $1=$2" >> /home/$piid/.bashrc
+            source /home/$piid/.bashrc
+        print_result $?
+    fi
+
+}
+
+
+update_locale_setting_remote() {
+
+    # $1: setting
+    # $2: value
+
+    sudo sshpass -p $pword ssh $piid@$ip_target "grep 'export LC_ALL' /home/$piid/.bashrc" &> /dev/null
+
+    if [ $? -ne 0 ]
+    then
+        print_instruction "Add $1 setting with $2 to .bashrc..."
+            sudo sshpass -p $pword ssh $piid@$ip_target "grep 'export LC_ALL' /home/$piid/.bashrc" &> /dev/null
+
+            sudo sshpass -p $pword ssh $piid@$ip_target 'echo "export '$1'='$2'" >> /home/$piid/.bashrc'
+
+            sudo sshpass -p $pword ssh $piid@$ip_target "source /home/$piid/.bashrc"
+        print_result $?
+    fi
+}
+
 

@@ -41,34 +41,23 @@ print_result $?
 
 lc_val="${new_locale:0:len}"
 
-grep "export LANG=$lc_val" /home/$piid/.bashrc
+update_locale_setting "LANG" $lc_val
 
-if [ $? -ne 0 ]
-then
-    print_instruction "Add LANG setting with $lc_val to .bashrc..."
-        echo "export LANG=$lc_val" >> .bashrc
-    print_result $?
-fi
+update_locale_setting "LC_ALL" $lc_val
 
-grep "export LANG=$lc_val" /home/$piid/.bashrc
+update_locale_setting "LC_CTYPE" $lc_val
 
-if [ $? -ne 0 ]
-then
-    print_instruction "Add LC_ALL setting with $lc_val to .bashrc..."
-        echo "export LC_ALL=$lc_val" >> .bashrc
-    print_result $?
-fi
+update_locale_setting "LC_MESSAGES" $lc_val
 
-print_instruction "Make changes current to the session..."
-    source .bashrc
-print_result $?
+update_locale_setting "LC_COLLATE" $lc_val
 
 print_instruction "Execute locale-gen with the current settings..."
-sudo locale-gen
+    sudo locale-gen
 print_result $?
 
 print_instruction "See the locale changes:"
     locale -a
+    locale
 print_result $?
 
 
@@ -82,7 +71,6 @@ do
 
         new_host_name=$(echo $cluster_data | jq --raw-output ".[$i].name")
 
-
         # Comment out the original locale...
         print_instruction "Comment out the old locale: $orig_locale..."
             sudo sshpass -p $pword ssh $piid@$ip_target "sudo sed -i 's/^$orig_locale/# $orig_locale/g' /etc/locale.gen"
@@ -93,26 +81,17 @@ do
             sudo sshpass -p $pword ssh $piid@$ip_target "sudo sed -i 's/^# $new_locale/$new_locale/g' /etc/locale.gen"
         print_result $?
 
-        sudo sshpass -p $pword ssh $piid@$ip_target "grep 'export LANG=$lc_val' /home/$piid/.bashrc"
+        update_locale_setting_remote "LANG" $lc_val
 
-        if [ $? -ne 0 ]
-        then
-            print_instruction "Add LANG setting with $lc_val to .bashrc..."
-                sudo sshpass -p $pword ssh $piid@$ip_target "echo 'export LANG=$lc_val' >> /home/$piid/.bashrc"
-            print_result $?
-        fi
+        update_locale_setting_remote "LANG" $lc_val
 
-        sudo sshpass -p $pword ssh $piid@$ip_target "grep 'export LC_ALL=$lc_val' /home/$piid/.bashrc"
-        if [ $? -ne 0 ]
-        then
-            print_instruction "Add LC_ALL setting with $lc_val to .bashrc..."
-                sudo sshpass -p $pword ssh $piid@$ip_target "echo 'export LC_ALL=$lc_val' >> /home/$piid/.bashrc"
-            print_result $?
-        fi
+        update_locale_setting_remote "LC_ALL" $lc_val
 
-        print_instruction "Make changes current to the session..."
-            sudo sshpass -p $pword ssh $piid@$ip_target "source .bashrc"
-        print_result $?
+        update_locale_setting_remote "LC_CTYPE" $lc_val
+
+        update_locale_setting_remote "LC_MESSAGES" $lc_val
+
+        update_locale_setting_remote "LC_COLLATE" $lc_val
 
         print_instruction "Execute locale-gen with the current settings..."
             sudo sshpass -p $pword ssh $piid@$ip_target "sudo locale-gen"
