@@ -55,11 +55,6 @@ print_instruction "Execute locale-gen with the current settings..."
     sudo locale-gen
 print_result $?
 
-print_instruction "See the locale changes:"
-    locale -a
-    locale
-print_result $?
-
 
 for ((i=0; i<$length; i++));
 do
