@@ -76,12 +76,16 @@ then
     print_warning "The install of Kubernetes was not successful on the master: $ip_addr_me. Skipping the initialization step... "
 else
     print_instruction "\nkubeadm init setting advertise-address=$ip_addr_me and network-cidr=10.244.0.0/16..."
-        if [ -f /etc/kubernetes/manifests/kube-apiserver.yaml ]
-        then  # If we've tried once and partially succeeded and yet failed - try again without the preflight checks
+
+        # Init with the full preflight checks
+        sudo kubeadm init --apiserver-advertise-address=$ip_addr_me --pod-network-cidr=10.244.0.0/16
+
+        if [ $? -ne 0 ]
+        then
+            # If we've tried once and partially succeeded and yet failed - try again without the preflight checks
             sudo kubeadm init --apiserver-advertise-address=$ip_addr_me --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=all
-        else  # Init with the full preflight checks
-            sudo kubeadm init --apiserver-advertise-address=$ip_addr_me --pod-network-cidr=10.244.0.0/16
         fi
+
     print_result $?
 
     # Need to run this as $piid (pi) but we're running as root with sudo so...runuser
