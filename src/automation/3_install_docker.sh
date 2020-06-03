@@ -127,6 +127,8 @@ do
 
     if [ $ip_target != $ip_addr_me ]
     then
+        print_instruction "Processing $host_target/$ip_target:"
+
         # Remote machine so use ssh
         print_instruction "apt-get clean..."
             sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get clean
@@ -140,7 +142,7 @@ do
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y --fix-missing dist-upgrade
         print_result $?
 
-        print_instruction "Installing software-properties-common..."
+        print_instruction "Installing software-properties-common on $ip_target/$host_target..."
             sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get install -y software-properties-common
         print_result $?
 

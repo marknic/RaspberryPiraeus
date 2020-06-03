@@ -100,6 +100,8 @@ fi
 
 joincmd=$(sudo kubeadm token create --print-join-command)
 
+sudo $joincmd
+
 
 for ((i=0; i<$length; i++));
 do
@@ -111,7 +113,6 @@ do
     then
         host_target=$(echo $cluster_data | jq --raw-output ".[$i].name")
 
-        print_instruction "\n-----------"
         print_instruction "Configuring $host_target/$ip_target\n"
 
         print_instruction "Checking to see if $kub_list already exists..."
@@ -159,11 +160,9 @@ do
 
 
         # Installing Kubernetes (kubeadm/kubectl/kubelet)
-        print_instruction "\nInstall kubeadm kubectl kubelet..."
-            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y install kubeadm kubectl kubelet
-        print_result $?
 
         result=0
+
         install_package_remote kubeadm
         if [ $? -ne 0 ]; then result=1; fi
 
@@ -175,7 +174,7 @@ do
 
         if [ $result -eq 0 ]
         then
-            sudo sshpass -p $pword ssh $piid@$ip_target "$joincmd"
+            sudo sshpass -p $pword ssh $piid@$ip_target "sudo $joincmd"
         else
             print_warning "At least one of the Kubernetes packages failed to install properly."
             print_warning "  Skipping the join command..."
