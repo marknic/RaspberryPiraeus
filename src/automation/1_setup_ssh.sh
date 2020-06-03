@@ -120,7 +120,7 @@ do
 
 done
 
-./1.1_update_locale.sh
+./1.1_locale_and_time.sh
 
 print_instruction "\nDone!\n"
 

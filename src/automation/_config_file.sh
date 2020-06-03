@@ -180,14 +180,14 @@ update_locale_setting_remote() {
     # $1: setting
     # $2: value
 
-    sudo sshpass -p $pword ssh $piid@$ip_target "grep 'export LC_ALL' /home/$piid/.bashrc" &> /dev/null
+    sudo sshpass -p $pword ssh $piid@$ip_target "grep 'export $1' /home/$piid/.bashrc &> /dev/null"
 
     if [ $? -ne 0 ]
     then
         print_instruction "Add $1 setting with $2 to .bashrc..."
-            sudo sshpass -p $pword ssh $piid@$ip_target "grep 'export LC_ALL' /home/$piid/.bashrc" &> /dev/null
+            sudo sshpass -p $pword ssh $piid@$ip_target "grep 'export $1' /home/$piid/.bashrc &> /dev/null"
 
-            sudo sshpass -p $pword ssh $piid@$ip_target 'echo "export '$1'='$2'" >> /home/$piid/.bashrc'
+            sudo sshpass -p $pword ssh $piid@$ip_target 'sudo echo "export '$1'='$2'" >> /home/'$piid'/.bashrc'
 
             sudo sshpass -p $pword ssh $piid@$ip_target "source /home/$piid/.bashrc"
         print_result $?
