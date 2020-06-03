@@ -102,6 +102,8 @@ joincmd=$(sudo kubeadm token create --print-join-command)
 
 sudo $joincmd
 
+# Install Flannel
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 
 for ((i=0; i<$length; i++));
 do
@@ -179,6 +181,8 @@ do
             print_warning "At least one of the Kubernetes packages failed to install properly."
             print_warning "  Skipping the join command..."
         fi
+
+        kubectl label node $host_target node-role.kubernetes.io/worker=worker
     fi
 done
 
