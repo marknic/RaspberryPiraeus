@@ -127,7 +127,9 @@ install_package() {
 
     result=0
 
-    if [ ! dpkg -l "$1" &> /dev/null ]; then
+    dpkg -l "$1" &> /dev/null
+
+    if [ $? -ne 0 ]; then
         print_instruction "\nInstall $1..."
             sudo apt-get -y install $1
             result=$?
@@ -144,7 +146,9 @@ install_package_remote() {
 
     result=0
 
-    if [ ! sudo sshpass -p $pword ssh $piid@$ip_target dpkg -l "$1" &> /dev/null ]; then
+    sudo sshpass -p $pword ssh $piid@$ip_target dpkg -l "$1" &> /dev/null
+
+    if [ $? -ne 0 ]; then
         print_instruction "\nInstall $1..."
             sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y install $1
             result=$?

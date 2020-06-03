@@ -173,7 +173,7 @@ do
         install_package_remote kubelet
         if [ $? -ne 0 ]; then result=1; fi
 
-        if [ result -eq 0 ]
+        if [ $result -eq 0 ]
         then
             sudo sshpass -p $pword ssh $piid@$ip_target "$joincmd"
         else
