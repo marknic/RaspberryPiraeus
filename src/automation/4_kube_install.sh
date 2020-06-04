@@ -104,10 +104,7 @@ fi
 
 joincmd=$(sudo kubeadm token create --print-join-command)
 
-sudo $joincmd
 
-# Install Flannel
-kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 
 for ((i=0; i<$length; i++));
 do
@@ -156,15 +153,6 @@ do
 
         done
 
-        print_instruction "Update..."
-            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get --fix-missing update
-        print_result $?
-
-        print_instruction "Upgrade..."
-            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y --fix-missing upgrade
-        print_result $?
-
-
         # Installing Kubernetes (kubeadm/kubectl/kubelet)
 
         result=0
@@ -178,15 +166,29 @@ do
         install_package_remote kubelet
         if [ $? -ne 0 ]; then result=1; fi
 
-        if [ $result -eq 0 ]
-        then
-            sudo sshpass -p $pword ssh $piid@$ip_target "sudo $joincmd"
-        else
-            print_warning "At least one of the Kubernetes packages failed to install properly."
-            print_warning "  Skipping the join command..."
-        fi
-
-        kubectl label node $host_target node-role.kubernetes.io/worker=worker
     fi
+done
+
+
+print_instruction "Pausing for 30 seconds to allow the Kubernetes services to stabilize..."
+sleep 30s
+print_instruction "Continuing..."
+
+sudo $joincmd
+
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+
+for ((i=0; i<$length; i++));
+do
+    ip_target=$(echo $cluster_data | jq --raw-output ".[$i].IP")
+    host_target=$(echo $cluster_data | jq --raw-output ".[$i].name")
+
+    if [ $ip_target != $ip_addr_me ]
+    then
+        kubectl label node $host_target node-role.kubernetes.io/worker=worker
+
+        sudo sshpass -p $pword ssh $piid@$ip_target "sudo $joincmd"
+    fi
+
 done
 
