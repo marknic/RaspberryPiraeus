@@ -36,10 +36,8 @@ handle_result() {
 for ((i=0; i<$length; i++));
 do
     # Get the IP to search for
-    ip_target=$(echo $cluster_data | jq --raw-output ".[$i].IP")
-    new_host_name=$(echo $cluster_data | jq --raw-output ".[$i].name")
-
-    print_instruction "Updating $new_host_name.\n"
+    
+    print_instruction "Updating $host_target.\n"
 
     if [ $ip_target == $ip_addr_me ]; then
         sudo apt-get clean
@@ -68,7 +66,7 @@ do
 
     if [ final_result -ne 0 ]
     then
-        
+
         while true; do
             print_warning "\n\nAt least one of the update/upgrade attempts failed.  Do you want to continue? "
             read -p "(y/n)?" yn

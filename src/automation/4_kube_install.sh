@@ -77,16 +77,27 @@ then
 else
     print_instruction "\nkubeadm init setting advertise-address=$ip_addr_me and network-cidr=10.244.0.0/16..."
 
+    # kubeadm init
+    # Using a file to flag that the init step has already run
+    if [ ! -f "/home/$piid/$kubeadminitdonefile" ]
         # Init with the full preflight checks
         sudo kubeadm init --apiserver-advertise-address=$ip_addr_me --pod-network-cidr=10.244.0.0/16
+        result=$?
 
-        if [ $? -ne 0 ]
+        if [ $result -ne 0 ]
         then
             # If we've tried once and partially succeeded and yet failed - try again without the preflight checks
             sudo kubeadm init --apiserver-advertise-address=$ip_addr_me --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=all
+            result=$?
+        else
+            touch "/home/$piid/$kubeadminitdonefile"
         fi
+    else
+        print_instruction "\nkubeadm init has already been done.  Skipping the init step..."
+        result=0
+    fi
 
-    print_result $?
+    print_result $result
 
     # Need to run this as $piid (pi) but we're running as root with sudo so...runuser
     print_instruction "\nmkdir .kube as pi..."
@@ -172,11 +183,16 @@ done
 
 print_instruction "Pausing for 30 seconds to allow the Kubernetes services to stabilize..."
 sleep 30s
-print_instruction "Continuing..."
 
-sudo $joincmd
-
-kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+while true; do
+    printf "\n\n30 seconds has elapsed.  Continue "
+    read -p "(y/n)?" yn
+    case $yn in
+        [Yy]* ) break;;
+        [Nn]* ) exit;;
+        * ) echo "Please answer (y)es or (n)o.";;
+    esac
+done
 
 for ((i=0; i<$length; i++));
 do
@@ -185,10 +201,21 @@ do
 
     if [ $ip_target != $ip_addr_me ]
     then
-        kubectl label node $host_target node-role.kubernetes.io/worker=worker
+        # Join the worker node to the cluster
+        print_instruction "Join the node $ip_target/$host_target to the cluster..."
+            sudo sshpass -p $pword ssh $piid@$ip_target "sudo $joincmd"
+        print_result $?
 
-        sudo sshpass -p $pword ssh $piid@$ip_target "sudo $joincmd"
+
+        # Label the node as a "worker"
+        print_instruction "Labeling the node $ip_target/$host_target as a worker..."
+            kubectl label node $host_target node-role.kubernetes.io/worker=worker
+        print_result $?
     fi
 
 done
+
+print_instruction "Labeling the node $ip_target/$host_target as a worker..."
+    kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+print_result $?
 

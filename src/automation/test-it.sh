@@ -60,15 +60,14 @@ execute_command_with_retry() {
 for ((i=0; i<$length; i++));
 do
     # Get the IP to search for
-    ip_target=$(echo $cluster_data | jq --raw-output ".[$i].IP")
-    new_host_name=$(echo $cluster_data | jq --raw-output ".[$i].name")
+    get_ip_host_and_platform $i
 
     if [ $ip_target == $ip_addr_me ]; then
         cp $FILE_HOSTS $localhostsfile
     else
 
         # Set Local time on the RPi (Optional)
-        print_instruction "Setting up local time ($ip_target:$new_host_name)..."
+        print_instruction "Setting up local time ($ip_target:$host_target)..."
             #sudo sshpass -p $pword ssh $piid@$ip_target "sudo ln -fs /usr/share/zoneinfo/$zonelocation /etc/localtime"
             execute_remote_command_with_retry "sudo ln -fs /usr/share/zoneinfo/$zonelocation /etc/localtime"
         print_result $?

@@ -19,132 +19,157 @@ print_instruction " |____/ \___/ \___|_|\_\___|_|     \n"
 
 . _array_setup.sh
 
-print_instruction "apt-get clean..."
-    sudo apt-get clean
-print_result $?
-
-print_instruction "apt-get --fix-missing update..."
-    sudo apt-get --fix-missing update
-print_result $?
-
-print_instruction "apt-get -y --fix-missing dist-upgrade..."
-    sudo apt-get -y --fix-missing dist-upgrade
-print_result $?
-
-print_instruction "Adding cgroup settings to $BOOT_FOLDER$CMDLINE_TXT file\n"
-
-if [ ! -f $CMDLINE_TXT_BACKUP ]; then
-    print_instruction "Making backup of cmdline.txt -> cmdline_backup.txt\n"
-    sudo cp $BOOT_FOLDER$CMDLINE_TXT $BOOT_FOLDER$CMDLINE_TXT_BACKUP
-fi
-
-if [ $? -ne 0 ]; then
-    print_instruction "Copying $CMDLINE_TXT to $BOOT_FOLDER$CMDLINE_TXT.\n"
-        sudo cp -f $CMDLINE_TXT $BOOT_FOLDER$CMDLINE_TXT
-    print_result $?
-fi
-
-print_instruction "\nAdding link to Raspbian Docker repository and adding the APT key...\n"
-    sudo curl -fsSL https://download.docker.com/linux/raspbian/gpg  | sudo apt-key add -
-print_result $?
-
-# This command will fail if docker is not installed
-sudo docker ps > /dev/null 2>&1
-
-# Only do this if docker has not been installed yet
-if [ $? -ne 0 ]
-then
-    # Install docker
-    print_instruction "Getting docker install script..."
-        curl -fsSL https://get.docker.com -o get-docker.sh
-    print_result $?
-
-    print_instruction "Installing Docker via script..."
-        sh get-docker.sh
-    print_result $?
-fi
-
-grep -q docker /etc/group
-
-if [ $? -ne 0 ]; then
-    print_instruction "\nCreating 'docker' group.\n"
-        sudo groupadd docker
-    print_result $?
-else
-    print_instruction "'docker' group exists.\n"
-fi
-
-
-# if the ID doesn't exist in the group...add it
-id $piid | grep -q 'docker'
-
-if [ $? -ne 0 ]
-then
-    print_instruction "Adding $piid to the 'docker' group.\n"
-    sudo usermod $piid -aG docker
-else
-    print_instruction "$piid exists within the 'docker' group.\n"
-fi
-
-
-if [ ! -d "$DOCKER_ETC_DIR" ]; then
-    # If $DOCKER_ETC_DIR does not exist.
-    sudo mkdir $DOCKER_ETC_DIR
-else
-    sudo rm -f $daemondestfilename > /dev/null 2>&1
-fi
-
-print_instruction "\nCopying $daemonjsonfile to $daemondestfilename..."
-    sudo cp -f $daemonjsonfile $daemondestfilename
-print_result $?
-
-
-if [ ! -f "$ETC_FOLDER$BAK_FILE" ]
-then
-    # Create a backup if it doesn't already exist
-    print_instruction "Create $ETC_FOLDER$BAK_FILE if it doesn't exist... "
-        cp "$ETC_FOLDER$SYSCTL_FILE" "$ETC_FOLDER$BAK_FILE"
-    print_result $?
-fi
-
-# Create temporary file with an update - uncommented line
-print_instruction "Modifying $ETC_FOLDER$SYSCTL_FILE on: $host_target/$ip_target... "
-    sudo sed -i "$SED_REGEX_QUERY" $ETC_FOLDER$SYSCTL_FILE
-print_result $?
-
-# Going to use the sysctl.conf file to copy to the workers
-print_instruction "Copying $ETC_FOLDER$SYSCTL_FILE to local folder... "
-    cp $ETC_FOLDER$SYSCTL_FILE .
-print_result $?
-
-
 
 for ((i=0; i<$length; i++));
 do
-    # Get the IP to search for
-    ip_target=$(echo $cluster_data | jq --raw-output ".[$i].IP")
-    host_target=$(echo $cluster_data | jq --raw-output ".[$i].name")
 
-    if [ $ip_target != $ip_addr_me ]
+    get_ip_host_and_platform $i
+
+    if [ $ip_target == $ip_addr_me ]
     then
-        print_instruction "Processing $host_target/$ip_target:"
 
-        # Remote machine so use ssh
-        print_instruction "apt-get clean..."
-            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get clean
+        print_instruction "Adding cgroup settings to $BOOT_FOLDER$CMDLINE_TXT file..."
+
+        if [ $platform_target == $PLATFORM_PI]
+        then
+            cmdline_file=$BOOT_FOLDER$CMDLINE_TXT
+            cmdline_backup=$BOOT_FOLDER$CMDLINE_TXT_BACKUP
+            docker_keys="https://download.docker.com/linux/raspbian/gpg"
+        else
+            cmdline_file=$BOOT_FIRMWARE_FOLDER$CMDLINE_TXT
+            cmdline_backup=$BOOT_FIRMWARE_FOLDER$CMDLINE_TXT_BACKUP
+            docker_keys="https://download.docker.com/linux/ubuntu/gpg"
+        fi
+
+
+        grep $CGROUP_TEST $cmdline_file
+
+        if [ $? -eq 0 ]
+        then
+            echo "cgroup parameters already added"
+        else
+            print_instruction "\nCreating cmdline.txt backup...\n"
+                sudo cp -f $cmdline_file $cmdline_backup
+            print_result $?
+
+            print_instruction "\nAdding CGroup settings...\n"
+                sudo sed -e "s/$/ $CGROUP/" $cmdline_backup > $cmdline_file
+            print_result $?
+        fi
+
+        print_instruction "\nAdding link to Raspbian Docker repository and adding the APT key...\n"
+            sudo curl -fsSL $docker_keys | sudo apt-key add -
         print_result $?
 
-        print_instruction "apt-get --fix-missing update..."
-            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get --fix-missing update
+        # This command will fail if docker is not installed
+        sudo docker ps > /dev/null 2>&1
+
+        # Only do this if docker has not been installed yet
+        if [ $? -eq 0 ]; then
+            print_instruction "Docker already installed...skipping."
+        else
+            # Install docker
+            print_instruction "Getting docker install script..."
+                curl -fsSL https://get.docker.com -o get-docker.sh
+            print_result $?
+
+            print_instruction "Installing Docker via script..."
+                sh get-docker.sh
+            print_result $?
+
+            print_instruction "apt-get update..."
+                sudo apt-get update
+            print_result $?
+        fi
+
+        grep -q docker /etc/group
+
+        if [ $? -eq 0 ]; then
+            print_instruction "'docker' group exists.\n"
+        else
+            print_instruction "\nCreating 'docker' group.\n"
+                sudo groupadd docker
+            print_result $?
+        fi
+
+
+        # if the ID doesn't exist in the group...add it
+        id $piid | grep -q 'docker'
+
+        if [ $? -eq 0 ]; then
+            print_instruction "$piid exists within the 'docker' group.\n"
+        else
+            print_instruction "Adding $piid to the 'docker' group.\n"
+                sudo usermod $piid -aG docker
+            print_result $?
+        fi
+
+
+        if [ ! -d "$DOCKER_ETC_DIR" ]; then
+            # If $DOCKER_ETC_DIR does not exist.
+            sudo mkdir $DOCKER_ETC_DIR
+        else
+            sudo rm -f $daemondestfilename > /dev/null 2>&1
+        fi
+
+        print_instruction "\nCopying $daemonjsonfile to $daemondestfilename..."
+            sudo cp -f $daemonjsonfile $daemondestfilename
+        print_result $?
+
+
+        if [ ! -f "$ETC_FOLDER$BAK_FILE" ]
+        then
+            # Create a backup if it doesn't already exist
+            print_instruction "Create $ETC_FOLDER$BAK_FILE if it doesn't exist... "
+                cp "$ETC_FOLDER$SYSCTL_FILE" "$ETC_FOLDER$BAK_FILE"
+            print_result $?
+        fi
+
+        # Create temporary file with an update - uncommented line
+        print_instruction "Modifying $ETC_FOLDER$SYSCTL_FILE on: $host_target/$ip_target... "
+            sudo sed -i "$SED_REGEX_QUERY" $ETC_FOLDER$SYSCTL_FILE
+        print_result $?
+
+        # Going to use the sysctl.conf file to copy to the workers
+        print_instruction "Copying $ETC_FOLDER$SYSCTL_FILE to local folder... "
+            cp $ETC_FOLDER$SYSCTL_FILE .
+        print_result $?
+
+
+    else
+
+        # Remote machine so use ssh
+        print_instruction "apt-get update..."
+            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get update
         print_result $?
 
         print_instruction "apt-get -y --fix-missing dist-upgrade..."
         sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y --fix-missing dist-upgrade
         print_result $?
 
-        print_instruction "Installing software-properties-common on $ip_target/$host_target..."
-            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get install -y software-properties-common
+
+
+        print_instruction "Installing apt-transport-https..."
+            install_and_validate_package apt-transport-https
         print_result $?
+
+        print_instruction "Installing ca-certificates..."
+            install_and_validate_package ca-certificates
+        print_result $?
+
+        print_instruction "Installing curl..."
+            install_and_validate_package curl
+        print_result $?
+
+        print_instruction "Installing software-properties-common..."
+            install_and_validate_package software-properties-common
+        print_result $?
+
+
+
+
+
+
 
         print_instruction "Adding cgroup settings to $BOOT_FOLDER$CMDLINE_TXT file\n"
 

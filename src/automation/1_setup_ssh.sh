@@ -21,20 +21,26 @@ print_instruction " |____/____/|_| |_|            \n"
 
 print_instruction "Setting up SSH to communicate with the workers.\n"
 
-# # Set up SSH keys
-print_instruction "apt-get --fix-missing update..."
-    ssh-keygen -t rsa -b 2048 -f /home/$piid/.ssh/id_rsa -N ""
-print_result $?
+test -f /home/$piid/.ssh/id_rsa.pub
+
+if [ $? -ne 0 ]
+then
+    # # Set up SSH keys
+    print_instruction "Create SSH keys..."
+        ssh-keygen -t rsa -b 2048 -f /home/$piid/.ssh/id_rsa -N ""
+    print_result $?
+fi
 
 sudo chown -R $piid /home/$piid/.ssh/
 
 print_instruction "Done creating SSH Keys.\n\n"
 
+
+
 for ((i=0; i<$length; i++));
 do
     # Get the IP to search for
-    ip_target=$(echo $cluster_data | jq --raw-output ".[$i].IP")
-    new_host_name=$(echo $cluster_data | jq --raw-output ".[$i].name")
+    get_ip_host_and_platform $i
 
     print_instruction "Deleting $localhostsfile so it can be recreated.\n"
     rm -f $localhostsfile > /dev/null 2>&1
@@ -42,7 +48,7 @@ do
     rm -f $localhostnamefile > /dev/null 2>&1
 
     # Create the hostname file (to be copied to the remote machine's /etc/ folder)
-    echo "$new_host_name" > $localhostnamefile
+    echo "$host_target" > $localhostnamefile
 
     if [ $ip_target == $ip_addr_me ]; then
         cp $FILE_HOSTS $localhostsfile
@@ -53,10 +59,6 @@ do
 
         print_instruction "Copying the SSH public key from the master to the worker.\n"
             sudo sshpass -p $pword scp -p -r /home/$piid/.ssh/id_rsa.pub $piid@$ip_target:/home/$piid/.ssh/authorized_keys
-        print_result $?
-
-        print_instruction "apt-get clean on worker: $ip_target.\n"
-            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get clean
         print_result $?
 
         print_instruction "apt-get update on worker: $ip_target.\n"
@@ -75,7 +77,7 @@ do
     sed -i -e "/127.0.1.1/d" $localhostsfile
 
     # Replace the removed line with the updated line
-    echo "127.0.1.1       $new_host_name" >> $localhostsfile
+    echo "127.0.1.1       $host_target" >> $localhostsfile
 
     print_instruction "Adding worker hosts to the current hosts file."
     for ((j=0; j<$length; j++));

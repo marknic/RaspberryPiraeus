@@ -13,6 +13,12 @@ orig_keyboard="gb"
 new_keyboard="us"
 
 
+PLATFORM_PI="pi"
+PLATFORM_UBUNTU="ubuntu"
+ID_PI="pi"
+ID_UBUNTU="ubuntu"
+PASSWORD_PI="raspberry"
+PASSWORD_UBUNTU="raspberry"
 
 FILE_HOSTNAME="/etc/hostname"
 FILE_HOSTS="/etc/hosts"
@@ -23,18 +29,18 @@ ETC_FOLDER="/etc/"
 SED_REGEX_QUERY="s/#net.ipv4.ip_forward=1/net.ipv4.ip_forward=1/"
 DOCKER_ETC_DIR="/etc/docker/"
 BOOT_FOLDER="/boot/"
+BOOT_FIRMWARE_FOLDER="/boot/firmware/"
 CMDLINE_TXT_BACKUP="cmdline_backup.txt"
 CMDLINE_TXT="cmdline.txt"
 CGROUP=" cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory"
 CGROUP_TEST="cgroup_enable"
-piid="pi"
-pword="raspberry"
+
 localhostsfile="hosts.local"
 localhostnamefile="hostname.local"
 clusterfile="_cluster.json"
 daemonjsonfile="_daemon.json"
 daemondestfilename="/etc/docker/daemon.json"
-
+kubeadminitdonefile="kubeadm_init.flg"
 download_location="https://download.docker.com/linux/debian/dists/buster/pool/stable/armhf/"
 kub_list="/etc/apt/sources.list.d/kubernetes.list"
 
@@ -198,4 +204,22 @@ update_locale_setting_remote() {
     fi
 }
 
+
+get_ip_host_and_platform() {
+
+    ip_target=$(echo $cluster_data | jq --raw-output ".[$1].IP")
+    host_target=$(echo $cluster_data | jq --raw-output ".[$1].name")
+    platform_target=$(echo $cluster_data | jq --raw-output ".[$1].platform")
+
+    if [ platform_target == PLATFORM_PI ]
+    then
+        piid="$ID_PI"
+        pword="$PASSWORD_PI"
+    else
+        piid="$ID_UBUNTU"
+        pword="$PASSWORD_UBUNTU"
+    fi
+
+    print_instruction "Processing $host_target/$ip_target/$platform_target:"
+}
 
