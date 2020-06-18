@@ -103,21 +103,19 @@ execute_command() {
     local -i attempt_num=1
 
     if [ "$2" == "-1"]; then
-        if  [ "$1" == "-l" ]
+        if  [ "$1" == "-l" ]; then
             eval "$3"
         else
             sudo sshpass -p $pword ssh $piid@$ip_target "$3"
         fi
     else
 
-        if [ "$1" == "-l" ]
-        then
+        if [ "$1" == "-l" ]; then
 
             # Local Call
             until eval "$3"
             do
-                if (( attempt_num == max_attempts ))
-                then
+                if (( attempt_num == max_attempts )); then
                     print_instruction "Attempt $attempt_num failed and there are no more attempts."
                     return 1
                 else
