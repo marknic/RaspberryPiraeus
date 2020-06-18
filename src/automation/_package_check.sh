@@ -1,54 +1,33 @@
 #!/bin/bash
 
-install_and_validate_package() {
-    local -r -i max_attempts=5
-    local -i attempt_num=1
-
-    until dpkg-query -W -f='${Status}\n' $1 > /dev/null 2>&1
-    do
-        if (( attempt_num == max_attempts ))
-        then
-            echo "Attempt $attempt_num failed and there are no more attempts left!"
-            return 1
-        else
-            echo "Attempting to install package: $1  This is attempt $attempt_num."
-            (( attempt_num++ ))
-            sudo apt-get install -y $1
-        fi
-    done
-}
 
 
-install_and_validate_package_remote() {
-    local -r -i max_attempts=5
-    local -i attempt_num=1
+for ((i=0; i<$length; i++));
+do
+    # Get the IP to search for
+    get_ip_host_and_platform $i
 
-    until sudo sshpass -p $pword ssh $piid@$ip_target sudo dpkg-query -W -f='${Status}\n' $1 > /dev/null 2>&1
-    do
-        if (( attempt_num == max_attempts ))
-        then
-            echo "Attempt $attempt_num failed and there are no more attempts left!"
-            return 1
-        else
-            echo "Attempting to install package: $1  This is attempt $attempt_num."
-            (( attempt_num++ ))
-            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get install -y $1
-        fi
-    done
-}
+    if [ $ip_target == $ip_addr_me ]; then callLocation="-l"; else callLocation="-r"; fi
 
-printf "\n Verifying dependent packages:\n"
+    printf "\n Verifying dependent packages:\n"
 
-# install jq here - it is used to parse the json data
-install_and_validate_package jq
+    if [ $ip_target == $ip_addr_me ]; then
 
-# install sshpass here - it is used to include passwords on SSH commands
-install_and_validate_package sshpass
+        # install jq on the master - it is used to parse the json data
+        install_and_validate_package $callLocation jq
 
-install_and_validate_package apt-transport-https
+        # install sshpass on the master - it is used to include passwords on SSH commands
+        install_and_validate_package $callLocation sshpass
 
-install_and_validate_package ca-certificates
+    fi
 
-install_and_validate_package curl
+    # These packages are for kubernetes and docker operation
+    install_and_validate_package $callLocation "apt-transport-https"
 
-install_and_validate_package software-properties-common
+    install_and_validate_package $callLocation "ca-certificates"
+
+    install_and_validate_package $callLocation "curl"
+
+    install_and_validate_package $callLocation "software-properties-common"
+
+done

@@ -73,137 +73,6 @@ print_result () {
     fi
 }
 
-execute_remote_command_with_retry() {
-    local -r -i max_attempts=3
-    local -i attempt_num=1
-
-    until sudo sshpass -p $pword ssh $piid@$ip_target $1
-    do
-        if (( attempt_num == max_attempts ))
-        then
-            print_instruction "Attempt $attempt_num failed and there are no more attempts."
-            return 1
-        else
-            print_instruction "Attempting to execute command.  This is attempt $attempt_num."
-            (( attempt_num++ ))
-            sudo sshpass -p $pword ssh $piid@$ip_target $1
-        fi
-    done
-}
-
-execute_command_with_retry() {
-    local -r -i max_attempts=3
-    local -i attempt_num=1
-
-    until eval $1
-    do
-        if (( attempt_num == max_attempts ))
-        then
-            print_instruction "Attempt $attempt_num failed and there are no more attempts."
-            return 1
-        else
-            print_instruction "Attempting to execute command.  This is attempt $attempt_num."
-            (( attempt_num++ ))
-            eval $1
-        fi
-    done
-}
-
-# kill_process_if_port_used() {
-
-#     if [ -n "$1" ]
-#     then
-#         val=$(sudo netstat -lnp | grep $1 | egrep -o "[0-9]+/" | egrep -o "[0-9]+")
-
-#         if [ -n "$val" ]
-#         then
-#             print_instruction "\nKilling process $val..."
-#                 sudo kill $val
-#             print_result $?
-#         fi
-#     else
-#         print_warning "A port value must be passed into 'kill_process_if_port_used()'"
-#         return 1
-#     fi
-
-# }
-
-
-install_package() {
-
-    result=0
-
-    dpkg -l "$1" &> /dev/null
-
-    if [ $? -ne 0 ]; then
-        print_instruction "\nInstall $1..."
-            sudo apt-get -y install $1
-            result=$?
-        print_result $result
-    else
-        print_instruction "$1 already installed...skipping..."
-    fi
-
-    return $result
-}
-
-
-install_package_remote() {
-
-    result=0
-
-    sudo sshpass -p $pword ssh $piid@$ip_target dpkg -l "$1" &> /dev/null
-
-    if [ $? -ne 0 ]; then
-        print_instruction "\nInstall $1..."
-            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y install $1
-            result=$?
-        print_result $result
-    else
-        print_instruction "$1 already installed...skipping..."
-    fi
-
-    return $result
-}
-
-
-update_locale_setting() {
-
-    # $1: setting
-    # $2: value
-
-    grep "export $1=" /home/$piid/.bashrc &> /dev/null
-
-    if [ $? -ne 0 ]
-    then
-        print_instruction "Add $1 setting with $2 to .bashrc..."
-            echo "export $1=$2" >> /home/$piid/.bashrc
-            source /home/$piid/.bashrc
-        print_result $?
-    fi
-
-}
-
-
-update_locale_setting_remote() {
-
-    # $1: setting
-    # $2: value
-
-    sudo sshpass -p $pword ssh $piid@$ip_target "grep 'export $1' /home/$piid/.bashrc &> /dev/null"
-
-    if [ $? -ne 0 ]
-    then
-        print_instruction "Add $1 setting with $2 to .bashrc..."
-            sudo sshpass -p $pword ssh $piid@$ip_target "grep 'export $1' /home/$piid/.bashrc &> /dev/null"
-
-            sudo sshpass -p $pword ssh $piid@$ip_target 'sudo echo "export '$1'='$2'" >> /home/'$piid'/.bashrc'
-
-            sudo sshpass -p $pword ssh $piid@$ip_target "source /home/$piid/.bashrc"
-        print_result $?
-    fi
-}
-
 
 get_ip_host_and_platform() {
 
@@ -222,4 +91,103 @@ get_ip_host_and_platform() {
 
     print_instruction "Processing $host_target/$ip_target/$platform_target:"
 }
+
+
+
+
+
+# execute_command -r|-l -1|-R "command string"
+execute_command() {
+
+    local -r -i max_attempts=3
+    local -i attempt_num=1
+
+    if [ "$2" == "-1"]; then
+        if  [ "$1" == "-l" ]
+            eval "$3"
+        else
+            sudo sshpass -p $pword ssh $piid@$ip_target "$3"
+        fi
+    else
+
+        if [ "$1" == "-l" ]
+        then
+
+            # Local Call
+            until eval "$3"
+            do
+                if (( attempt_num == max_attempts ))
+                then
+                    print_instruction "Attempt $attempt_num failed and there are no more attempts."
+                    return 1
+                else
+                    print_instruction "Attempting to execute command.  This is attempt $attempt_num."
+                    (( attempt_num++ ))
+                    eval "$3"
+
+                    return $?
+                fi
+            done
+
+        else
+
+            # Remote Call
+            until sudo sshpass -p $pword ssh $piid@$ip_target "$3"
+            do
+                if (( attempt_num == max_attempts ))
+                then
+                    print_instruction "Attempt $attempt_num failed and there are no more attempts."
+                    return 1
+                else
+                    print_instruction "Attempting to execute command.  This is attempt $attempt_num."
+                    (( attempt_num++ ))
+                    sudo sshpass -p $pword ssh $piid@$ip_target "$3"
+
+                    return $?
+                fi
+            done
+
+        fi
+    fi
+}
+
+
+
+install_and_validate_package() {
+    local -r -i max_attempts=5
+    local -i attempt_num=1
+
+    until execute_command $1 -1 "dpkg-query -W -f='${Status}\n' $2 > /dev/null 2>&1"
+    do
+        if (( attempt_num == max_attempts ))
+        then
+            echo "Attempt $attempt_num failed and there are no more attempts left!"
+            return 1
+        else
+            echo "Attempting to install package: $2  This is attempt $attempt_num."
+            (( attempt_num++ ))
+            execute_command $1 -1 "sudo apt-get install -y $2"
+        fi
+    done
+}
+
+
+update_locale_setting() {
+
+    # $1: setting
+    # $2: value
+    # $3: (-r - remote call | -l - local call)
+
+    execute_command $3 -1 "grep "'"'"export $1="'"'" /home/$piid/.bashrc &> /dev/null"
+
+    if [ $? -ne 0 ]
+    then
+        print_instruction "Add $1 setting with $2 to .bashrc..."
+            execute_command $3 -1 "echo "'"'"export $1=$2"'"'" >> /home/$piid/.bashrc"
+            execute_command $3 -1 "source /home/$piid/.bashrc"
+        print_result $?
+    fi
+
+}
+
 

@@ -15,12 +15,13 @@ print_instruction " |____/____/|_| |_|            \n"
 
 . _check_root.sh
 
-. _package_check.sh
-
 . _array_setup.sh
+
+. _package_check.sh
 
 print_instruction "Setting up SSH to communicate with the workers.\n"
 
+# Only check/create SSH keys on the Master
 test -f /home/$piid/.ssh/id_rsa.pub
 
 if [ $? -ne 0 ]
@@ -29,18 +30,19 @@ then
     print_instruction "Create SSH keys..."
         ssh-keygen -t rsa -b 2048 -f /home/$piid/.ssh/id_rsa -N ""
     print_result $?
+
+    print_instruction "Done creating SSH Keys.\n\n"
 fi
 
 sudo chown -R $piid /home/$piid/.ssh/
-
-print_instruction "Done creating SSH Keys.\n\n"
-
 
 
 for ((i=0; i<$length; i++));
 do
     # Get the IP to search for
     get_ip_host_and_platform $i
+
+    if [ $ip_target == $ip_addr_me ]; then callLocation="-l"; else callLocation="-r"; fi
 
     print_instruction "Deleting $localhostsfile so it can be recreated.\n"
     rm -f $localhostsfile > /dev/null 2>&1
@@ -62,7 +64,7 @@ do
         print_result $?
 
         print_instruction "apt-get update on worker: $ip_target.\n"
-            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get --fix-missing update
+            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get update
         print_result $?
 
         print_instruction "apt-get upgrade on worker: $ip_target.\n"

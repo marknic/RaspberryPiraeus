@@ -16,9 +16,9 @@ print_instruction "                    |_|                        \n"
 
 . _check_root.sh
 
-. _package_check.sh
-
 . _array_setup.sh
+
+. _package_check.sh
 
 
 for ((i=0; i<$length; i++));
@@ -26,114 +26,63 @@ do
 
     get_ip_host_and_platform $i
 
-    if [ $ip_target == $ip_addr_me ]
+    if [ $ip_target == $ip_addr_me ]; then callLocation="-l"; else callLocation="-r"; fi
+
+    result=0
+    print_instruction "Update and Upgrade\n"
+
+    execute_command $callLocation -1 "sudo apt-get update"
+    if [ $? -ne 0 ]; then result=1; fi
+
+    execute_command $callLocation -1 "sudo apt-get -y --fix-missing upgrade"
+    if [ $? -ne 0 ]; then result=1; fi
+
+    if [ $result -eq 1 ]; then print_instruction "$RED Clean, Update and Upgrade FAILED.$NC"; fi
+
+    execute_command $callLocation -1 "swapmem=$(grep SwapTotal /proc/meminfo | awk '{ print $2}')"
+
+    if [ $swapmem -gt 0 ]
     then
-
-        result=0
-        print_instruction "Update and Upgrade\n"
-
-        sudo apt-get update
-        if [ $? -ne 0 ]; then result=1; fi
-
-        sudo apt-get -y --fix-missing upgrade
-        if [ $? -ne 0 ]; then result=1; fi
-
-        if [ $result -eq 1 ]; then print_instruction "$RED Clean, Update and Upgrade FAILED.$NC"; fi
-
-        swapmem=$(grep SwapTotal /proc/meminfo | awk '{ print $2}')
-
-        if [ $swapmem -gt 0 ]
+        if [ platform_target == $PLATFORM_PI ]
         then
-            if [ platform_target == $PLATFORM_PI ]
-            then
-                # Raspbian
-                print_instruction "Removing the swap file on $ip_addr_me\n"
-                print_instruction "dphys-swapfile swapoff (master)..."
-                    sudo dphys-swapfile swapoff
-                print_result $?
-
-                print_instruction "dphys-swapfile uninstall (master)..."
-                    sudo dphys-swapfile uninstall
-                print_result $?
-
-                print_instruction "apt-get -y purge dphys-swapfile (master)..."
-                    sudo apt-get -y purge dphys-swapfile
-                print_result $?
-
-                print_instruction "apt-get -y autoremove (master)..."
-                    sudo apt-get -y autoremove
-                print_result $?
-            else
-                # Ubuntu
-                print_instruction "Turning swap file off ($ip_target:$host_target)..."
-                    sudo swapoff -a -v
-                print_result $?
-
-                print_instruction "Removing swapfile..."
-                    sudo rm /swapfile
-                print_result $?
-
-                print_instruction "Making backup copy of /etc/fstab file..."
-                    sudo cp /etc/fstab /etc/fstab.bak
-                print_result $?
-
-                print_instruction "Removing swapfile setting in /etc/fstab..."
-                    sudo sed -i '/\/swapfile/d' /etc/fstab
-                print_result $?
-            fi
-        fi
-
-    else
-
-        print_instruction "Processing $host_target/$ip_target:"
-
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get update
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y --fix-missing dist-upgrade
-
-        swapmem=$(sudo sshpass -p $pword ssh $piid@$ip_target "grep SwapTotal /proc/meminfo | awk '{ print $2}')")
-
-        if [ $swapmem -gt 0 ]
-        then
+            # Raspbian
             print_instruction "Removing the swap file on $ip_addr_me\n"
+            print_instruction "dphys-swapfile swapoff (master)..."
+                execute_command $callLocation -1 "sudo dphys-swapfile swapoff"
+            print_result $?
 
-            if [ platform_target == $PLATFORM_PI ]
-            then
-                # Raspbian
-                print_instruction "dphys-swapfile swapoff ($ip_target:$host_target)..."
-                    sudo sshpass -p $pword ssh $piid@$ip_target sudo dphys-swapfile swapoff > /dev/null 2>&1
-                print_result $?
+            print_instruction "dphys-swapfile uninstall (master)..."
+                execute_command $callLocation -1 "sudo dphys-swapfile uninstall"
+            print_result $?
 
-                print_instruction "dphys-swapfile uninstall ($ip_target:$host_target)..."
-                    sudo sshpass -p $pword ssh $piid@$ip_target sudo dphys-swapfile uninstall > /dev/null 2>&1
-                print_result $?
+            print_instruction "apt-get -y purge dphys-swapfile (master)..."
+                execute_command $callLocation -1 "sudo apt-get -y purge dphys-swapfile"
+            print_result $?
 
-                print_instruction "apt-get -y purge dphys-swapfile ($ip_target:$host_target)..."
-                    sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y purge dphys-swapfile > /dev/null 2>&1
-                print_result $?
+            print_instruction "apt-get -y autoremove (master)..."
+                execute_command $callLocation -1 "sudo apt-get -y autoremove"
+            print_result $?
+        else
+            # Ubuntu
+            print_instruction "Turning swap file off ($ip_target:$host_target)..."
+                execute_command $callLocation -1 "sudo swapoff -a -v"
+            print_result $?
 
-                print_instruction "apt-get -y autoremove ($ip_target:$host_target)..."
-                    sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y autoremove > /dev/null 2>&1
-                print_result $?
-            else
-                # Ubuntu
-                print_instruction "Turning swap file off ($ip_target:$host_target)..."
-                    sudo sshpass -p $pword ssh $piid@$ip_target sudo swapoff -a -v
-                print_result $?
+            print_instruction "Removing swapfile..."
+                execute_command $callLocation -1 "sudo rm /swapfile"
+            print_result $?
 
-                print_instruction "Removing swapfile..."
-                    sudo sshpass -p $pword ssh $piid@$ip_target sudo rm /swapfile
-                print_result $?
+            print_instruction "Making backup copy of /etc/fstab file..."
+                execute_command $callLocation -1 "sudo cp /etc/fstab /etc/fstab.bak"
+            print_result $?
 
-                print_instruction "Making backup copy of /etc/fstab file..."
-                    sudo sshpass -p $pword ssh $piid@$ip_target sudo cp /etc/fstab /etc/fstab.bak
-                print_result $?
-
-                print_instruction "Removing swapfile setting in /etc/fstab..."
-                    sudo sshpass -p $pword ssh $piid@$ip_target sudo sed -i '/\/swapfile/d' /etc/fstab
-                print_result $?
-            fi
+            print_instruction "Removing swapfile setting in /etc/fstab..."
+                execute_command $callLocation -1 "sudo sed -i '/\/swapfile/d' /etc/fstab"
+            print_result $?
         fi
+
     fi
+
 done
 
 . _worker_reboot.sh
