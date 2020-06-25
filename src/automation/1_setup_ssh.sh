@@ -36,14 +36,12 @@ fi
 
 sudo chown -R $piid /home/$piid/.ssh/
 
-
 for ((i=0; i<$length; i++));
 do
     # Get the IP to search for
     get_ip_host_and_platform $i
 
-    if [ $ip_target == $ip_addr_me ]; then callLocation="-l"; else callLocation="-r"; fi
-
+    # Do this locally
     print_instruction "Deleting $localhostsfile so it can be recreated.\n"
     rm -f $localhostsfile > /dev/null 2>&1
     print_instruction "Deleting $localhostnamefile so it can be recreated.\n"
