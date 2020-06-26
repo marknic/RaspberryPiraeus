@@ -1,6 +1,6 @@
 # RaspberryPiraeus
 
-Piraeus on Docker in Kubernetes on Raspian (Debian) Linux on RPi Cluster
+Piraeus on Docker in Kubernetes on Raspbian (Debian) or Ubuntu Linux on RPi Cluster
 
 ## Build/install Kubernetes on a Raspberry Pi Cluster
 
@@ -9,9 +9,9 @@ Piraeus on Docker in Kubernetes on Raspian (Debian) Linux on RPi Cluster
 2. Enable SSH on all RPi's
     a. Login (pi/raspberry)
     b. Enter these commands:
-    sudo systemctl enable ssh
-    sudo systemctl start ssh
-    logout
+    ***sudo systemctl enable ssh
+    ***sudo systemctl start ssh
+    ***logout
 
 3. Windows: check to see if known_hosts contains an ssh key and if the Rpi's are already listed.  If so, remove them and start over.
     a. Use this command to see if an IP address is already listed in the Known Hosts (SSH) file.  If the IP is already listed, and you're starting up an RPi using that IP, SSH will not connect properly
