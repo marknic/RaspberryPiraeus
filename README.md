@@ -10,9 +10,9 @@ Piraeus on Docker in Kubernetes on Raspbian (Debian) or Ubuntu Linux on RPi Clus
     a. Login (pi/raspberry)
     b. Enter these commands:
     
-    **sudo systemctl enable ssh
+    ** sudo systemctl enable ssh
     
-    ***sudo systemctl start ssh
+    *** sudo systemctl start ssh
     
     ***logout
 
