@@ -1,10 +1,5 @@
 [
     {
-        "name": "NODENAME",
-        "IP": "NODEIP",
-        "platform": "ubuntu or pi"
-    },
-    {
         "name": "kub-master",
         "IP": "192.168.8.100",
         "platform": "pi"
