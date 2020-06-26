@@ -17,8 +17,6 @@ print_instruction " |____/ \___/ \___|_|\_\___|_|     \n"
 
 . _array_setup.sh
 
-#. _package_check.sh
-
 
 for ((i=0; i<$length; i++));
 do
