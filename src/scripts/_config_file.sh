@@ -102,7 +102,7 @@ execute_command() {
     local -r -i max_attempts=3
     local -i attempt_num=1
 
-    if [ "$2" == "-1"]; then
+    if [ "$2" == "-1" ]; then
         if  [ "$1" == "-l" ]; then
             eval "$3"
         else
