@@ -7,7 +7,7 @@ Piraeus on Docker in Kubernetes on Raspbian (Debian) or Ubuntu Linux on RPi Clus
 1. Is SSH enabled on your laptop?
 
 2. Enable SSH on all RPi's
-    a. Login (pi/raspberry)
+    a. Login (pi/raspberry)</br>
     b. Enter these commands:
     
     ** sudo systemctl enable ssh
