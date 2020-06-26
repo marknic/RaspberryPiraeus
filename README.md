@@ -59,12 +59,12 @@ Piraeus on Docker in Kubernetes on Raspbian (Debian) or Ubuntu Linux on RPi Clus
 
 10. Switch to automation (scripting) folder </br>
     a. Create an alias to make this easier: </br>
-    #### echo "alias cdpi='cd ~/RaspberryPiraeus/src/automation/'" >> .bashrc </br>
+    #### echo "alias cdpi='cd ~/RaspberryPiraeus/src/scripts/'" >> .bashrc </br>
     #### source .bashrc </br>
     b. Now you can just type cdpi to get to the script folder </br>
     #### cdpi
 
-    #### echo "alias cdpi='cd ~/RaspberryPiraeus/src/automation/'" >> .bashrc </br>
+    #### echo "alias cdpi='cd ~/RaspberryPiraeus/src/scripts/'" >> .bashrc </br>
     #### source .bashrc </br>
     #### cdpi </br>
 
