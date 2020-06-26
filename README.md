@@ -6,7 +6,7 @@ Piraeus on Docker in Kubernetes on Raspbian (Debian) or Ubuntu Linux on RPi Clus
 
 1. Is SSH enabled on your laptop?
 
-2. Enable SSH on all RPi's
+2. Enable SSH on all RPi's</br>
     a. Login (pi/raspberry)</br>
     b. Enter these commands:
     
@@ -16,9 +16,10 @@ Piraeus on Docker in Kubernetes on Raspbian (Debian) or Ubuntu Linux on RPi Clus
     
     ***logout
 
-3. Windows: check to see if known_hosts contains an ssh key and if the Rpi's are already listed.  If so, remove them and start over.
-    a. Use this command to see if an IP address is already listed in the Known Hosts (SSH) file.  If the IP is already listed, and you're starting up an RPi using that IP, SSH will not connect properly
-    findstr /c:192.168.8.100 C:\Users\nicho\.ssh\known_hosts
+3. Windows: check to see if known_hosts contains an ssh key and if the Rpi's are already listed.  If so, remove them and start over.</br>
+    a. Use this command to see if an IP address is already listed in the Known Hosts (SSH) file.</br>  
+    If the IP is already listed, and you're starting up an RPi using that IP, SSH will not connect properly</br>
+    #### findstr /c:192.168.8.100 C:\Users\nicho\.ssh\known_hosts
 
     b. Use these commands to remove the IP Addresses from Known Hosts file
     type C:\Users\nicho\.ssh\known_hosts | findstr /v 192.168.8.100 | findstr /v 192.168.8.101 > C:\Users\nicho\.ssh\known_hosts.txt
