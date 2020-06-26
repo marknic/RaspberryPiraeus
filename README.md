@@ -9,8 +9,11 @@ Piraeus on Docker in Kubernetes on Raspbian (Debian) or Ubuntu Linux on RPi Clus
 2. Enable SSH on all RPi's
     a. Login (pi/raspberry)
     b. Enter these commands:
+    
     ***sudo systemctl enable ssh
+    
     ***sudo systemctl start ssh
+    
     ***logout
 
 3. Windows: check to see if known_hosts contains an ssh key and if the Rpi's are already listed.  If so, remove them and start over.
