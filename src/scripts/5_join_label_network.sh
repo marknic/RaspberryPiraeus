@@ -24,7 +24,7 @@ print_instruction " |_| \_|\___|\__| \_/\_/ \___/|_|  |_|\_\  \n"
 
 #. _package_check.sh
 
-
+ 
 print_instruction "Joining, Labeling, and adding the network support..."
 print_instruction "Note: Make sure you allow enough time for the kubernetes services to spin up"
 print_instruction "        before running this script.  Run 'kubectl get nodes' to make sure"
