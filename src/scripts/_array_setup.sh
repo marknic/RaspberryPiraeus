@@ -31,7 +31,7 @@ printf "\nMy IP Address:$ip_addr_me\n"
 length=$(cat _cluster.json | jq '. | length')
 printf "Cluster Size: $length nodes.\n\n"
 
-printf " ${YLOW}Cluster Data: $cluster_data ${NC}\n\n"
+printf " ${YLOW}Cluster Data: $cluster_data \n${NC}\n\n"
 
 printf "${YLOW}Initialize ID (Master)\n"
 get_ip_host_and_platform 0

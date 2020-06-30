@@ -76,11 +76,11 @@ print_result () {
 
 get_ip_host_and_platform() {
 
-    print_warning "get_ip_host_and_platform - "'$1:'"$1 -- platform_target:$platform_target"
-
     ip_target=$(echo $cluster_data | jq --raw-output ".[$1].IP")
     host_target=$(echo $cluster_data | jq --raw-output ".[$1].name")
     platform_target=$(echo $cluster_data | jq --raw-output ".[$1].platform")
+
+    print_warning "\nget_ip_host_and_platform - "'$1:'"$1 -- platform_target:$platform_target"
 
     if [ $platform_target == $PLATFORM_PI ]
     then
@@ -95,7 +95,7 @@ get_ip_host_and_platform() {
 
     print_warning "Processing $host_target/$ip_target/$platform_target:"
 
-    print_warning "Processing $piid/$pword:"
+    print_warning "Processing $piid/$pword\n"
 }
 
 
