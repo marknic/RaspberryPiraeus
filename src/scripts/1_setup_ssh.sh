@@ -19,7 +19,10 @@ print_instruction " |____/____/|_| |_|            \n"
 
 . _package_check.sh
 
-print_instruction "Setting up SSH to communicate with the workers.\n"
+get_ip_host_and_platform 0
+
+print_instruction "\n\nSetting up SSH to communicate with the workers.\n"
+print_instruction "Master: $piid - $ip_target\n"
 
 # Only check/create SSH keys on the Master
 test -f /home/$piid/.ssh/id_rsa.pub

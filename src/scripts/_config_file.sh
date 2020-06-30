@@ -90,6 +90,8 @@ get_ip_host_and_platform() {
     fi
 
     print_instruction "Processing $host_target/$ip_target/$platform_target:"
+
+    print_instruction "Processing $piid/$pword:"
 }
 
 
