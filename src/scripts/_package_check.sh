@@ -1,36 +1,45 @@
 #!/bin/bash
 
+packageCheckFile="package_check.complete"
 
+print_instruction "\n\nPackage Check"
 
-for ((i=0; i<$length; i++));
-do
-    # Get the IP to search for
-    get_ip_host_and_platform $i
+if [ ! -f $packageCheckFile ]
+then
 
-    if [ $ip_target == $ip_addr_me ]; then callLocation="-l"; else callLocation="-r"; fi
+    for ((i=0; i<$length; i++));
+    do
+        # Get the IP to search for
+        get_ip_host_and_platform $i
 
-    printf "\n Verifying dependent packages:\n"
+        if [ $ip_target == $ip_addr_me ]; then callLocation="-l"; else callLocation="-r"; fi
 
-    if [ $ip_target == $ip_addr_me ]; then
+        printf "\n Verifying dependent packages:\n"
 
-        # install jq on the master - it is used to parse the json data
-        install_and_validate_package $callLocation jq
+        if [ $ip_target == $ip_addr_me ]; then
 
-        # install sshpass on the master - it is used to include passwords on SSH commands
-        install_and_validate_package $callLocation sshpass
+            # install jq on the master - it is used to parse the json data
+            install_and_validate_package $callLocation jq
 
-    fi
+            # install sshpass on the master - it is used to include passwords on SSH commands
+            install_and_validate_package $callLocation sshpass
 
-    # These packages are for kubernetes and docker operation
-    install_and_validate_package $callLocation "apt-transport-https"
+        fi
 
-    install_and_validate_package $callLocation "ca-certificates"
+        # These packages are for kubernetes and docker operation
+        install_and_validate_package $callLocation "apt-transport-https"
 
-    install_and_validate_package $callLocation "curl"
+        install_and_validate_package $callLocation "ca-certificates"
 
-    install_and_validate_package $callLocation "software-properties-common"
+        install_and_validate_package $callLocation "curl"
 
-done
+        install_and_validate_package $callLocation "software-properties-common"
 
-# Reset the id and ip back to the master
-get_ip_host_and_platform 0
+    done
+
+    touch $packageCheckFile
+
+else
+    print_instruction "\nPackage check previously completed...skipping.\n"
+fi
+
