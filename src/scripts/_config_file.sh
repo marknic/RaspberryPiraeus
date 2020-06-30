@@ -80,7 +80,7 @@ get_ip_host_and_platform() {
     host_target=$(echo $cluster_data | jq --raw-output ".[$1].name")
     platform_target=$(echo $cluster_data | jq --raw-output ".[$1].platform")
 
-    if [ platform_target == PLATFORM_PI ]
+    if [ $platform_target == $PLATFORM_PI ]
     then
         piid="$ID_PI"
         pword="$PASSWORD_PI"
