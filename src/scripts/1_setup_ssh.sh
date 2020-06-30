@@ -20,6 +20,7 @@ print_instruction " |____/____/|_| |_|            \n"
 . _package_check.sh
 
 get_ip_host_and_platform 0
+master_piid=$piid
 
 printf "\n\n"
 
@@ -47,6 +48,8 @@ do
     # Get the IP to search for
     get_ip_host_and_platform $i
 
+    if [ $ip_target == $ip_addr_me ]; then callLocation="-l"; else callLocation="-r"; fi
+
     # Do this locally
     print_instruction "Deleting $localhostsfile so it can be recreated.\n"
     rm -f $localhostsfile > /dev/null 2>&1
@@ -60,20 +63,25 @@ do
         cp $FILE_HOSTS $localhostsfile
     else
 
-        sudo sshpass -p $pword ssh -o "StrictHostKeyChecking=no" $piid@$ip_target sudo mkdir /home/$piid/.ssh/
-        sudo sshpass -p $pword ssh $piid@$ip_target sudo chown -R $piid /home/$piid/.ssh/
+        execute_command $callLocation -1 "test -d /home/$piid/.ssh/"
+
+        if [ $? -ne 0 ]
+        then
+            sudo sshpass -p $pword ssh -o "StrictHostKeyChecking=no" $piid@$ip_target "sudo mkdir /home/$piid/.ssh/"
+            execute_command $callLocation -1 "sudo chown -R $piid /home/$piid/.ssh/"
+        fi
 
         print_instruction "Copying the SSH public key from the master to the worker.\n"
-            sudo sshpass -p $pword scp -p -r /home/$piid/.ssh/id_rsa.pub $piid@$ip_target:/home/$piid/.ssh/authorized_keys
+            sudo sshpass -p $pword scp -p -r "/home/$master_piid/.ssh/id_rsa.pub" $piid@$ip_target:/home/$piid/.ssh/authorized_keys
         print_result $?
 
-        print_instruction "apt-get update on worker: $ip_target.\n"
-            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get update
-        print_result $?
+        execute_command $callLocation -1 "sudo apt-get update"
+        if [ $? -ne 0 ]; then result=1; fi
 
-        print_instruction "apt-get upgrade on worker: $ip_target.\n"
-            sudo sshpass -p $pword ssh $piid@$ip_target sudo apt-get -y --fix-missing dist-upgrade
-        print_result $?
+        execute_command $callLocation -1 "sudo apt-get -y --fix-missing upgrade"
+        if [ $? -ne 0 ]; then result=1; fi
+
+        if [ $result -eq 1 ]; then print_instruction "$RED Update or Upgrade FAILED.$NC"; fi
 
     fi
 

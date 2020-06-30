@@ -37,7 +37,7 @@ do
     execute_command $callLocation -1 "sudo apt-get -y --fix-missing upgrade"
     if [ $? -ne 0 ]; then result=1; fi
 
-    if [ $result -eq 1 ]; then print_instruction "$RED Clean, Update and Upgrade FAILED.$NC"; fi
+    if [ $result -eq 1 ]; then print_instruction "$RED Update or Upgrade FAILED.$NC"; fi
 
     execute_command $callLocation -1 "swapmem=$(grep SwapTotal /proc/meminfo | awk '{ print $2}')"
 
