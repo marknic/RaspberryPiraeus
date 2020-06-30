@@ -22,7 +22,7 @@ done
 printf "\n\nRebooting workers!\n"
 for ((i=0; i<$length; i++));
 do
-    ip_target=$(echo $cluster_data | jq --raw-output ".[$i].IP")
+    get_ip_host_and_platform $i
 
     if [ "$ip_target" != "$ip_addr_me" ] ; then
         sshpass -p $pword ssh $piid@$ip_target "sudo reboot"
@@ -39,8 +39,7 @@ sleep 25
 
 for ((i=0; i<$length; i++));
 do
-    ip_target=$(echo $cluster_data | jq --raw-output ".[$i].IP")
-    host_name=$(echo $cluster_data | jq --raw-output ".[$i].name")
+    get_ip_host_and_platform $i
 
     if [ "$ip_target" != "$ip_addr_me" ] ; then
 

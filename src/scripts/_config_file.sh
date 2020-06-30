@@ -94,8 +94,6 @@ get_ip_host_and_platform() {
 
 
 
-
-
 # execute_command -r|-l -1|-R "command string"
 execute_command() {
 

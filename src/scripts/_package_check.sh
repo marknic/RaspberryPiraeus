@@ -31,3 +31,6 @@ do
     install_and_validate_package $callLocation "software-properties-common"
 
 done
+
+# Reset the id and ip back to the master
+get_ip_host_and_platform 0
