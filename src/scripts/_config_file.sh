@@ -80,22 +80,19 @@ get_ip_host_and_platform() {
     host_target=$(echo $cluster_data | jq --raw-output ".[$1].name")
     platform_target=$(echo $cluster_data | jq --raw-output ".[$1].platform")
 
-    print_warning "\nget_ip_host_and_platform - "'$1:'"$1 -- platform_target:$platform_target"
+    #print_warning "\nget_ip_host_and_platform - "'$1:'"$1 -- platform_target:$platform_target"
 
     if [ $platform_target == $PLATFORM_PI ]
     then
-        print_warning "Inside of TRUE!"
         piid="$ID_PI"
         pword="$PASSWORD_PI"
     else
-        print_warning "Inside of FALSE!"
         piid="$ID_UBUNTU"
         pword="$PASSWORD_UBUNTU"
     fi
 
     print_warning "Processing $host_target/$ip_target/$platform_target:"
 
-    print_warning "Processing $piid/$pword\n"
 }
 
 
