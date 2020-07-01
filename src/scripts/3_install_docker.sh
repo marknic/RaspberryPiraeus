@@ -25,10 +25,8 @@ do
 
     if [ $ip_target == $ip_addr_me ]; then callLocation="-l"; else callLocation="-r"; fi
 
-
-
     # Configure Boot Options
-    if [ $platform_target == $PLATFORM_PI]
+    if [ $platform_target == $PLATFORM_PI ]
     then
         cmdline_file=$BOOT_FOLDER$CMDLINE_TXT
         cmdline_backup=$BOOT_FOLDER$CMDLINE_TXT_BACKUP
