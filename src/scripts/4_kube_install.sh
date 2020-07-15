@@ -109,6 +109,7 @@ do
             # kubeadm init
             # Using a file to flag that the init step has already run
             if [ ! -f "/home/$piid/$kubeadminitdonefile" ]
+            then
                 # Init with the full preflight checks
                 sudo kubeadm init --apiserver-advertise-address=$ip_addr_me --pod-network-cidr=10.244.0.0/16
                 result=$?
