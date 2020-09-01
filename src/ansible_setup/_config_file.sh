@@ -12,6 +12,8 @@ new_locale="en_US.UTF-8 UTF-8"
 orig_keyboard="gb"
 new_keyboard="us"
 
+new_CommonId="marknic"
+new_CommonPw="raspberry"
 
 PLATFORM_PI="pi"
 PLATFORM_UBUNTU="ubuntu"
@@ -20,6 +22,7 @@ ID_UBUNTU="ubuntu"
 
 FILE_HOSTNAME="/etc/hostname"
 FILE_HOSTS="/etc/hosts"
+FILE_PASSWD="/etc/passwd"
 FILE_KUB_LIST_DATA="_kub_list.txt"
 SYSCTL_FILE="sysctl.conf"
 BAK_FILE="${SYSCTL_FILE}.BAK"
@@ -35,12 +38,9 @@ CGROUP_TEST="cgroup_enable"
 
 localhostsfile="hosts.local"
 localhostnamefile="hostname.local"
+localpasswdfile="passwd.local"
+newUserDatafile="newuser.data"
 clusterfile="_cluster.json"
-daemonjsonfile="_daemon.json"
-daemondestfilename="/etc/docker/daemon.json"
-kubeadminitdonefile="kubeadm_init.flg"
-download_location="https://download.docker.com/linux/debian/dists/buster/pool/stable/armhf/"
-kub_list="/etc/apt/sources.list.d/kubernetes.list"
 
 RED='\033[1;31m'
 GRN='\033[0;32m'

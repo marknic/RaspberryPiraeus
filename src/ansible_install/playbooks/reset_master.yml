@@ -1,0 +1,19 @@
+---
+- hosts: master
+  become: yes
+  vars_files:
+    - vars/default.yml
+
+  tasks:
+
+  - name: reset the cluster
+    shell: kubeadm reset --force
+    become: true
+
+  - name: revert iptables
+    shell: iptables -F && iptables -t nat -F && iptables -t mangle -F && iptables -X
+    become: true
+
+  - name: delete kubmaster
+    shell: kubectl delete node kubmaster
+    become: true

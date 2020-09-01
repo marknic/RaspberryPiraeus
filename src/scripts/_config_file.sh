@@ -96,6 +96,10 @@ get_ip_host_and_platform() {
 }
 
 
+print_execute_command() {
+    printf '\nExample: execute_command -r|-l -1|-R "command string"\n\n'
+}
+
 
 # execute_command -r|-l -1|-R "command string"
 execute_command() {
@@ -103,11 +107,40 @@ execute_command() {
     local -r -i max_attempts=3
     local -i attempt_num=1
 
+
+    if [[ "$1" != "-r" && "$1" != "-l" ]]
+    then
+        printf "execute_command: No location parameter (parm 1) \n"
+
+        print_execute_command
+
+        exit 1
+    fi
+
+    if [[ "$2" != "-1" && "$2" != "-R" ]]
+    then
+        printf "execute_command: No iteration parameter (parm 2) \n"
+
+        print_execute_command
+
+        exit 1
+    fi
+
+    if [ -z "$3" ]
+    then
+        printf "execute_command: No command string (parm 3) \n"
+
+        print_execute_command
+
+        exit 1
+    fi
+
+
     if [ "$2" == "-1" ]; then
         if  [ "$1" == "-l" ]; then
             eval "$3"
         else
-            sudo sshpass -p $pword ssh $piid@$ip_target "$3"
+            sudo sshpass -p $user_password ssh $user_id@$ip_target "$3"
         fi
     else
 
@@ -131,7 +164,7 @@ execute_command() {
         else
 
             # Remote Call
-            until sudo sshpass -p $pword ssh $piid@$ip_target "$3"
+            until sudo sshpass -p $user_password ssh $user_id@$ip_target "$3"
             do
                 if (( attempt_num == max_attempts ))
                 then
@@ -140,7 +173,7 @@ execute_command() {
                 else
                     print_instruction "Attempting to execute command.  This is attempt $attempt_num."
                     (( attempt_num++ ))
-                    sudo sshpass -p $pword ssh $piid@$ip_target "$3"
+                    sudo sshpass -p $user_password ssh $user_id@$ip_target "$3"
 
                     return $?
                 fi

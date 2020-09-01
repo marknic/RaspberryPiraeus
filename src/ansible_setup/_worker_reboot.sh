@@ -17,50 +17,37 @@ while true; do
     esac
 done
 
-
-
-printf "\n\nRebooting workers!\n"
+printf "\n\nRebooting cluster!\n"
 for ((i=0; i<$length; i++));
 do
     get_ip_host_and_platform $i
 
-    if [ "$ip_target" != "$ip_addr_me" ] ; then
-        sshpass -p $pword ssh $piid@$ip_target "sudo reboot"
-    else
-        master_name=$(echo $cluster_data | jq --raw-output ".[$i].name")
-    fi
+    print_instruction "Rebooting $ip_target..."
+        sshpass -p $user_password ssh $user_id@$ip_target "sudo reboot"
+
 done
 
 printf "\nVerifying Reboot:\n"
 
-printf "Waiting 25 seconds...\n\n"
+printf "Waiting 20 seconds...\n\n"
 
-sleep 25
+sleep 20
 
 for ((i=0; i<$length; i++));
 do
     get_ip_host_and_platform $i
 
-    if [ "$ip_target" != "$ip_addr_me" ] ; then
+    output='down'
 
-        output='down'
+    while [ "$output" != "up" ]
+    do
+        output=$(sshpass -p $user_password ssh $user_id@$ip_target uptime | awk '{print $2}')
 
-        while [ "$output" != "up" ]
-        do
-            output=$(sshpass -p $pword ssh $piid@$ip_target uptime | awk '{print $2}')
-
-            if [ "$output" != "up" ]
-            then
-                sleep 2
-            else
-                print_instruction "$ip_target is back up as $host_name."
-            fi
-        done
-    fi
+        if [ "$output" != "up" ]
+        then
+            sleep 2
+        else
+            print_instruction "$ip_target is back up as $host_name."
+        fi
+    done
 done
-
-print_instruction "\nRebooting $master_name ($ip_addr_me)..."
-print_instruction "\nSSH connection will drop."
-print_instruction "\nYou will need to reconnect with the master when it is done rebooting.\n"
-
-sudo reboot

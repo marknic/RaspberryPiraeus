@@ -1,49 +1,14 @@
 [
     {
-        "name": "NODENAME",
-        "IP": "NODEIP",
-        "platform": "ubuntu or pi",
-        "id": "USERID",
-        "password": "USERPASSWORD"
-    },
-    {
         "name": "kub-master",
-        "IP": "192.168.8.100",
+        "IP": "192.168.1.100",
         "platform": "pi",
         "id": "pi",
         "password": "raspberry"
     }
     ,{
         "name": "kub-worker-01",
-        "IP": "192.168.8.101",
-        "platform": "ubuntu",
-        "id": "ubuntu",
-        "password": "raspberry"
-    }
-    ,{
-        "name": "kub-worker-02",
-        "IP": "192.168.8.102",
-        "platform": "ubuntu",
-        "id": "ubuntu",
-        "password": "raspberry"
-    }
-    ,{
-        "name": "kub-worker-03",
-        "IP": "192.168.8.103",
-        "platform": "ubuntu",
-        "id": "ubuntu",
-        "password": "raspberry"
-    }
-    ,{
-        "name": "kub-worker-04",
-        "IP": "192.168.8.104",
-        "platform": "ubuntu",
-        "id": "ubuntu",
-        "password": "raspberry"
-    }
-    ,{
-        "name": "kub-worker-05",
-        "IP": "192.168.8.105",
+        "IP": "192.168.1.101",
         "platform": "ubuntu",
         "id": "ubuntu",
         "password": "raspberry"

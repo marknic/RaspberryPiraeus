@@ -1,0 +1,66 @@
+---
+- hosts: kubmaster
+  gather_facts: false
+  pre_tasks:
+    - name: Updating APT Cache
+      apt:
+        cache_valid_time: 1800
+      become: true
+  # roles:
+  #   - role: ansible-change-hostname
+
+
+- hosts: kubmaster
+  any_errors_fatal: true
+  tasks:
+    - name: Install aptitude using apt
+      apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
+      become: true
+
+    - name: Ensure the locale exists
+      locale_gen:
+        name: en_US.UTF-8
+        state: present
+
+    - name: Set timezone to America/Chicago
+      timezone:
+        name: America/Chicago
+
+    - name: set default locale1
+      command: update-locale "LANG=en_US.UTF-8"
+      become: yes
+
+    - name: set default locale2
+      command: locale-gen --purge "en_US.UTF-8"
+      become: yes
+
+    - name: set default locale3
+      command: dpkg-reconfigure --frontend noninteractive locales
+      become: yes
+
+    - name: Installing vim
+      apt:
+        name: vim
+        state: present
+      become: true
+
+    # We install dnsutils to provide us dig on the cluster nodes
+    - name: Installing dnsutils
+      apt:
+        name: dnsutils
+        state: present
+      become: true
+
+    - name: Disabling Swap
+      service:
+        name: dphys-swapfile
+        enabled: false
+        state: stopped
+      become: true
+
+    - name: Uninstalling dphys-swapfile
+      apt:
+        name: dphys-swapfile
+        state: absent
+      become: true
+

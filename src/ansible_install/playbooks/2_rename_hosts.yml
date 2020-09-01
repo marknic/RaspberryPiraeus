@@ -1,0 +1,45 @@
+---
+- name: host file update - Local DNS setup across all the servers
+  hosts: all
+  vars_files:
+    - vars/default.yml
+  any_errors_fatal: true
+  become: true
+
+  tasks:
+
+  - debug:
+      msg: "{{ ansible_host }} {{ inventory_hostname }} {{ ansible_hostname }} "
+    when: ansible_host is defined
+
+  - name: Add IP address of all hosts to all hosts
+    lineinfile:
+      path: /etc/hosts
+      regexp: '.*{{ item }}$'
+      line: "{{ hostvars[item].ansible_host }} {{item}}"
+      state: present
+    when: hostvars[item].ansible_host is defined
+    with_items: "{{ groups.all }}"
+
+  - name: updating hostname (1/2)
+    hostname:
+      name: "{{ inventory_hostname }}"
+    register: hostname_change
+
+  - name: updating hostname (2/2)
+    copy:
+      content: "{{ inventory_hostname }}{{'\n'}}"
+      dest: /etc/hostname
+      backup: true
+    register: hostname_change
+
+  - name: update /etc/hosts
+    lineinfile:
+      path: /etc/hosts
+      regexp: '^127\.0\.0\.1'
+      line: "127.0.0.1{{'\t'}}{{ inventory_hostname }}"
+      backup: true
+      state: present
+
+  - name: Unconditionally reboot the machine with all defaults
+    reboot:

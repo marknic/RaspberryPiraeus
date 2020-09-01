@@ -1,8 +1,0 @@
-[piraeus]
-kub-master ansible_host=192.168.1.100 kubernetes_role=master
-kub-worker-01 ansible_host=192.168.1.101 kubernetes_role=node
-
-[piraeus:vars]
-ansible_ssh_user=pi
-deploy_target=pi
-kubernetes_apiserver_advertise_address=10.0.100.61

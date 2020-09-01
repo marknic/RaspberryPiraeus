@@ -1,0 +1,9 @@
+---
+- hosts: raspbian
+  tasks:
+
+    - name: do update
+      apt:
+        name: dphys-swapfile
+        state: absent
+      become: true

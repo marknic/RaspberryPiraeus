@@ -17,20 +17,16 @@ print_instruction " |_____\___/ \___\__,_|_|\___|     \n"
 
 . _array_setup.sh
 
-. _package_check.sh
-
+callLocation="-r"
 
 for ((i=0; i<$length; i++));
 do
     # Get the IP to search for
     get_ip_host_and_platform $i
 
-    if [ $ip_target == $ip_addr_me ]; then callLocation="-l"; else callLocation="-r"; fi
-
     space_pos=`expr index "$new_locale" ' '`
     len=$((space_pos-1))
     lc_val="${new_locale:0:len}"
-
 
     if [ platform_target == $PLATFORM_PI  ]
     then
@@ -59,7 +55,7 @@ do
         update_locale_setting "LC_COLLATE" $lc_val $callLocation
 
         print_instruction "Execute locale-gen with the current settings..."
-            sudo locale-gen
+            execute_command $callLocation -1 "sudo locale-gen"
         print_result $?
 
         print_instruction "Execute locale -a with the current settings..."

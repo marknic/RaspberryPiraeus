@@ -1,0 +1,66 @@
+---
+- hosts: all
+  vars_files:
+    - vars/default.yml
+  any_errors_fatal: true
+  become: true
+
+  tasks:
+  - name: add Kubernetes apt-key
+    apt_key:
+      url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+      state: present
+
+  - name: add Kubernetes' APT repository
+    apt_repository:
+      repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
+      state: present
+      filename: 'kubernetes'
+
+  - name: install kubelet
+    apt:
+      name: kubelet
+      state: present
+      update_cache: true
+
+  - name: install kubeadm
+    apt:
+      name: kubeadm
+      state: present
+
+  - name: Copy docker daemon to remote
+    shell: |
+      cat > /etc/docker/daemon.json <<EOF
+      {
+      "exec-opts": ["native.cgroupdriver=systemd"],
+      "log-driver": "json-file",
+      "log-opts": {
+        "max-size": "100m"
+      },
+      "storage-driver": "overlay2"
+      }
+      EOF
+
+  - name: Create systemd directory for daemon
+    file:
+      path: /etc/systemd/system/docker.service.d
+      state: directory
+
+  - name: just force systemd to reread configs
+    systemd:
+      daemon_reload: yes
+
+  - name: restart Docker
+    systemd:
+      name: docker
+      state: restarted
+
+- hosts: master
+  become: yes
+
+  tasks:
+  - name: install kubectl
+    apt:
+      name: kubectl
+      state: present
+      force: yes

@@ -1,0 +1,134 @@
+---
+- hosts: all
+  vars_files:
+    - vars/default.yml
+
+  any_errors_fatal: true
+  become: true
+
+  tasks:
+
+    - name: Create Docker configuration directories - All
+      file:
+        path: "{{ item }}"
+        state: "directory"
+        owner: "root"
+        group: "root"
+        mode: "0755"
+      loop:
+        - "/etc/docker"
+        - "/etc/systemd/system/docker.service.d"
+
+    - name: Add Docker GPG apt Key - Ubuntu
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository - Ubuntu
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu bionic stable
+        state: present
+
+    - name: Update apt and install docker-ce - Ubuntu
+      apt:
+        update_cache: true
+        name: docker-ce
+        state: latest
+
+    - name: Install Docker Module for Python - Ubuntu
+      pip:
+        name: docker
+
+    - name: Configure Docker daemon options (json) - Ubuntu
+      template:
+        src: "templates/etc/docker/daemon.json.j2"
+        dest: "/etc/docker/daemon.json"
+        owner: "root"
+        group: "root"
+        mode: "0644"
+      when: docker__default_daemon_json | d() or docker__daemon_json | d()
+
+    - name: Install Docker - Ubuntu
+      apt:
+        name: docker-ce
+        state: present
+
+    - name: Add user(s) to "docker" group - Ubuntu
+      user:
+        name: "{{ item }}"
+        groups: "docker"
+        append: true
+      loop: "{{ docker__users }}"
+
+    - name: Configure Docker daemon options (flags) - Ubuntu
+      template:
+        src: "etc/systemd/system/docker.service.d/options.conf.j2"
+        dest: "/etc/systemd/system/docker.service.d/options.conf"
+        owner: "root"
+        group: "root"
+        mode: "0644"
+      register: docker__register_daemon_flags
+      when: docker__daemon_flags | d()
+      notify: ["Restart Docker"]
+
+    - name: Configure Docker daemon environment variables - Ubuntu
+      template:
+        src: "etc/systemd/system/docker.service.d/environment.conf.j2"
+        dest: "/etc/systemd/system/docker.service.d/environment.conf"
+        owner: "root"
+        group: "root"
+        mode: "0644"
+      register: docker__register_daemon_environment
+      when: docker__daemon_environment | d()
+      notify: ["Restart Docker"]
+
+    - name: Configure custom systemd unit file override - Ubuntu
+      template:
+        src: "etc/systemd/system/docker.service.d/custom.conf.j2"
+        dest: "/etc/systemd/system/docker.service.d/custom.conf"
+        owner: "root"
+        group: "root"
+        mode: "0644"
+      register: docker__register_custom_override
+      when: docker__systemd_override | d()
+      notify: ["Restart Docker"]
+
+    - name: Reload systemd daemon - Ubuntu
+      systemd:
+        daemon_reload: true
+      when: docker__register_daemon_flags is changed
+            or docker__register_daemon_environment is changed
+            or docker__register_custom_override is changed
+
+    - name: Restart Docker now to make sure `docker login` works - Ubuntu
+      meta: "flush_handlers"
+
+    - name: Manage Docker registry login credentials - Ubuntu
+      docker_login:
+        registry_url: "{{ item.registry_url | d(omit) }}"
+        username: "{{ item.username }}"
+        password: "{{ item.password }}"
+        email: "{{ item.email | d(omit) }}"
+        reauthorize: "{{ item.reauthorize | d(omit) }}"
+        config_path: "{{ item.config_path | d((ansible_env.PWD | d('/root')) + '/.docker/config.json') }}"
+        state: "{{ item.state | d('present') }}"
+      loop: "{{ docker__registries }}"
+      when: item.username | d() and item.password | d()
+      vars:
+        ansible_python_interpreter: "{{ '/usr/bin/env python3-docker' }}"
+
+    - name: Remove Docker related cron jobs - Ubuntu
+      file:
+        path: "/etc/cron.d/{{ item.cron_file }}"
+        state: "absent"
+      loop: "{{ docker__cron_jobs }}"
+      when:
+        - item.state | d("present") == "absent"
+        - item.cron_file | d()
+
+  handlers:
+    - name: Restart Docker
+      systemd:
+        name: "docker"
+        state: "restarted"
+

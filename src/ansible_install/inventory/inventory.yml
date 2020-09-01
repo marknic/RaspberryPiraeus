@@ -1,0 +1,38 @@
+---
+all:
+  hosts:
+    kubmaster:
+      ansible_host: 192.168.1.101
+      ansible_python_interpreter: /usr/bin/python3
+
+    kubworker01:
+      ansible_host: 192.168.1.102
+      ansible_python_interpreter: /usr/bin/python3
+
+  children:
+
+    master:
+      hosts:
+        kubmaster: {}
+    workers:
+      hosts:
+        kubworker[01:01]: {}
+
+    raspbian:
+      hosts: {}
+    ubuntu:
+      hosts:
+        kubmaster: {}
+        kubworker[01:01]: {}
+
+    master_raspbian:
+      hosts: {}
+    master_ubuntu:
+      hosts:
+        kubworker[01:01]: {}
+
+    workers_raspbian:
+      hosts: {}
+    workers_ubuntu:
+      hosts:
+        kubworker[01:01]: {}
