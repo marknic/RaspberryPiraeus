@@ -3,7 +3,6 @@
   hosts: localhost
   vars_files:
     - vars/default.yml
-  any_errors_fatal: true
   become: true
 
   tasks:
@@ -16,11 +15,10 @@
       state: present
     when: hostvars[item].ansible_host is defined
     with_items: "{{ groups.all }}"
-    delegate_to: localhost
 
   - name: add an entry for the resis server
     lineinfile:
       path: /etc/hosts
       state: present
       line: "{{ redis_ip }}  {{ redis_hostname }}"
-    delegate_to: localhost
+
