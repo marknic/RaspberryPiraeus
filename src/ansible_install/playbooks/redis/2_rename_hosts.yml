@@ -1,9 +1,8 @@
 ---
-- name: rename the hosts from the default
+- name: rename hosts from ubuntu
   hosts: all
   vars_files:
     - vars/default.yml
-  any_errors_fatal: true
   become: true
 
   tasks:

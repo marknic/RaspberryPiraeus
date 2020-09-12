@@ -1,0 +1,99 @@
+---
+- name: configure the k8s cluster
+  hosts: master
+  become: yes
+  vars_files:
+    - vars/default.yml
+
+  tasks:
+  - name: Update all packages to the latest version...
+    apt:
+      upgrade: dist
+
+  - name: delete cluster_initialized.txt
+    ignore_errors: yes
+    file:
+      state: absent
+      path: cluster_initialized.txt
+
+  - name: delete kubeadm_token.txt
+    ignore_errors: yes
+    file:
+      state: absent
+      path: "{{ playbook_dir }}/kubeadm_token.txt"
+    delegate_to: localhost
+
+  - name: delete sha_token.txt
+    ignore_errors: yes
+    file:
+      state: absent
+      path: "{{ playbook_dir }}/sha_token.txt"
+    delegate_to: localhost
+
+  - name: generate k8s token
+    shell: kubeadm token generate
+    register: kubeadm_token
+
+  - name: copy token locally to kubeadm_token.txt
+    copy:
+      content: "{{ kubeadm_token.stdout }}"
+      dest: "{{ playbook_dir }}/kubeadm_token.txt"
+    delegate_to: localhost
+
+  - name: initialize the cluster
+    shell: kubeadm init --token="{{ kubeadm_token.stdout }}" --kubernetes-version=v{{ k8s_version }} --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address="{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"  >> cluster_initialized.txt
+    args:
+      chdir: /home/{{ std_username }}
+      creates: cluster_initialized.txt
+
+  - name: get sha256 token from init output
+    shell: cat cluster_initialized.txt | grep -e 'sha256:' | awk '{print $2}'
+    register: sha_token
+
+  - name: copy sha_token locally to sha_token.txt
+    copy:
+      content: "{{ sha_token.stdout }}"
+      dest: "{{ playbook_dir }}/sha_token.txt"
+    delegate_to: localhost
+
+  - name: create .kube directory
+    become: true
+    become_user: "{{ std_username }}"
+    file:
+      path: /home/{{ std_username }}/.kube
+      state: directory
+      mode: 0755
+
+  - name: copy admin.conf to user's kube config
+    copy:
+      src: /etc/kubernetes/admin.conf
+      dest: /home/{{ std_username }}/.kube/config
+      remote_src: yes
+      owner: "{{ std_username }}"
+
+  - name: install Pod network
+    become: true
+    become_user: "{{ std_username }}"
+    shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml >> pod_network_setup.txt
+    args:
+      chdir: /home/{{ std_username }}
+      creates: pod_network_setup.txt
+
+
+
+- hosts: workers
+  become: yes
+  vars:
+    sha_token_val: "{{ lookup('file', '{{ playbook_dir }}/sha_token.txt') }}"
+    kubeadm_token_val: "{{ lookup('file', '{{ playbook_dir }}/kubeadm_token.txt') }}"
+  vars_files:
+    - vars/default.yml
+
+  tasks:
+
+  - name: Join nodes
+    become: true
+    shell: kubeadm join {{ hostvars['kubmaster01'].ansible_host }}:6443 --token {{ kubeadm_token_val }} --discovery-token-ca-cert-hash {{ sha_token_val }}
+    args:
+      chdir: /home/{{ std_username }}
+

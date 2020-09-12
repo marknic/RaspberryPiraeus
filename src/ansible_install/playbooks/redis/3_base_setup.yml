@@ -1,9 +1,8 @@
 ---
-- name: setup the machines with all dependencies
+- name: deploy pre-reqs
   hosts: all
   vars_files:
     - vars/default.yml
-  any_errors_fatal: true
   become: true
 
   tasks:
@@ -31,6 +30,8 @@
       - cron
       - gnupg2
       - libffi-dev
+      - build-essential
+      - tcl
 
   - name: Update apt-get repo and cache
     apt:
@@ -55,13 +56,3 @@
   - name: Set timezone-u
     timezone:
       name: "{{ time_zone }}"
-
-  - name: Disable swap for current session
-    command: swapoff -a
-
-  - name: Disable swap permanently, persist reboots
-    replace:
-      path: /etc/fstab
-      regexp: ^(\s*)([^#\n]+\s+)(\w+\s+)swap(\s+.*)$
-      replace: "#\\1\\2\\3swap\\4"
-      backup: yes

@@ -1,0 +1,11 @@
+---
+all:
+  hosts:
+    redis01:
+      ansible_host: 192.168.1.97
+      ansible_python_interpreter: /usr/bin/python3
+
+  children:
+    redis_svr:
+      hosts:
+        redis[01:01]: {}

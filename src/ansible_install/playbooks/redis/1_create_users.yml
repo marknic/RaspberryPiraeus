@@ -1,28 +1,16 @@
 ---
-- name: create all of the users and groups
+- name: create users on machines
   hosts: all
   vars_files:
     - vars/default.yml
-
-  any_errors_fatal: true
+  become: true
 
   tasks:
-
-  - name: Create root ansible tmp directory
-    file:
-      path: /root/.ansible/tmp
-      state: directory
-      owner: root
-      group: root
-      mode: 0700
-      recurse: yes
-    become: true
 
   - name: Make sure we have all groups
     group:
       name: "{{ item }}"
       state: present
-    become: true
     loop:
       - "{{ config_group }}"
       - "{{ std_username }}"
