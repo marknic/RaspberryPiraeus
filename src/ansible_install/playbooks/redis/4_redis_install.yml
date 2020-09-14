@@ -22,7 +22,7 @@
     lineinfile:
       path: /etc/redis/redis.conf
       state: present
-      line: bind {{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}
+      line: bind {{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }} 127.0.0.1
 
   - name: update redis.conf 'systemd'
     shell: sed -i 's/^supervised\s*(upstart|no|auto)\s*$/supervised systemd/gm' /etc/redis/redis.conf

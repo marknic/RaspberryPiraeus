@@ -63,5 +63,8 @@
     args:
       warn: false
 
+  - name: enable the docker service
+    shell: systemctl enable docker.service
 
-
+  - name: Unconditionally reboot the machine with all defaults
+    reboot:
