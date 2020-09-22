@@ -3,7 +3,6 @@
   hosts: all
   vars_files:
     - vars/default.yml
-  any_errors_fatal: true
   become: true
 
   tasks:

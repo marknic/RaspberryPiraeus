@@ -3,7 +3,6 @@
   hosts: all
   vars_files:
     - vars/default.yml
-  any_errors_fatal: true
   become: true
 
   tasks:
@@ -59,9 +58,50 @@
   - name: Disable swap for current session
     command: swapoff -a
 
+
+
+- name: configure swap on ubuntuworkers
+  hosts: ubuntuworkers
+  vars_files:
+    - vars/default.yml
+  become: true
+
+  tasks:
+
   - name: Disable swap permanently, persist reboots
     replace:
       path: /etc/fstab
       regexp: ^(\s*)([^#\n]+\s+)(\w+\s+)swap(\s+.*)$
       replace: "#\\1\\2\\3swap\\4"
       backup: yes
+
+
+
+- name: configure swap & GUI on mlworkers
+  hosts: mlworkers
+  vars_files:
+    - vars/default.yml
+  become: true
+
+  tasks:
+
+  - name: Disable swap for current session
+    command: swapoff -a
+
+  # Disable swap permanently
+  - name: stat nvzramconfig.sh
+    stat:
+      path: /etc/systemd/nvzramconfig.sh
+    register: nvzramconfig
+
+  - name: rename
+    command: mv /etc/systemd/nvzramconfig.sh /etc/systemd/nvzramconfig.sh.bak
+    when: nvzramconfig.stat.exists
+
+
+  - name: disable gui
+    shell: systemctl set-default multi-user.target
+
+  - name: set high-power mode
+    shell: nvpmodel -m 0
+

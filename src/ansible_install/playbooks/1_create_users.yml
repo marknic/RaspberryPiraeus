@@ -4,8 +4,6 @@
   vars_files:
     - vars/default.yml
 
-  any_errors_fatal: true
-
   tasks:
 
   - name: Create root ansible tmp directory

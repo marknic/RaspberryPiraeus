@@ -1,7 +1,6 @@
 ---
 - name: label all of the nodes
   hosts: master
-  #become: yes
   vars_files:
     - vars/default.yml
 
