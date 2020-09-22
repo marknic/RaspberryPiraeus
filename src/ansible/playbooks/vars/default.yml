@@ -1,0 +1,19 @@
+machine_locale: en_US.UTF-8
+new_keyboard: us
+time_zone: America/Chicago
+
+std_username: marknic
+std_password: raspberry
+config_group: kubconfig
+
+k8s_version: 1.19.1
+
+cmdline_txt: dwc_otg.fiq_fix_enable=2 console=ttyAMA0,115200 kgdboc=ttyAMA0,115200 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 rootwait rootflags=noload net.ifnames=0
+cgroup_text: cgroup_enable=cpuset cgroup_enable=memory cgroup_memory=1 swapaccount=1
+
+docker__users:
+  - "{{ ansible_env.SUDO_USER | d('root') }}"
+  - "{{ std_username }}"
+
+redis_ip: 192.168.1.97
+redis_hostname: redisserver

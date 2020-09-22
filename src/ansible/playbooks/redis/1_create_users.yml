@@ -1,0 +1,45 @@
+---
+- name: create users on machines
+  hosts: all
+  vars_files:
+    - vars/default.yml
+  become: true
+
+  tasks:
+
+  - name: Make sure we have all groups
+    group:
+      name: "{{ item }}"
+      state: present
+    loop:
+      - "{{ config_group }}"
+      - "{{ std_username }}"
+
+  - name: Create Users
+    user:
+      name: "{{ std_username }}"
+      password: "{{ std_password | password_hash('sha512') }}"
+      shell: /bin/bash
+      update_password: on_create
+      groups: "{{ config_group }}, {{ std_username }}"
+      append: yes
+      state: present
+      createhome: yes
+    become: true
+
+  - name: Allow 'kubconfig' group to have passwordless sudo
+    lineinfile:
+      dest: /etc/sudoers
+      state: present
+      regexp: '^%{{ config_group }}'
+      line: '%{{ config_group }} ALL=(ALL) NOPASSWD: ALL'
+      validate: 'visudo -cf %s'
+    become: true
+
+  - name: Set authorized host with ssh key
+    authorized_key:
+      user: "{{ std_username }}"
+      state: present
+      key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+    become: true
+

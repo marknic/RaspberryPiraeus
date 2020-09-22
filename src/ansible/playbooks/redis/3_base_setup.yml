@@ -1,0 +1,58 @@
+---
+- name: deploy pre-reqs
+  hosts: all
+  vars_files:
+    - vars/default.yml
+  become: true
+
+  tasks:
+  - name: Install aptitude using apt
+    apt:
+      name: aptitude
+      state: latest
+      update_cache: true
+      force_apt_get: true
+
+  - name: Install required system packages - All
+    apt:
+      name: "{{ item }}"
+      state: latest
+      update_cache: true
+    loop:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - python3-pip
+      - virtualenv
+      - python3-setuptools
+      - dnsutils
+      - cron
+      - gnupg2
+      - libffi-dev
+      - build-essential
+      - tcl
+
+  - name: Update apt-get repo and cache
+    apt:
+      update_cache: true
+      force_apt_get: true
+      cache_valid_time: 3600
+
+  - name: Upgrade all apt packages
+    apt:
+      upgrade: dist
+      force_apt_get: true
+
+  - name: set default locale-u1
+    command: localectl set-locale LANG={{ machine_locale }}
+
+  - name: set default locale-u2
+    command: localectl set-locale LC_TIME={{ machine_locale }}
+
+  - name: set default locale-u2
+    command: localectl set-keymap {{ machine_locale }}
+
+  - name: Set timezone-u
+    timezone:
+      name: "{{ time_zone }}"

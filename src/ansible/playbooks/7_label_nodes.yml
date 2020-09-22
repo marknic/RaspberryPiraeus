@@ -1,0 +1,12 @@
+---
+- name: label all of the nodes
+  hosts: master
+  vars_files:
+    - vars/default.yml
+
+  tasks:
+
+  - name: Label nodes
+    shell: kubectl label node {{ item }} node-role.kubernetes.io/worker=worker
+    with_items: "{{ hostvars['kubmaster01']['groups']['workers'] }}"
+

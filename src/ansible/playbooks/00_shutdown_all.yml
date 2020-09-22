@@ -1,0 +1,13 @@
+---
+- name: create all of the users and groups
+  hosts: all
+  vars_files:
+    - vars/default.yml
+  gather_facts: no
+
+  tasks:
+
+  - name: Join nodes
+    become: true
+    shell: shutdown -h now
+
