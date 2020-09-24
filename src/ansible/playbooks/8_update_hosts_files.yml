@@ -16,7 +16,7 @@
     when: hostvars[item].ansible_host is defined
     with_items: "{{ groups.all }}"
 
-  - name: add an entry for the resis server
+  - name: add an entry for the redis server
     lineinfile:
       path: /etc/hosts
       state: present

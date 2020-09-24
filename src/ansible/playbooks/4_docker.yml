@@ -19,8 +19,8 @@
 
 
 
-- name: configure docker on ubuntuworkers machines
-  hosts: ubuntuworkers
+- name: configure docker on ubuntu2004machines machines
+  hosts: ubuntu2004machines
   vars_files:
     - vars/default.yml
   become: true
@@ -70,7 +70,6 @@
     shell: sed -i 's/  / /g' /boot/firmware/cmdline.txt
     args:
       warn: false
-
 
 
 

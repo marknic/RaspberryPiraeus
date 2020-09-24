@@ -1,0 +1,13 @@
+---
+- name: halt all machines
+  hosts: all
+  become: yes
+  vars_files:
+    - vars/default.yml
+  gather_facts: no
+
+  tasks:
+
+  - name: halt all nodes
+    shell: halt
+

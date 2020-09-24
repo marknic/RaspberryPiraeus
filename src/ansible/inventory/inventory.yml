@@ -42,6 +42,10 @@ all:
         kubworker01: {}
         kubworker02: {}
         kubworker07: {}
+    ubuntu2004machines:
+      hosts:
+        kubmaster01: {}
+        kubworker[01:02]: {}
     ubuntuworkers:
       hosts:
         kubworker[01:02]: {}
