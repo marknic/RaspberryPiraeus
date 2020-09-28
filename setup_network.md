@@ -13,4 +13,4 @@ Kubernetes likes static IP addresses and while there are ways to get around that
 
 The cluster used to create the process and script was hard-wired to the network.  WiFi can be used and would be a slightly simpler configuration but the description below assumes a hard-wired network.
 
-
+![Network Diagram](images/kub-network.png)
