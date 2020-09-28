@@ -16,28 +16,28 @@
       state: absent
       path: cluster_initialized.txt
 
-  - name: delete kubeadm_token.txt
+  - name: delete kubeadm_token.tkn
     ignore_errors: yes
     file:
       state: absent
-      path: "{{ playbook_dir }}/kubeadm_token.txt"
+      path: "{{ playbook_dir }}/kubeadm_token.tkn"
     delegate_to: localhost
 
-  - name: delete sha_token.txt
+  - name: delete sha_token.tkn
     ignore_errors: yes
     file:
       state: absent
-      path: "{{ playbook_dir }}/sha_token.txt"
+      path: "{{ playbook_dir }}/sha_token.tkn"
     delegate_to: localhost
 
   - name: generate k8s token
     shell: kubeadm token generate
     register: kubeadm_token
 
-  - name: copy token locally to kubeadm_token.txt
+  - name: copy token locally to kubeadm_token.tkn
     copy:
       content: "{{ kubeadm_token.stdout }}"
-      dest: "{{ playbook_dir }}/kubeadm_token.txt"
+      dest: "{{ playbook_dir }}/kubeadm_token.tkn"
     delegate_to: localhost
 
   - name: initialize the cluster
@@ -50,10 +50,10 @@
     shell: cat cluster_initialized.txt | grep -e 'sha256:' | awk '{print $2}'
     register: sha_token
 
-  - name: copy sha_token locally to sha_token.txt
+  - name: copy sha_token locally to sha_token.tkn
     copy:
       content: "{{ sha_token.stdout }}"
-      dest: "{{ playbook_dir }}/sha_token.txt"
+      dest: "{{ playbook_dir }}/sha_token.tkn"
     delegate_to: localhost
 
   - name: create .kube directory
@@ -84,8 +84,8 @@
 - hosts: workers
   become: yes
   vars:
-    sha_token_val: "{{ lookup('file', '{{ playbook_dir }}/sha_token.txt') }}"
-    kubeadm_token_val: "{{ lookup('file', '{{ playbook_dir }}/kubeadm_token.txt') }}"
+    sha_token_val: "{{ lookup('file', '{{ playbook_dir }}/sha_token.tkn') }}"
+    kubeadm_token_val: "{{ lookup('file', '{{ playbook_dir }}/kubeadm_token.tkn') }}"
   vars_files:
     - vars/default.yml
 
