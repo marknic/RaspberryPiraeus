@@ -24,23 +24,49 @@
 
   tasks:
 
-  - name: Comment out any existing bindings
+  - name: remove CR/LF
     replace:
-      path: redis.conf
-      regexp: '^bind'
-      replace: '#bind'
+      path: test.txt
+      regexp: '[\n\r]'
+      replace: ''
 
-  - name: Add our binding
+  - name: remove 1
+    replace:
+      path: test.txt
+      regexp: '(cgroup_\S*|swapaccount\S*)'
+      replace: ''
+
+  - name: remove 2
+    replace:
+      path: test.txt
+      regexp: '\s{2,}'
+      replace: ''
+
+  - name: Add cgroup settings
     lineinfile:
-      path: redis.conf
+      path: test.txt
       state: present
-      line: bind {{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}
+      insertafter: "^.*$"
+      line: ' cgroup_enable=cpuset cgroup_enable=memory cgroup_memory=1 swapaccount=1'
 
-  - name: Set systemd
+  - name: remove CR/LF
     replace:
-      path: redis.conf
-      regexp: '^supervised\s*(no|auto|upstart)'
-      replace: 'supervised systemd'
+      path: test.txt
+      regexp: '[\n\r]'
+      replace: ''
+
+
+  # - name: Add our binding
+  #   lineinfile:
+  #     path: redis.conf
+  #     state: present
+  #     line: bind {{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}
+
+  # - name: Set systemd
+  #   replace:
+  #     path: redis.conf
+  #     regexp: '^supervised\s*(no|auto|upstart)'
+  #     replace: 'supervised systemd'
 
 
 

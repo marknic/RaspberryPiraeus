@@ -1,0 +1,50 @@
+---
+- name: configure kubernetes on all machines
+  hosts: all
+  vars_files:
+    - vars/default.yml
+  become: true
+
+  tasks:
+
+  - name: delete if exists
+    file:
+      path: /etc/modules-load.d/containerd.conf
+      state: absent
+
+  - name: create config file for containerd
+    blockinfile:
+      path: /etc/modules-load.d/containerd.conf
+      create: yes
+      block: |
+        overlay
+        br_netfilter
+
+  - name: modprobe overlay
+    shell: modprobe overlay
+
+  - name: modprobe br_netfilter
+    shell: modprobe br_netfilter
+
+  - name: delete if exists 2
+    file:
+      path: /etc/sysctl.d/99-kubernetes-cri.conf
+      state: absent
+
+  - name: create kubernetes cri config file
+    blockinfile:
+      path: /etc/sysctl.d/99-kubernetes-cri.conf
+      create: yes
+      block: |
+        net.bridge.bridge-nf-call-iptables  = 1
+        net.ipv4.ip_forward                 = 1
+        net.bridge.bridge-nf-call-ip6tables = 1
+
+  - name: finish updating iptables
+    shell: sysctl --system
+
+  - name: finish updating iptables
+    shell: systemctl restart containerd
+
+
+

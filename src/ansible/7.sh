@@ -1,3 +1,3 @@
 #!/bin/bash
 
-ansible-playbook playbooks/7_label_nodes.yml
+ansible-playbook -v playbooks/7_config_master.yml

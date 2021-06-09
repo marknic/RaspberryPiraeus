@@ -32,11 +32,21 @@
       backup: true
     register: hostname_change
 
-  - name: update /etc/hosts
+  - name: add hostname /etc/hosts
     lineinfile:
       path: /etc/hosts
-      regexp: '^127\.0\.0\.1'
+      regexp: '^\s*127\.0\.0\.1\s+{{ inventory_hostname }}\s*$'
       line: "127.0.0.1{{'\t'}}{{ inventory_hostname }}"
+      insertbefore: BOF
+      backup: true
+      state: present
+
+  - name: add localhost /etc/hosts
+    lineinfile:
+      path: /etc/hosts
+      regexp: '^\s*127\.0\.0\.1\s+localhost\s*$'
+      line: "127.0.0.1    localhost"
+      insertbefore: BOF
       backup: true
       state: present
 

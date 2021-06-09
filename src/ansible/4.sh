@@ -1,3 +1,3 @@
 #!/bin/bash
 
-ansible-playbook playbooks/4_docker.yml
+ansible-playbook -v playbooks/4_install_containerd.yml

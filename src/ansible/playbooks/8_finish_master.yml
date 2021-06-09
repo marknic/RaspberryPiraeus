@@ -1,0 +1,19 @@
+---
+- name: configure the k8s cluster
+  hosts: master
+  vars_files:
+    - vars/default.yml
+
+  tasks:
+
+  - name: create config folder for kubectl
+    shell: mkdir -p $HOME/.kube
+
+  - name: copy config into config folder for kubectl
+    shell: sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+
+  - name: change owner of config for kubectl
+    shell: sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+  - name: install Pod network
+    shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml

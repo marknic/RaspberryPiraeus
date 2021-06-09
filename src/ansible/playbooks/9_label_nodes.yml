@@ -1,0 +1,52 @@
+---
+- name: join all of the workernodes
+  hosts: master
+  vars_files:
+    - vars/default.yml
+
+  tasks:
+
+  - name: Get join command from master
+    shell: kubeadm token create --print-join-command
+    run_once: true
+    register: join_command
+
+  - name: Make vars persistant
+    set_fact:
+      join_command_fact: "{{ join_command.stdout }}"
+
+
+
+
+- name: join all of the workernodes
+  hosts: workers
+  become: yes
+  vars_files:
+    - vars/default.yml
+
+  tasks:
+
+  # - name: get the value of the join_command fact
+  #   debug:
+  #     var: hostvars[groups['master'][0]]['join_command_fact']
+
+  - name: join workers
+    shell: "{{ hostvars[groups['master'][0]]['join_command_fact'] }}"
+
+
+
+- name: label all of the nodes
+  hosts: master
+  vars_files:
+    - vars/default.yml
+
+  tasks:
+
+  # - name: get the value of the join_command fact
+  #   debug:
+  #     var: groups['workers']
+
+  - name: Label nodes
+    shell: "kubectl label node {{ item }} node-role.kubernetes.io/worker=worker"
+    with_items: "{{ groups['workers'] }}"
+

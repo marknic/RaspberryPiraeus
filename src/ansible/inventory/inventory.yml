@@ -13,21 +13,21 @@ all:
       ansible_host: 192.168.1.102
       ansible_python_interpreter: /usr/bin/python3
 
-    # kubworker03:
-    #   ansible_host: 192.168.1.103
-    #   ansible_python_interpreter: /usr/bin/python3
+    kubworker03:
+      ansible_host: 192.168.1.103
+      ansible_python_interpreter: /usr/bin/python3
 
-    # kubworker04:
-    #   ansible_host: 192.168.1.104
-    #   ansible_python_interpreter: /usr/bin/python3
+    kubworker04:
+      ansible_host: 192.168.1.104
+      ansible_python_interpreter: /usr/bin/python3
 
-    # kubworker05:
-    #   ansible_host: 192.168.1.105
-    #   ansible_python_interpreter: /usr/bin/python3
+    kubworker05:
+      ansible_host: 192.168.1.105
+      ansible_python_interpreter: /usr/bin/python3
 
-    # kubworker06:
-    #   ansible_host: 192.168.1.106
-    #   ansible_python_interpreter: /usr/bin/python3
+    kubworker06:
+      ansible_host: 192.168.1.106
+      ansible_python_interpreter: /usr/bin/python3
 
     kubworker07:
       ansible_host: 192.168.1.107
@@ -41,15 +41,10 @@ all:
       hosts:
         kubworker01: {}
         kubworker02: {}
+        kubworker03: {}
+        kubworker04: {}
+        kubworker05: {}
+        kubworker06: {}
         kubworker07: {}
-    ubuntu2004machines:
-      hosts:
-        kubmaster01: {}
-        kubworker[01:02]: {}
-    ubuntuworkers:
-      hosts:
-        kubworker[01:02]: {}
-    mlworkers:
-      hosts:
-        kubworker[07:07]: {}
+
 
